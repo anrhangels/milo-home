@@ -16,4 +16,4 @@ Public version 0.0.3 uses Android code 104, above previous 102/103 builds. Futur
 
 Metadata retains a top-level Standard record for older clients and separate records in `editions.standard` and `editions.byedpi`. Each edition retains its own asset, hash, size and APK verification. Early separate-edition clients, particularly ByeByeDPI, may need one manual download of 0.0.3. New clients select their edition from the shared release.
 
-Previous experimental releases are retained as maintainer drafts. Their numbers are outside the new public version sequence. Historical evidence remains in [testing](TESTING.md); RC support in code is retained for future testing, but no Preview is published now.
+Previous experimental releases are removed from the public release list. Git history and tags remain. Historical evidence remains in [testing](TESTING.md); RC support in code is retained for future testing, but no Preview is published now.

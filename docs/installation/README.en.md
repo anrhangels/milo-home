@@ -9,7 +9,7 @@
 **Production Standard and ByeByeDPI editions are available: Milo Home 0.0.3.** Tags beginning with `test-` are for an isolated emulator/test device, not your working launcher. Select the edition and compatible signing identity; do not substitute a test APK.
 
 1. Read the channel and notes in [Releases](https://github.com/anrhangels/milo-home/releases).
-2. Choose **production / Stable** for normal use. RC is an explicitly chosen preview.
+2. Choose **Milo Home 0.0.3**, the current public release.
 3. Choose Standard or byedpi. Examples use Standard: download `MiloHome-standard.apk`, `MiloHome-standard.apk.sha256` and `update.json` from the same release. Verify size, SHA-256 and signing identity.
 4. If `com.gathin.tvhome` is installed, compare certificates and versions **before installing**. Updates need a compatible signing identity and a higher `versionCode`.
 
