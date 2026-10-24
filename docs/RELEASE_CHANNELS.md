@@ -1,29 +1,28 @@
-# Release channels and publisher
+# Варианты и каналы Milo Home
 
-Stable: tag `v1.0.0`, GitHub Release with prerelease=false. RC: tag `v1.1.0-rc.1`, prerelease=true.
-Drafts are never client updates. Both channels use the same production keystore. Every successive installable code must grow,
-including RC→Stable (e.g. Stable100 → RC101 → Stable102); a lower Stable is not a downgrade option.
+Есть два варианта одного приложения:
 
-The test distribution uses tags `test-v1.0.0` / `test-v1.1.0-rc.1` and track=test metadata. It is a separate test configuration,
-not a third user-facing channel. It still has exactly Stable and RC. Production-track apps ignore test metadata.
+| Вариант | Stable | RC |
+| --- | --- | --- |
+| Standard: системные настройки Wi-Fi, без управления ByeByeDPI | [1.2.0](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.2.0) | [1.3.0-rc.1](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.3.0-rc.1) |
+| ByeByeDPI: меню сети с парным backend | [1.2.0](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.2.0) | [1.3.0-rc.1](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.3.0-rc.1) |
 
-Release entrypoint: **Publish Milo Home** / workflow_dispatch on the default branch, channel + track + version_code + version_name.
-It is not triggered by arbitrary pushes. PR/push CI compiles/tests/lints and uploads a test-only artifact without release secrets.
-Release publishing serializes jobs, validates versions before and immediately before publication, signs and verifies the actual APK,
-then uploads MiloHome.apk, MiloHome.apk.sha256 and update.json with generated notes. RC is marked as prerelease.
+Stable102, RC103; новые официальные APK подписаны постоянным ключом. RC — prerelease, а не обязательное автоматическое обновление. Одновременно эти варианты не устанавливаются: applicationId одинаков. Встроенный обновлятор предлагает только свой вариант и совместимую подпись. Ручной переход между вариантами требует проверки подписи и неуменьшающегося versionCode.
 
-Create GitHub environments `test-releases` and `production-releases`. Each needs secrets MILO_KEYSTORE_B64,
-MILO_STORE_PASSWORD, MILO_KEY_ALIAS, MILO_KEY_PASSWORD and public environment variable MILO_SIGNER_SHA256.
-Stable/RC within one environment must share the same key. Recommended: restrict environments to the default branch and require owner approval.
-The isolated emulator test environment uses its own test key. The current Haier key is unavailable;
-neither test nor production APKs can update it in place. See SIGNING.md.
+## Что скачивать
 
-Metadata schema1 contains applicationId, versionCode/versionName, channel, track, tag, minSdk, size, SHA-256, signer SHA-256,
-asset name and notes. The same JSON is included in a `milo-update:v1` comment block in the REST release body,
-so the client can inspect both channels with bounded API calls without HTML scraping or separate metadata downloads per release.
-The asset URL must match the configured repository/tag/name. APK signature verification remains the final trust anchor.
+MiloHome-standard.apk или MiloHome-byedpi.apk и соответствующий .sha256; update.json описывает конкретный файл. В релизах byedpi отдельно приложены парные backend APK для armeabi-v7a и x86_64, контрольные суммы и архив исходников GPL. Backend собран локально из опубликованной модификации; четыре APK лаунчера собраны GitHub Actions. Backend не встроен в APK лаунчера и не ставится автоматически.
 
-The owner approved first publication on 2026-10-24. Both environments and their encrypted GitHub Secrets are configured,
-restricted to the milo-main branch. Test Stable10 and RC11 were published by Actions and installed through the launcher
-on an isolated Android11 emulator. No production release or physical-TV migration has been performed.
-Keep local fixture evidence separate from the actual online delivery evidence in TESTING.md.
+## Версии и метаданные
+
+Теги: standard-vX.Y.Z / byedpi-vX.Y.Z, для RC — суффикс -rc.N. Track=test добавляет префикс test-; эти сборки production-клиент игнорирует. Старые тестовые релизы без variant считаются legacy byedpi, не Standard.
+
+versionCode возрастает через оба канала внутри варианта. Metadata schema1 содержит variant, track, channel, package, version, размер, SHA-256 и сертификат. Блок milo-update:v1 в теле REST Release позволяет проверить кандидатов без HTML-парсинга. По размеру и хешу проверяется настоящий release-asset, затем подпись и manifest APK.
+
+## Выпуск
+
+Workflow Publish Milo Home запускается вручную из milo-main с variant, channel, track, version_code, version_name. Окружения production-releases / test-releases содержат MILO_KEYSTORE_B64, MILO_STORE_PASSWORD, MILO_KEY_ALIAS, MILO_KEY_PASSWORD и публичную переменную MILO_SIGNER_SHA256. Прямые push и PR не публикуют релиз.
+
+Каждая публикация повторно проверяет монотонность версии и подпись; ключ удаляется из временного каталога runner. CI собирает оба варианта без секретов. Ключи и пароли не являются артефактами. По умолчанию Latest указывает на Standard Stable; у GitHub один общий Latest, поэтому второй Stable выбирайте по таблице выше.
+
+Старый ключ установленного Haier не найден; наличие новых релизов не делает его текущую установку совместимой. [Миграция](SIGNING.md) · [Испытания](TESTING.md).

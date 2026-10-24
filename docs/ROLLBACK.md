@@ -1,19 +1,23 @@
-# Recovery and rollback
+# Восстановление рабочей версии
 
-Keep the current signed APK and device snapshot privately. Do not restore system packages, change networks or delete app data as part of an updater rollback.
-Android normally rejects an older versionCode; `adb install -r -d` is not a dependable recovery plan for a non-debuggable launcher.
+Сохраните текущий APK и состояние HOME до обновления. Не удаляйте данные, не включайте/отключайте системные пакеты и не меняйте сеть ради восстановления лаунчера.
 
-The known working ByeByeDPI network-menu baseline is preserved as Git commit `710a49aa2e20ad72d3b7e3c5c174262386edbea9`.
-`tools/milo/build_recovery.py` rebuilds it with an explicitly higher code and the chosen signing identity, without installing anything:
+## Вернуться к прежнему HOME
+
+Выберите прежний домашний экран в системных настройках. Если HOME меняли через ADB, используйте фактический компонент из своего сохранённого состояния; убедитесь, что этот лаунчер установлен и доступен. Чужие названия пакетов из примеров не являются правильным резервным HOME для любого ТВ.
+
+## Восстановить прежнюю реализацию
+
+Android обычно отклоняет APK с меньшим versionCode. -r -d не является надёжным восстановлением для release-приложения. Корректный путь — пересобрать известную рабочую реализацию с совместимым ключом и кодом выше всех уже установленных версий.
+
+Сетевая реализация до обновлятора сохранена коммитом710a49aa2e20ad72d3b7e3c5c174262386edbea9. tools/milo/build_recovery.py берёт только launcher из этого коммита и ничего не устанавливает:
 
 ```sh
-python tools/milo/build_recovery.py --code 12 --after-code 11 --name 2.7-recovery.12 --out recovery.apk
+python tools/milo/build_recovery.py --code 104 --after-code 103 --name 2.7-recovery.104 --out recovery.apk
 ```
 
-For a permanent-key build100, use a matching permanent key and a code greater than every installed Stable/RC, e.g.101 only if100 is the highest installed code.
-Pass signing secrets through the environment as in BUILDING.md. Verify the recovery certificate against the installed certificate before installing.
-Rebuilding the previous implementation as a forward version preserves its package/data model while removing the updater; it does not restore a lost private key.
+Переменные подписи задаются как в [BUILDING](BUILDING.md). Перед установкой проверьте сертификат против установленного приложения. Если на устройстве уже есть код104 или выше, нужен ещё больший код.
 
-HOME and the disabled-package snapshot must be checked before/after an approved recovery. No automatic fallback to uninstall, root, factory reset,
-package enable/disable or a different applicationId exists. Selecting the original factory Home is a separate user-approved system operation.
-If initial key migration has not been proven, do not apply a new-key recovery APK to the old-key device.
+Это специальное ручное восстановление старой сетевой реализации, не обычный релиз Standard/RC. Его нельзя автоматически раздавать через чужой variant. Ранее подготовленные recovery12/test и recovery101/production не подходят для понижения с102/103; не устанавливайте их поверх новых версий.
+
+Старый приватный ключ Haier отсутствует. Пересборка с новым ключом его не возвращает и не делает recovery совместимым с текущей версией8. [План миграции](SIGNING.md). Удаление, сброс, root и изменение applicationId не являются автоматическим запасным шагом.

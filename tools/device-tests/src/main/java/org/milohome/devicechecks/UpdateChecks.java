@@ -9,6 +9,36 @@ import java.io.*;
 
 /** Independent framework-only runner: does not share dependencies with a shrinking target APK. */
 public class UpdateChecks extends InstrumentationTestCase {
+    public void testConfigureShowcase() throws Exception {
+        Context c=getInstrumentation().getTargetContext();
+        File dir=c.getExternalFilesDir(null);assertNotNull(dir);dir.mkdirs();
+        String apps="[\"com.google.android.youtube.tv\",\"com.android.vending\",\"com.mediatek.wwtv.mediaplayer\"]";
+        String json="{\"dock_apps\":"+apps+",\"library_apps\":[],\"hidden_apps\":[\"com.android.traceur\"],\"columns\":3,\"fill_dock\":false}";
+        try(OutputStream out=new FileOutputStream(new File(dir,"config.json"))){out.write(json.getBytes(java.nio.charset.StandardCharsets.UTF_8));}
+        c.getSharedPreferences("launcher_settings",0).edit().clear().commit();
+        c.getSharedPreferences("milo_updates",0).edit().clear().commit();
+    }
+    public void testEditionManifest() throws Exception {
+        Context c=getInstrumentation().getTargetContext();
+        PackageInfo p=c.getPackageManager().getPackageInfo(c.getPackageName(),PackageManager.GET_META_DATA|PackageManager.GET_PERMISSIONS);
+        String edition=p.applicationInfo.metaData.getString("com.milohome.variant");
+        assertTrue("standard".equals(edition)||"byedpi".equals(edition));
+        boolean control=java.util.Arrays.asList(p.requestedPermissions).contains("io.github.romanvht.byedpi.permission.TV_CONTROL");
+        assertEquals("byedpi".equals(edition),control);
+        assertNotNull(c.getPackageManager().getApplicationIcon(c.getPackageName()));
+        android.os.Bundle result=new android.os.Bundle();result.putString("installedEdition",edition);result.putInt("installedVersionCode",p.versionCode);getInstrumentation().sendStatus(0,result);
+    }
+    public void testSeedEditionUpdateData() throws Exception {
+        Context c=getInstrumentation().getTargetContext();
+        c.getSharedPreferences("milo_e2e",0).edit().putString("edition_sentinel","preserve-edition-update").commit();
+    }
+    public void testEditionUpdateData() throws Exception {
+        testEditionManifest();Context c=getInstrumentation().getTargetContext();
+        assertEquals(103,c.getPackageManager().getPackageInfo(c.getPackageName(),0).versionCode);
+        assertEquals("preserve-edition-update",c.getSharedPreferences("milo_e2e",0).getString("edition_sentinel",""));
+        ResolveInfo home=c.getPackageManager().resolveActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME),PackageManager.MATCH_DEFAULT_ONLY);
+        assertEquals(c.getPackageName(),home.activityInfo.packageName);
+    }
     public void testPersistentData() throws Exception {
         Context c=getInstrumentation().getTargetContext();
         int code=c.getPackageManager().getPackageInfo(c.getPackageName(),0).versionCode;

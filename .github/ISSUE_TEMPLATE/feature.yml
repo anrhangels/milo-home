@@ -1,0 +1,10 @@
+name: Предложение Milo Home
+description: Небольшое улучшение интерфейса, пульта или обновлений
+body:
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Какую задачу решает предложение
+      description: Опишите сценарий пользователя, нужное поведение и ограничения слабого ТВ.
+    validations:
+      required: true

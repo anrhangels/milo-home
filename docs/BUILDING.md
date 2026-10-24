@@ -1,30 +1,31 @@
-# Building
+# Сборка Milo Home
 
-Requirements: JDK17, SDK platform34, Build Tools35.0.0. The checked-in Gradle wrapper pins Gradle8.9 and its distribution hash;
-AGP is 8.5.2. Existing native Java UI, RecyclerView and DynamicAnimation are preserved. Runtime addition: apksig8.5.2.
-JSON/JUnit/AndroidX test runner dependencies are test-only. Minimum Android remains API26, target34.
+[Документация](README.md) · [English README](../README.en.md)
 
-Create `launcher/local.properties` with your SDK path (ignored by Git) or set ANDROID_HOME.
+## Инструменты
+
+JDK17, Android SDK platform34, Build-Tools35.0.0. Wrapper фиксирует Gradle8.9, Android Gradle Plugin8.5.2. SDK задаётся через ANDROID_HOME или локальный launcher/local.properties, который не коммитится.
+
+## Два варианта
 
 ```sh
 cd launcher
-./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease
+./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease -PmiloVariant=standard
+./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease -PmiloVariant=byedpi
 ```
 
-Without signing environment variables, local builds use the machine's debug key and are **not production releases**.
-Production signing uses MILO_KEYSTORE, MILO_STORE_PASSWORD, MILO_KEY_ALIAS, MILO_KEY_PASSWORD, provided through protected
-environment/CI secrets, never committed Gradle properties. Version defaults come from version.properties and can be overridden
-by `-PmiloVersionCode=... -PmiloVersionName=...`. Public repository: `-PmiloUpdateRepo=anrhangels/milo-home`.
+Результат каждой команды: app/build/outputs/apk/release/app-release.apk. Скопируйте его отдельно перед сборкой другого варианта. По умолчанию собирается Standard. -PmiloVersionCode и -PmiloVersionName переопределяют version.properties; -PmiloUpdateRepo задаёт репозиторий Releases.
 
-Runtime test track: `-PmiloUpdateTrack=test`. The isolated emulator fixtures are bootstrap9, Stable10 and RC11 with one
-new local test/debug key, different from the installed Haier key. Prepared production100 uses a permanent key. Do not mix their installation
-tracks or treat certificate differences as an error to bypass.
+## Подпись и тестовый канал
 
-To run isolated instrumentation, provide signed Stable10 and RC11 fixtures as `MiloHome.apk` / `MiloHome-rc.apk` in a directory
-outside Git, set MILO_TEST_ASSETS to that directory, then build with `-PmiloInstrumented -PmiloUpdateTrack=test` and
-`assembleRelease assembleReleaseAndroidTest`. This enables debuggability only for the local test build; publisher validation rejects it.
-Always pass the emulator serial explicitly. Never run an installation command without a serial while a real TV is connected.
+Без переменных подписи используется локальный debug-ключ; такая сборка не является официальным релизом и может быть несовместима с установленной. Production использует MILO_KEYSTORE, MILO_STORE_PASSWORD, MILO_KEY_ALIAS, MILO_KEY_PASSWORD из защищённого окружения. Stable и RC подписываются одним постоянным ключом.
 
-`tools/milo/release.py` validates channel/version/code, signer and the actual APK and generates update.json, checksum and release notes.
-Actions pins dependencies by commit SHA. Signing keys are never Actions artifacts. Upstream workflows are retained for reference
-under `.github/upstream-workflows/` and the fork uses its own CI/release workflow.
+Для изолированных испытаний добавьте -PmiloUpdateTrack=test. -PmiloInstrumented допустим только с track=test: включает инструменты тестирования и отключает минимизацию. Публикатор отвергает debuggable APK. Не устанавливайте тестовые сборки на рабочий телевизор ради обхода подписи.
+
+MILO_TEST_ASSETS может указывать на внешний каталог APK-фикстур. AndroidX-тесты запускаются в эмуляторе; tools/device-tests — отдельный framework-only инструмент проверки данных после замены оптимизированного APK. Во всех ADB-командах нужен явный -s.
+
+## Выпуск и оформление
+
+CI проверяет оба варианта. tools/milo/release.py проверяет настоящий APK, включая variant, и создаёт метаданные. Ключи не попадают в артефакты. Подробности: [каналы](RELEASE_CHANNELS.md) и [подпись](SIGNING.md).
+
+tools/branding — только экспорт документации; Node/Sharp не входят в Android-приложение. Изменение изображений не должно менять тему или раскладку в продукте. [Снимки](screenshots/README.md).

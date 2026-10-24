@@ -4,11 +4,11 @@
 
 ## Select the right build first
 
-**No production release has been published yet.** Tags beginning with `test-` are for an isolated emulator/test device, not your working launcher. These instructions describe the process for a future compatible production APK; do not substitute a test APK.
+**Production Standard and ByeByeDPI editions are available: Stable1.2.0 / RC1.3.0-rc.1.** Tags beginning with `test-` are for an isolated emulator/test device, not your working launcher. Select the edition and compatible signing identity; do not substitute a test APK.
 
 1. Read the channel and notes in [Releases](https://github.com/anrhangels/milo-home/releases).
 2. Choose **production / Stable** for normal use. RC is an explicitly chosen preview.
-3. Download `MiloHome.apk`, `MiloHome.apk.sha256` and `update.json` from the same release. Verify size, SHA-256 and signing identity.
+3. Choose Standard or byedpi. Examples use Standard: download `MiloHome-standard.apk`, `MiloHome-standard.apk.sha256` and `update.json` from the same release. Verify size, SHA-256 and signing identity.
 4. If `com.gathin.tvhome` is installed, compare certificates and versions **before installing**. Updates need a compatible signing identity and a higher `versionCode`.
 
 The current Haier signing key is unavailable, so the new APK cannot update it in place. Do not uninstall to bypass this. [Signing and migration](../SIGNING.md).
@@ -37,13 +37,13 @@ Always specify the exact target with `-s`, especially when an emulator is connec
 A checksum verifies file integrity; it does **not replace** signature verification. Android SDK Build-Tools provides `apksigner` and `aapt`. On Windows use `apksigner.bat` / `aapt.exe`; on Linux/macOS use `apksigner` / `aapt`, by their actual full paths:
 
 ```text
-apksigner verify --verbose --print-certs MiloHome.apk
-aapt dump badging MiloHome.apk
+apksigner verify --verbose --print-certs MiloHome-standard.apk
+aapt dump badging MiloHome-standard.apk
 ```
 
-Check package `com.gathin.tvhome`, versionCode, minSdk, ABI and certificate. Also compare the certificate with [SIGNING](../SIGNING.md), not just metadata beside the APK. The future production certificate is `0eb3e4397a0f1f2c05925c47da6bebeea0e757c41967642af051c774d72b36db`.
+Check package `com.gathin.tvhome`, versionCode, minSdk, ABI and certificate. Also compare the certificate with [SIGNING](../SIGNING.md), not just metadata beside the APK. The production certificate is `0eb3e4397a0f1f2c05925c47da6bebeea0e757c41967642af051c774d72b36db`.
 
-To inspect an installed APK, obtain its path with `shell pm path com.gathin.tvhome`, download the reported base.apk using `adb -s SERIAL pull "ACTUAL_PATH" before-MiloHome.apk`, then verify it with the same apksigner. SDK Build-Tools is a separate component, not part of standalone platform-tools. Use the [AI-assisted workflow](../AI-INSTALL.en.md) if needed; do not guess compatibility.
+To inspect an installed APK, obtain its path with `shell pm path com.gathin.tvhome`, download the reported base.apk using `adb -s SERIAL pull "ACTUAL_PATH" before-MiloHome-standard.apk`, then verify it with the same apksigner. SDK Build-Tools is a separate component, not part of standalone platform-tools. Use the [AI-assisted workflow](../AI-INSTALL.en.md) if needed; do not guess compatibility.
 
 A saved old APK and HOME state are useful recovery records, **not a guaranteed private-data backup**. Backup may be disabled. Do not promise settings survive a key change or uninstall.
 

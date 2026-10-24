@@ -1,43 +1,35 @@
-name: Bug
-description: The launcher, a script or the prompt did something wrong
-labels: [bug]
+name: Ошибка Milo Home
+description: Проблема лаунчера, пульта или обновлений
+title: "[Bug] "
 body:
   - type: dropdown
-    id: part
+    id: edition
     attributes:
-      label: Which part
-      options:
-        - Launcher (the home screen)
-        - Install script (build-and-install)
-        - Debloat or restore scripts
-        - tools/tv.py or b64push.py
-        - The prompt (PROMPT.md)
-        - Website (cleanyour.tv)
+      label: Вариант
+      options: [Standard, ByeByeDPI]
     validations:
       required: true
   - type: input
-    id: tv
+    id: version
     attributes:
-      label: TV model and Android version
-      placeholder: Xiaomi MiTV-MOOQ1, Android TV 10
+      label: Версия и канал
+      placeholder: "1.2.0 Stable, versionCode102"
     validations:
       required: true
-  - type: textarea
-    id: what
+  - type: input
+    id: device
     attributes:
-      label: What happened, and what you expected
-    validations:
-      required: true
+      label: Модель ТВ, Android и ABI
+      description: Не указывайте IP, серийный номер, аккаунт или SSID.
   - type: textarea
     id: steps
     attributes:
-      label: Steps to reproduce
-      placeholder: |
-        1. Press Down twice from the dock
-        2. Press Home
+      label: Что произошло и как повторить
+      description: Ожидаемый результат, фактический результат, способ установки.
+    validations:
+      required: true
   - type: textarea
-    id: logs
+    id: evidence
     attributes:
-      label: Output or screenshot
-      description: Script output, a `logcat` excerpt, or a screenshot pulled from the TV.
-      render: shell
+      label: Проверки и снимки
+      description: Только очищенные от приватных данных сведения. Не прикладывайте ключи или токены.

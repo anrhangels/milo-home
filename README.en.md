@@ -20,7 +20,7 @@
 
 ## Less noise. More you.
 
-Milo Home is an independent fork of **Gathin23**'s [CleanYourTV](https://github.com/Gathin23/cleanyourtv). It keeps the native Java interface, themes and remote navigation, adding a practical network menu and verified GitHub updates.
+Milo Home is an independent Android TV project: a native home screen, familiar remote navigation and verified updates. It develops the code and ideas of **Gathin23**'s [CleanYourTV](https://github.com/Gathin23/cleanyourtv), retaining its lightweight foundation and original layout.
 
 | Your home screen | Network within reach | Updates with a choice |
 | --- | --- | --- |
@@ -32,19 +32,18 @@ There is no persistent updater service. Launch-time checks are asynchronous, wit
 
 ## The interface, in use
 
-The cover uses the owner's actual Haier 32 Smart TV BX photograph in the project's new visual frame. The photographed interface has not been redrawn.
+The cover and gallery use fresh direct ADB captures from the running Haier 32 Smart TV BX. App tiles and interface content were not painted in. Decorative frames stay outside the screen.
 
-![Version selection and a genuine GitHub RC](docs/brand/updates-en.webp)
+![Original home with YouTube, Play Store and MultiMediaPlayer](docs/brand/updates-en.webp)
 
-*Left: a menu demonstration with labelled local fixture metadata. Right: a genuine published GitHub RC. Both are actual Android 11 emulator captures.*
+*Left: YouTube focused. Right: MultiMediaPlayer focused. The original glow follows the selected app; neither app was launched. The Haier keeps its compatible working build; new editions were tested separately on an emulator.*
 
 <details>
-<summary><strong>Original captures and image provenance</strong></summary>
+<summary><strong>Original captures without decorative frames</strong></summary>
 
-- [Haier photo](docs/screenshots/haier-user-photo.webp) · [Home](docs/screenshots/home.png)
-- [Channels](docs/screenshots/update-channels.png) · [Confirmation](docs/screenshots/update-confirm.png) · [Progress](docs/screenshots/update-progress.png)
-- [Published RC](docs/screenshots/online-rc-menu.png) · [Android installer](docs/screenshots/online-rc-installer.png)
-- [Capture provenance](docs/screenshots/README.md) · [Mascot and branding](docs/brand/README.md)
+[YouTube focused](docs/screenshots/haier-home-fresh.png) · [MultiMediaPlayer focused](docs/screenshots/haier-media-fresh.png) · [New ByeByeDPI menu](docs/screenshots/byedpi-network.png) · [New RC](docs/screenshots/standard-rc-menu.png).
+
+[Capture provenance](docs/screenshots/README.md) · [Branding](docs/brand/README.md).
 
 </details>
 
@@ -54,7 +53,16 @@ The cover uses the owner's actual Haier 32 Smart TV BX photograph in the project
 | --- | --- |
 | [Copyable prompt and workflow](docs/AI-INSTALL.en.md). The assistant inspects the device, APK and signing identity before preparing a concrete plan. | [Windows](docs/installation/windows.en.md) · [Linux](docs/installation/linux.en.md) · [macOS](docs/installation/macos.en.md). Official ADB, file verification, state records and first launch. |
 
-> **Only isolated test Stable10 and RC11 builds are currently published.** No production release is available yet. These APKs cannot update the existing Haier launcher in place: its old private signing key was not found. [Signing and migration status →](docs/SIGNING.md)
+### Choose your edition
+
+| Edition | Stable 1.2.0 | RC 1.3.0-rc.1 |
+| --- | --- | --- |
+| **Standard** — no ByeByeDPI control; Wi-Fi opens system settings | [Download](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.2.0) | [Preview](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.3.0-rc.1) |
+| **ByeByeDPI** — paired backend network menu | [Download](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.2.0) | [Preview](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.3.0-rc.1) |
+
+Both editions include the new icon. They are alternative builds of one app; the updater only offers its own edition. Choose Stable for everyday use. [Channels](docs/RELEASE_CHANNELS.md).
+
+> Updating an installed app requires a compatible signing identity. The old key for the specific Haier was not found; these releases cannot replace that installation in place. [Signing and initial migration →](docs/SIGNING.md)
 
 The [installation overview](docs/installation/README.en.md) covers compatibility, HOME selection and returning to the original screen. A new launcher does not require removing the factory launcher. Installation itself does not select HOME or disable system packages.
 
@@ -64,12 +72,12 @@ The network menu requires the **paired modified backend**, signed with the coord
 
 ## What has been verified
 
-- **231 launcher tests**, nine publisher tests, Android Lint and GitHub Actions assembly.
-- Actual **Actions → Release → download → APK verification → Android installer**, Stable10 → RC11 on an Android11 emulator.
+- **233 launcher tests**, 11 publisher tests, Android Lint and GitHub Actions assembly.
+- Four Actions-built APKs verified for signature, hash and edition. Standard Stable1.2.0 → RC was tested through the updater and standard installer; the ByeByeDPI edition update preserved data and the running backend process.
 - App data, UID and HOME preserved during ordinary same-key updates.
-- The earlier network-menu build works on Haier / Android11 / ARM32. The new updater has not been installed on the physical TV.
+- The earlier network-menu build works on Haier / Android11 / ARM32. The new editions have not replaced that working TV installation.
 
-[Evidence and limitations](docs/TESTING.md) · [CI](https://github.com/anrhangels/milo-home/actions) · [Test releases](https://github.com/anrhangels/milo-home/releases)
+[Evidence and limitations](docs/TESTING.md) · [CI](https://github.com/anrhangels/milo-home/actions) · [All releases](https://github.com/anrhangels/milo-home/releases)
 
 The fresh/default ByeByeDPI emulator profile interrupted GitHub TLS. Actual online delivery was tested with manual OFF; the launcher never disables VPN automatically. Android8+ is the build minimum, not certification for every vendor firmware.
 
@@ -83,6 +91,6 @@ The fresh/default ByeByeDPI emulator profile interrupted GitHub TLS. Actual onli
 
 ---
 
-**Original project:** [Gathin23 / CleanYourTV](https://github.com/Gathin23/cleanyourtv). **Fork development and maintenance:** [anrhangels](https://github.com/anrhangels), with assistance from **OpenAI Codex**. The mascot was supplied by the project owner; the new visual adaptation uses OpenAI image generation.
+**Original project:** [Gathin23 / CleanYourTV](https://github.com/Gathin23/cleanyourtv). **Milo Home development and maintenance:** [anrhangels](https://github.com/anrhangels), with assistance from **OpenAI Codex**. The mascot was supplied by the project owner; the new visual adaptation uses OpenAI image generation.
 
 The original [MIT licence](LICENSE) and attribution are preserved. The separate ByeByeDPI patch is GPLv3. [Credits and licences](CREDITS.md). This is an independent project, not an official CleanYourTV release.

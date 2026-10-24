@@ -1,14 +1,21 @@
-# Protected ByeByeDPI integration
+# Вариант с ByeByeDPI
 
-This fork retains the existing two-row network menu, not an extra add-on card. It controls a paired local modification of
-[romanvht/ByeByeDPI](https://github.com/romanvht/ByeByeDPI), rather than assuming the official release has the same public API.
-The backend uses a bound Messenger service protected by a signature permission and a calling-UID/package/signature check.
-Service state comes from native startup/shutdown acknowledgements; manual OFF is preserved across launcher restarts.
+Standard не содержит управления ByeByeDPI. Вариант byedpi открывает в кнопке Wi-Fi меню состояния/переключения backend и системные настройки сети. Отдельно установленный VPN не удаляется и не выключается автоматически при использовании Standard.
 
-Install the backend first, then the launcher, both with the coordinated signing identity. If an old official backend has a different
-certificate, export settings and plan migration rather than uninstalling it automatically. The launcher updater does not update,
-restart or reconfigure ByeByeDPI and does not create another autostart mechanism.
+## Парный backend
 
-The backend integration patch is distributed separately under its GPLv3 licence in integrations/byebye-dpi/.
-Apply it to the exact upstream commit recorded there and build with its submodules. Android's VPN permission remains an explicit system dialogue.
-The initial permanent-key migration needs a coordinated backend transition as explained in SIGNING.md.
+Нужна модифицированная сборка romanvht/ByeByeDPI, а не произвольный официальный APK. Связь — bound Messenger service с signature-permission и проверкой пакета/UID/подписи. Подтверждение VPN остаётся системным диалогом Android.
+
+В [Stable](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.2.0) и [RC](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.3.0-rc.1) есть отдельные ByeByeDPI-paired-armeabi-v7a.apk и ByeByeDPI-paired-x86_64.apk. Выбирайте по ABI; arm64-only backend в этом наборе не заявлен. APK не debuggable, подписаны тем же постоянным ключом, что лаунчер. Суммы и соответствующие исходники приложены рядом. Backend собран локально, не в workflow лаунчера.
+
+Для новой совместимой установки backend ставится первым, затем лаунчер: Android должен выдать signature-permission. Если официальный/прежний backend уже установлен с другим ключом, остановитесь и отдельно согласуйте миграцию его данных. Не удаляйте его автоматически. Сам лаунчер backend не скачивает и не переустанавливает.
+
+Пользователь подтверждает VPN на ТВ. OFF сохраняется при возврате на Home; лаунчер не добавляет второй механизм автозапуска. За запуск и остановку отвечает собственный сервис backend; UI получает подтверждённое состояние.
+
+## Доступ к GitHub
+
+Некоторые стратегии ByeDPI могут нарушать доступ к GitHub. В эмуляторе профиль по умолчанию обрывал TLS; онлайн-обновления проверены с ручным OFF. Подбор стратегии — отдельная настройка пользователя. Лаунчер не ослабляет TLS и не выбирает сеть в обход VPN автоматически.
+
+## Исходники
+
+[Патч и происхождение](../integrations/byebye-dpi/README.md), GPLv3. В приложенном release-архиве исходников есть исходные native-зависимости и лицензии без ключей и локальных build-каталогов. [Подпись и миграция](SIGNING.md).

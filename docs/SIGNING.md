@@ -1,37 +1,35 @@
-# Signing and first migration
+# Подпись APK и первоначальная миграция
 
-The installed Haier package is com.gathin.tvhome, code8 (2.7-haier-network.1), certificate SHA-256:
-5f6835adc0b1ad58dac28764bcc4e85a94dabbb15e78ff093a5a57879bbc6884.
-Its private key was not found and the owner has no known backup. An APK cannot supply the private key.
-No unavailable upstream developer key is requested or used.
+Android связывает приложение с его цифровой подписью. Тот же applicationId сам по себе не делает новый ключ совместимым. Хеш файла подтверждает целостность; доверие к автору и возможность обновления определяются подписью.
 
-Today's DIFFERENT local test certificate is
-b17f01c57f1e890363f1c90f01b5aa5ef434f52d5cdede95d2667497f46eb312.
-It signs isolated emulator fixtures9→10→11, which CANNOT update the installed Haier APK.
-The permanent production certificate is
-0eb3e4397a0f1f2c05925c47da6bebeea0e757c41967642af051c774d72b36db.
-Future production Stable and RC must share this permanent key.
+## Ключи Milo Home
 
-Keys and a second protected local copy are outside Git. Password records use Windows DPAPI CurrentUser.
-This is local protection, not independent disaster recovery. Before production adoption, create an external encrypted
-key backup and a recoverable password-manager record. Never commit keys or include them in Actions artifacts.
+| Назначение | SHA-256 сертификата |
+| --- | --- |
+| Все production Standard / byedpi, Stable / RC | `0eb3e4397a0f1f2c05925c47da6bebeea0e757c41967642af051c774d72b36db` |
+| Прежние изолированные тестовые9/10/11 | `b17f01c57f1e890363f1c90f01b5aa5ef434f52d5cdede95d2667497f46eb312` |
+| Совместимая старая установка конкретного Haier | `5f6835adc0b1ad58dac28764bcc4e85a94dabbb15e78ff093a5a57879bbc6884` |
 
-## Real-TV migration remains blocked
+Постоянный release-keystore хранится вне Git. Есть вторая защищённая локальная копия; пароли защищены Windows DPAPI. GitHub Actions получает его из Secrets. Нужна также независимая зашифрованная резервная копия и восстанавливаемый пароль: DPAPI одного профиля и GitHub Secrets не являются полноценным аварийным архивом.
 
-Without the installed key, no valid Haier old→new signature lineage can be created. An emulator lineage from the test key
-to the production key does NOT solve Haier migration. Ordinary updater metadata cannot authorize a new identity.
-Keep the working television unchanged. Neither test fixtures nor production APKs should be installed on it now.
+## Обычное обновление
 
-A future initial migration needs a separate reviewed plan:
+Нужны тот же package com.gathin.tvhome, совместимая подпись и больший versionCode. Встроенный обновлятор дополнительно требует тот же вариант и проверяет variant в manifest APK. Нельзя принять чужой ключ из JSON и считать это разрешённой миграцией.
 
-1. Preserve current APKs, HOME, disabled packages and exportable settings privately. Non-debuggable apps with backup disabled
-   do not provide guaranteed private-data recovery through ordinary ADB.
-2. Prepare a usable HOME fallback and coordinated launcher/backend packages signed with the permanent key. Verify recovery.
-   Enabling a factory launcher or changing HOME requires separate device permission.
-3. Explain unexportable settings and obtain explicit approval before any uninstall or data loss. There is no automatic uninstall,
-   package-name change, reset or signature-check bypass. Do not promise data preservation.
-4. Migrate both applications only after approval: ByeByeDPI uses signature-protected IPC. Recheck all22 disabled packages and
-   restore only verified, recoverable configuration.
+Standard и byedpi — альтернативные сборки одного приложения. Ручной переход возможен только после проверки подписи и кода; обновлятор сам его не выполняет. Изменение варианта не удаляет отдельно установленный backend и не меняет его настройки.
 
-If the genuine old key is later found, verify its fingerprint before considering same-key updates or Android11 rotation.
-Until then, update/install/rotation experiments remain isolated on the emulator.
+## Старый Haier: ключ не найден
+
+На конкретном рабочем Haier остаётся версия8 (2.7-haier-network.1) с сертификатом5f68… Приватный ключ не найден; известной копии у владельца нет. В APK содержится публичный сертификат, не восстанавливаемый приватный ключ. Новые production APK не могут обновить эту установку поверх.
+
+Эмуляторная проверка ротации b17f…→0eb3… не решает миграцию5f68… Без старого ключа нельзя создать доверенную цепочку для него. Не пытайтесь извлечь недоступный ключ оригинального разработчика, менять package для обхода, использовать -d, root или перепрошивку.
+
+Безопасный текущий результат — оставить рабочую установку. Отдельный план первоначальной миграции должен включать:
+
+1. Сохранение APK, HOME, отключённых пакетов и действительно экспортируемых настроек.
+2. Рабочий запасной HOME и совместимые новые launcher/backend APK.
+3. Честное описание данных, которые не удаётся сохранить: у non-debuggable приложения с отключённым backup частный каталог обычно недоступен обычному ADB.
+4. Отдельное явное согласие на удаление/потерю данных и смену HOME, если они нужны. До него ничего не удаляется.
+5. После согласованной установки — пульт, Wi-Fi, HOME, backend и сравнение списка отключённых пакетов.
+
+Нельзя обещать сохранение данных при смене ключа без подтверждённого экспорта. Если старый ключ позже найдётся, сначала сверьте его сертификат. [Установка](installation/README.md) · [Восстановление](ROLLBACK.md).

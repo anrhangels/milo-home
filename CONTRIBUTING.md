@@ -1,15 +1,27 @@
-# Contributing to Milo Home
+# Участие в Milo Home
 
-This is an independent fork of CleanYourTV, not the upstream review queue. Keep patches focused,
-preserve original attribution and include tests for security-critical updater changes.
-JDK17 / SDK34 / Build Tools35.0.0; in `launcher/` run `./gradlew testReleaseUnitTest lintRelease assembleRelease`.
-Run `python -m unittest discover -s tools/milo -p 'test_*.py' -v` and `python tools/milo/verify_public_tree.py`.
+Сначала опишите конкретное изменение: поведение пульта, ошибка интерфейса, обновлятор, один из вариантов или документация. Рабочая ветка проекта — milo-main. Небольшой PR должен решать одну задачу.
 
-Do not commit keystores, APKs, personal device identifiers, private snapshots, tokens or local SDK paths.
-Do not add polling, device package-management commands, forced/silent installs or code that changes HOME.
-Use test-track metadata and isolated emulators; never test a new signing identity first on a user's only Home.
-Actual screenshots must come from the running app; clearly label test fixtures and emulator/device scope.
+## Сборка и проверка
 
-Open a pull request with the behaviour change, tests and limitations. Release workflows run only by explicit dispatch
-from the default branch; PRs never receive release secrets. Original upstream contribution guidance is retained
-as `docs/UPSTREAM-CONTRIBUTING.md`. Existing upstream workflows are archived under `.github/upstream-workflows/`.
+Нужны JDK17, SDK34, Build-Tools35.0.0. В launcher/:
+
+```sh
+./gradlew testReleaseUnitTest lintRelease assembleRelease -PmiloVariant=standard -PmiloUpdateTrack=test
+./gradlew testReleaseUnitTest lintRelease assembleRelease -PmiloVariant=byedpi -PmiloUpdateTrack=test
+```
+
+```sh
+python -m unittest discover -s tools/milo -p 'test_*.py'
+python tools/milo/verify_public_tree.py
+```
+
+Объясните, что изменилось, почему и как это проверено. Для изменения вида приложите свежий скриншот и укажите устройство/версию. Тестовая карточка или макет должны быть подписаны. Поведение физического пульта не считается проверенным только по эмулятору.
+
+## Границы проекта
+
+Milo Home — лаунчер, а не набор debloat-скриптов. Не добавляйте списки отключаемых пакетов, прошивку, root, установку без согласия или обход подписи. Standard и byedpi не должны подменять друг друга в обновляторе. Новая зависимость должна иметь понятную пользу для маломощного ТВ.
+
+Документацию пишите сначала по-русски; поддерживайте английский README и инструкции установки. Секреты, APK, ADB-ключи, приватные сведения устройства и локальные SDK-пути в Git не попадают. Оригинальные лицензии и сведения об источнике кода сохраняются.
+
+Релизы публикуются отдельным workflow вручную; PR не получает ключей выпуска. Установка на телевизор и миграция подписи согласуются отдельно. [Сборка](docs/BUILDING.md) · [Архитектура](docs/ARCHITECTURE.md) · [Безопасность](SECURITY.md).

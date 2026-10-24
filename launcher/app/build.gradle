@@ -5,7 +5,7 @@ plugins {
 def miloVersion = new Properties()
 rootProject.file('../version.properties').withInputStream { miloVersion.load(it) }
 def instrumentedMilo = providers.gradleProperty('miloInstrumented').isPresent()
-def miloVariant = providers.gradleProperty('miloVariant').getOrElse('byedpi')
+def miloVariant = providers.gradleProperty('miloVariant').getOrElse('standard')
 if (!(miloVariant in ['standard', 'byedpi'])) throw new GradleException('Unknown Milo variant')
 if(instrumentedMilo && providers.gradleProperty('miloUpdateTrack').getOrElse('production') != 'test') {
     throw new GradleException('Instrumented builds are restricted to the isolated test track')

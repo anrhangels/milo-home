@@ -14,14 +14,14 @@ function svg(w,h,content) {
   <defs><radialGradient id="ambient"><stop stop-color="#2D315C"/><stop offset="1" stop-color="#101321"/></radialGradient>
   <linearGradient id="line"><stop stop-color="#EBC17E"/><stop offset="1" stop-color="#A8AFF4"/></linearGradient>
   <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#000" flood-opacity=".45"/></filter>
-  <clipPath id="photo"><rect x="750" y="200" width="982" height="736" rx="20"/></clipPath>
+  <clipPath id="photo"><rect x="750" y="270" width="982" height="552" rx="20"/></clipPath>
   </defs><rect width="${w}" height="${h}" fill="#101321"/>${content}</svg>`);
 }
 async function main() {
   const logo=await data(path.join(brand,'milo-icon.png'));
-  const photo=await data(path.join(shot,'haier-user-photo.webp'));
-  const channels=await data(path.join(shot,'update-channels.png'));
-  const online=await data(path.join(shot,'online-rc-menu.png'));
+  const photo=await data(path.join(shot,'haier-media-fresh.png'));
+  const channels=await data(path.join(shot,'haier-home-fresh.png'));
+  const online=await data(path.join(shot,'haier-media-fresh.png'));
   for(const lang of ['ru','en']) {
     const ru=lang==='ru';
     const copy=ru?['Ваш ТВ.','Ничего','лишнего.']:['Your TV.','Less noise.','More home.'];
@@ -33,21 +33,21 @@ async function main() {
       <rect x="78" y="690" width="70" height="4" rx="2" fill="#EBC17E"/>
       ${text(78,760,ru?'Лёгкий лаунчер. Удобный пульт.':'A lightweight launcher. Made for your remote.',27,'#C8CAD8')}
       ${text(78,805,ru?'Обновления — под вашим контролем.':'Updates on your terms.',27,'#C8CAD8')}
-      ${text(78,952,ru?'На базе CleanYourTV от Gathin23':'Built on CleanYourTV by Gathin23',20,'#959BAF')}
-      <rect x="738" y="188" width="1006" height="760" rx="30" fill="#090B12" stroke="#535672" stroke-width="2" filter="url(#shadow)"/>
-      ${image(photo,750,200,982,736,'clip-path="url(#photo)" preserveAspectRatio="xMidYMid slice"')}
-      ${text(760,998,ru?'Реальный кадр · Haier 32 Smart TV BX':'Real TV photo · Haier 32 Smart TV BX',20,'#A9AEC0')}`;
+      ${text(78,952,ru?'Standard / ByeByeDPI · Stable / RC':'Standard / ByeByeDPI · Stable / RC',20,'#959BAF')}
+      <rect x="738" y="258" width="1006" height="576" rx="30" fill="#090B12" stroke="#535672" stroke-width="2" filter="url(#shadow)"/>
+      ${image(photo,750,270,982,552,'clip-path="url(#photo)" preserveAspectRatio="xMidYMid slice"')}
+      ${text(760,885,ru?'Прямой скриншот · Haier 32 Smart TV BX':'Direct screen capture · Haier 32 Smart TV BX',20,'#A9AEC0')}`;
     await sharp(svg(1800,1040,content)).webp({quality:92}).toFile(path.join(brand,`hero-${lang}.webp`));
-    const gallery=`${text(76,108,ru?'Обновления — по вашему решению.':'You decide when to update.',64,'#F6F3EB',600)}
-      ${text(78,168,ru?'Stable или RC. Сначала подтверждение, затем установка.':'Stable or RC. Confirm first, then install.',29,'#B9BED2')}
-      ${text(78,260,ru?'01 / ВЫБОР ВЕРСИИ · ЛОКАЛЬНОЕ ДЕМО':'01 / CHOOSE A VERSION · LOCAL DEMO',18,'#A8AFF4',600,'letter-spacing="1.5"')}
-      ${text(928,260,ru?'02 / НАСТОЯЩИЙ RC ИЗ GITHUB':'02 / REAL RC FROM GITHUB',18,'#EBC17E',600,'letter-spacing="1.5"')}
+    const gallery=`${text(76,108,ru?'Привычный экран. Родные цвета.':'The familiar home. Its original colors.',64,'#F6F3EB',600)}
+      ${text(78,168,ru?'Подсветка меняется вместе с выбранным приложением.':'The glow follows the selected app.',29,'#B9BED2')}
+      ${text(78,260,ru?'01 / ВЫДЕЛЕН YOUTUBE':'01 / YOUTUBE FOCUSED',18,'#A8AFF4',600,'letter-spacing="1.5"')}
+      ${text(928,260,ru?'02 / ВЫДЕЛЕН MULTIMEDIAPLAYER':'02 / MULTIMEDIAPLAYER FOCUSED',18,'#EBC17E',600,'letter-spacing="1.5"')}
       <rect x="65" y="283" width="830" height="478" rx="24" fill="#090B12" stroke="#3C4059"/>
       <rect x="915" y="283" width="830" height="478" rx="24" fill="#090B12" stroke="#3C4059"/>
       ${image(channels,80,298,800,450)}${image(online,930,298,800,450)}
-      ${text(78,850,ru?'Проверка SHA-256 и подписи APK':'SHA-256 and APK signature verification',28,'#F6F3EB',600)}
-      ${text(928,850,ru?'Штатный установщик Android':'The standard Android installer',28,'#F6F3EB',600)}
-      ${text(78,932,ru?'Реальные снимки Android 11 эмулятора. Испытания на Haier — отдельный этап.':'Actual Android 11 emulator captures. Haier installation is a separate test.',22,'#959BAF')}`;
+      ${text(78,850,ru?'Реальные установленные приложения':'Real installed applications',28,'#F6F3EB',600)}
+      ${text(928,850,ru?'Без изменения темы лаунчера':'The launcher theme stays unchanged',28,'#F6F3EB',600)}
+      ${text(78,932,ru?'Свежие ADB-скриншоты работающего Haier. Приложения не запускались.':'Fresh ADB captures from the running Haier. Apps were not launched.',22,'#959BAF')}`;
     await sharp(svg(1800,1000,gallery)).webp({quality:93}).toFile(path.join(brand,`updates-${lang}.webp`));
   }
   const banner=`${image(logo,12,22,136,136)}${text(155,86,'Milo',34,'#F6F3EB',600)}${text(155,126,'Home',34,'#F6F3EB',600)}<rect x="161" y="143" width="52" height="3" rx="1.5" fill="#EBC17E"/>`;
@@ -55,7 +55,7 @@ async function main() {
   const social=`<ellipse cx="1000" cy="340" rx="650" ry="500" fill="url(#ambient)"/>${image(logo,60,56,106,106)}
     ${text(190,127,'Milo Home',62,'#F6F3EB',600)}
     ${text(64,290,'Ваш ТВ.',66,'#F6F3EB',600)}${text(64,372,'Ничего лишнего.',66,'#F6F3EB',600)}
-    ${text(68,486,'Лаунчер для Android TV',25,'#B9BED2')}${text(68,562,'На базе CleanYourTV от Gathin23',18,'#959BAF')}
+    ${text(68,486,'Лаунчер для Android TV',25,'#B9BED2')}${text(68,562,'Standard / ByeByeDPI · Stable / RC',18,'#959BAF')}
     <rect x="660" y="92" width="570" height="450" rx="20" fill="#090B12" stroke="#535672"/>
     ${image(photo,674,106,542,422,'preserveAspectRatio="xMidYMid meet"')}`;
   await sharp(svg(1280,640,social)).png({palette:true,colours:256}).toFile(path.join(brand,'social-preview.png'));

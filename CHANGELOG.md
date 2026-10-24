@@ -1,21 +1,20 @@
-# Changelog
+# История Milo Home
 
-## 1.0.0 — prepared; first public publication requires owner approval
+## 1.2.0 Stable / 1.3.0-rc.1
 
-- Preserve the working protected ByeByeDPI network menu without adding an app card.
-- GitHub REST update discovery, 24-hour successful-check cache and bounded failure/rate-limit retry.
-- Green update pill to the right of Settings; explicit Stable/RC selection and download confirmation.
-- Byte-based ring progress, cancellation when Home goes into the background, retryable errors.
-- SHA-256, apksig cryptographic validation and identity/version/SDK/ABI checks before Android Package Installer.
-- Explicit-dispatch signed release workflow and PR/push CI with secret-free test artifacts.
-- Separate test-track fixtures, Android11 emulator tests and actual demonstration screenshots.
-- Public attribution, preserved MIT/font licences, signing migration and forward-recovery documentation.
+- Два самостоятельных варианта: Standard и ByeByeDPI Edition.
+- Standard открывает системный Wi-Fi и не запрашивает TV_CONTROL; byedpi управляет парным backend.
+- Stable/RC разделены по варианту. Метаданные и настоящий APK проверяются по variant, подписи, хешу и версии.
+- Новый маскот в иконке приложения и TV banner.
+- Четыре подписанных production APK опубликованы GitHub Actions; backend-release и соответствующие исходники приложены отдельно.
+- Новый русский README и английская версия, инструкции Windows/Linux/macOS и установка с ИИ.
+- Витрина использует свежие ADB-скриншоты, а не фотографии владельца или дорисованные приложения.
+- Репозиторий переработан под Milo Home: удалены необязательные старые addons, списки телевизоров, пресеты, debloat-инструменты и служебные материалы upstream. Код лаунчера, его тесты, лицензии и Git-история сохранены.
 
-Release notes say "published" only after an actual Release URL and Actions result exist.
+## Предварительные тестовые9/10/11
 
-## Unreleased — Milo Home identity and documentation
+Первичная реализация проверяемых обновлений и защищённого меню сети. Изолированные APK подписаны тестовым ключом и не предназначены для обновления старого Haier. Подробности актуального состояния — в docs/TESTING.md и docs/SIGNING.md.
 
-- New crowned-ghost app icon and Android TV banner based on the owner's mascot.
-- Russian-first README with matching English edition, real-photo cover and screenshot gallery.
-- Windows, Linux and macOS installation guides and bilingual AI-assisted installation prompts.
-- Existing test release APKs remain unchanged; current branding is in source and future builds.
+## Происхождение
+
+Нативный лаунчер основан на CleanYourTV от Gathin23. Исходная MIT License и сведения о сторонних компонентах сохранены в LICENSE и CREDITS.md. Историю исходной реализации можно просмотреть в Git.

@@ -2,7 +2,7 @@
 
 [Общий порядок и совместимость](README.md) · [English](macos.en.md)
 
-**Начинайте только после проверки сборки и подписи по общей инструкции. Сейчас публичные APK — тестовые; production-релиза нет.**
+**Начинайте после проверки варианта и подписи по общей инструкции. Ниже показан Standard; для byedpi выберите его APK и проверьте парный backend отдельно.**
 
 ## 1. Подготовьте ADB
 
@@ -42,7 +42,7 @@ serial="TV_IP:ADB_PORT"
 Поместите совместимый production APK и его `.sha256` из одного релиза в текущую папку. Эта проверка не заменяет apksigner.
 
 ```bash
-shasum -a 256 --check MiloHome.apk.sha256
+shasum -a 256 --check MiloHome-standard.apk.sha256
 ```
 
 ## 5. Установите и запустите
@@ -50,7 +50,7 @@ shasum -a 256 --check MiloHome.apk.sha256
 Только после успешных проверок и выбора правильного устройства:
 
 ```bash
-./adb -s "$serial" install -r ./MiloHome.apk &&
+./adb -s "$serial" install -r ./MiloHome-standard.apk &&
   ./adb -s "$serial" shell am start -n com.gathin.tvhome/.MainActivity
 ```
 

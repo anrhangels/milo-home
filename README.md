@@ -20,7 +20,7 @@
 
 ## Меньше шума. Больше вашего.
 
-Milo Home — независимый форк [CleanYourTV](https://github.com/Gathin23/cleanyourtv) от **Gathin23**. Сохраняет нативный Java-интерфейс, темы и управление пультом; добавляет удобное меню сети и проверяемые обновления из GitHub.
+Milo Home — самостоятельный проект для Android TV: нативный домашний экран, привычный пульт и проверяемые обновления. Проект развивает код и идеи [CleanYourTV](https://github.com/Gathin23/cleanyourtv) от **Gathin23**, сохраняя его лёгкую основу и штатную раскладку.
 
 | Домашний экран | Сеть рядом | Обновления с выбором |
 | --- | --- | --- |
@@ -32,19 +32,18 @@ Milo Home — независимый форк [CleanYourTV](https://github.com/G
 
 ## Так это выглядит
 
-На обложке — ваш реальный снимок Haier 32 Smart TV BX, оформленный в новую палитру проекта. Сам интерфейс на фотографии не перерисован.
+На обложке и ниже — свежие прямые ADB-скриншоты работающего Haier 32 Smart TV BX. Интерфейс и приложения не дорисованы. Декоративная рамка находится за пределами экрана.
 
-![Выбор версии и настоящий RC из GitHub](docs/brand/updates-ru.webp)
+![Штатный экран с YouTube, Play Store и MultiMediaPlayer](docs/brand/updates-ru.webp)
 
-*Слева — демонстрация меню с помеченными тестовыми данными. Справа — реальный RC из опубликованного GitHub Release. Оба кадра сняты с Android 11 эмулятора.*
+*Слева выделен YouTube, справа — MultiMediaPlayer. Штатный ореол меняет цвет вместе с карточкой; приложения не запускались. На Haier сохранена его совместимая рабочая версия, новые сборки проверены отдельно на эмуляторе.*
 
 <details>
-<summary><strong>Все оригинальные кадры и происхождение изображений</strong></summary>
+<summary><strong>Оригинальные скриншоты без рамок</strong></summary>
 
-- [Фото Haier](docs/screenshots/haier-user-photo.webp) · [Домашний экран](docs/screenshots/home.png)
-- [Выбор канала](docs/screenshots/update-channels.png) · [Подтверждение](docs/screenshots/update-confirm.png) · [Прогресс](docs/screenshots/update-progress.png)
-- [Настоящий RC](docs/screenshots/online-rc-menu.png) · [Установщик Android](docs/screenshots/online-rc-installer.png)
-- [Как сделаны снимки](docs/screenshots/README.md) · [Маскот и оформление](docs/brand/README.md)
+[YouTube в фокусе](docs/screenshots/haier-home-fresh.png) · [MultiMediaPlayer в фокусе](docs/screenshots/haier-media-fresh.png) · [Новое меню ByeByeDPI](docs/screenshots/byedpi-network.png) · [Новый RC](docs/screenshots/standard-rc-menu.png).
+
+[Происхождение снимков](docs/screenshots/README.md) · [Оформление и маскот](docs/brand/README.md).
 
 </details>
 
@@ -54,7 +53,16 @@ Milo Home — независимый форк [CleanYourTV](https://github.com/G
 | --- | --- |
 | [Готовый промпт и порядок работы](docs/AI-INSTALL.ru.md). Ассистент сначала проверяет устройство, APK и подпись, затем предлагает конкретный план. | [Windows](docs/installation/windows.md) · [Linux](docs/installation/linux.md) · [macOS](docs/installation/macos.md). Официальный ADB, проверка файла, резервные сведения и первый запуск. |
 
-> **Сейчас опубликованы только тестовые Stable 10 и RC 11.** Они предназначены для изолированных испытаний. Production-релиза пока нет. Эти APK не обновляют нынешний Haier поверх установленного лаунчера: старый ключ подписи не найден. [Статус подписей и миграции →](docs/SIGNING.md)
+### Выберите свой вариант
+
+| Вариант | Stable 1.2.0 | RC 1.3.0-rc.1 |
+| --- | --- | --- |
+| **Standard** — без управления ByeByeDPI, кнопка Wi-Fi ведёт в системные настройки | [Скачать](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.2.0) | [Пререлиз](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.3.0-rc.1) |
+| **ByeByeDPI** — с меню парного backend | [Скачать](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.2.0) | [Пререлиз](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.3.0-rc.1) |
+
+Оба варианта получили новый значок. Это альтернативные сборки одного приложения; обновлятор предлагает только свой вариант. Для обычного использования выбирайте Stable. Подробности — в [описании каналов](docs/RELEASE_CHANNELS.md).
+
+> Установленную версию можно обновить только при совместимой подписи. Старый ключ конкретного Haier не найден; новые релизы не устанавливаются поверх него. [Проверка и первоначальная миграция →](docs/SIGNING.md)
 
 [Общая инструкция](docs/installation/README.md) объясняет проверку совместимости, выбор HOME и возврат к прежнему экрану. Новый лаунчер не требует удаления заводского. Установка сама по себе не переназначает HOME и не отключает системные пакеты.
 
@@ -64,12 +72,12 @@ Milo Home — независимый форк [CleanYourTV](https://github.com/G
 
 ## Что уже проверено
 
-- **231 тест лаунчера**, 9 тестов выпуска, Android Lint и сборка в GitHub Actions.
-- Настоящая цепочка **Actions → Release → загрузка → проверка APK → установщик**, Stable 10 → RC 11 на Android 11 эмуляторе.
+- **233 теста лаунчера**, 11 тестов выпуска, Android Lint и сборка в GitHub Actions.
+- Четыре APK собраны Actions и проверены по подписи, хешу и варианту. Standard 1.2.0 → RC проверен через встроенную загрузку и штатный установщик; обновление ByeByeDPI Edition сохранило данные и работающий процесс backend.
 - Сохранение данных, UID и HOME при обычном обновлении с одинаковой подписью.
-- Предыдущая сетевая модификация работает на Haier / Android 11 / ARM32. Новый обновлятор на физический ТВ ещё не установлен.
+- Предыдущая сетевая модификация работает на Haier / Android 11 / ARM32. Новые варианты не заменяли рабочую установку этого ТВ.
 
-[Результаты и ограничения](docs/TESTING.md) · [CI](https://github.com/anrhangels/milo-home/actions) · [Тестовые релизы](https://github.com/anrhangels/milo-home/releases)
+[Результаты и ограничения](docs/TESTING.md) · [CI](https://github.com/anrhangels/milo-home/actions) · [Все релизы](https://github.com/anrhangels/milo-home/releases)
 
 С профилем ByeByeDPI по умолчанию на эмуляторе GitHub обрывал TLS-соединение. Онлайн-доставка проверена при ручном OFF; лаунчер не выключает VPN автоматически. Android 8+ — минимум сборки, а не гарантия для каждой прошивки.
 
@@ -83,6 +91,6 @@ Milo Home — независимый форк [CleanYourTV](https://github.com/G
 
 ---
 
-**Основа:** [Gathin23 / CleanYourTV](https://github.com/Gathin23/cleanyourtv). **Разработка форка и сопровождение:** [anrhangels](https://github.com/anrhangels), при помощи **OpenAI Codex**. Маскот предоставлен владельцем проекта; графическая адаптация выполнена с помощью генерации изображений OpenAI.
+**Основа:** [Gathin23 / CleanYourTV](https://github.com/Gathin23/cleanyourtv). **Разработка Milo Home и сопровождение:** [anrhangels](https://github.com/anrhangels), при помощи **OpenAI Codex**. Маскот предоставлен владельцем проекта; графическая адаптация выполнена с помощью генерации изображений OpenAI.
 
-Оригинальная [MIT License](LICENSE) и авторство сохранены. Патч ByeByeDPI распространяется отдельно под GPLv3. [Все благодарности и лицензии](CREDITS.md). Независимый проект, не официальный релиз CleanYourTV.
+Оригинальная [MIT License](LICENSE) и авторство сохранены. Патч ByeByeDPI распространяется отдельно под GPLv3. [Все благодарности и лицензии](CREDITS.md). Самостоятельный проект с сохранённым авторством исходной основы.

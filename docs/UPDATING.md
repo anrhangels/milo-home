@@ -1,26 +1,23 @@
-# Updating Milo Home
+# Обновления Milo Home
 
-At launch, a bounded worker checks unauthenticated public GitHub Releases. Successful results are cached for 24 hours;
-failed automatic checks back off for an hour and respect bounded GitHub rate-limit reset/Retry-After responses.
-Return to Home does not start a new request each time. Use launcher settings → **Check for updates** for a manual check.
+При запуске лаунчер асинхронно читает GitHub Releases. Успешный результат кэшируется24ч; ошибки откладывают автоматический повтор, rate-limit учитывается. Ручная проверка доступна в настройках лаунчера. Возврат на Home не запускает непрерывный опрос.
 
-The green pill to the right of Settings is hidden if no compatible newer Stable or RC exists. Open it, choose a build,
-read the version/channel/size/notes and confirm **Yes**. **No** returns to channel selection without downloading.
-RC never installs automatically. Version ordering uses Android versionCode across both channels.
+## Что увидит пользователь
 
-The ring reflects received bytes relative to the release's validated expected size. A release without a known size
-is not offered, rather than showing a fabricated percentage. At completion the client validates the exact size/hash,
-APK signature, installed certificate, package, versionName/versionCode, Android API and native ABI.
-Only then is Android's ordinary installer opened. If source permission is missing, enable it in Android's own
-settings screen, return Home and select the green pill again. The app does not grant itself permission or confirm installation.
+При совместимой новой версии справа от «Настройки» появляется зелёная кнопка. В меню два канала: Stable и RC. Сначала выбирается версия и подтверждается загрузка. «Нет» не начинает передачу. RC не устанавливается автоматически.
 
-Closing only the popup leaves the transfer running while Home remains visible. Leaving the launcher cancels an active
-transfer/verification; partial bytes are removed and no installer starts in the background. A verified APK can remain
-in the private cache until Android clears it. No separate download service or periodic worker is installed.
+Круговой индикатор показывает реальные полученные байты относительно известного размера. Неизвестный/неверный размер не маскируется выдуманным процентом. После загрузки проверяются SHA-256, криптографическая подпись, package, версия, API, ABI и вариант сборки.
 
-For fresh installations of the protected ByeByeDPI integration, install the paired backend first and Milo Home second.
-For normal same-key updates do not uninstall or change applicationId. Android preserves app data/UID, but the actual
-vendor/installer scenario must still be verified. The updater never changes HOME, system packages or network settings.
+## Standard и ByeByeDPI
 
-Test distribution is a distinct build configuration (`miloUpdateTrack=test`); production clients ignore it.
-Do not install CI artifacts or instrumented builds as a permanent Home. Read SIGNING.md before a first-key migration.
+Standard получает только standard-релизы; byedpi — только byedpi. Метаданные другого варианта игнорируются. Даже если metadata ошибочно подписали вариантом текущего приложения, manifest скачанного APK проверяется отдельно. Test-track не предлагается production-клиентам.
+
+Переход между вариантами не является обычным автообновлением. Для ручной установки нужны совместимая подпись, неуменьшающийся код и отдельная проверка настроек. Смена ключа требует первоначальной миграции.
+
+## Установщик Android
+
+Только проверенный файл передаётся штатному системному установщику через закрытый FileProvider. Если разрешение источника не выдано, откройте предложенные системные настройки и подтвердите его. Вернитесь в лаунчер и снова выберите обновление; после пересоздания процесса может потребоваться повторная загрузка. Затем подтвердите обычную установку Android.
+
+Лаунчер не выдаёт себе разрешение, не подтверждает установку, не меняет HOME и системные пакеты. При уходе с Home незавершённая передача отменяется, временный файл удаляется. Проверенный APK может оставаться в приватном кэше до очистки системой.
+
+При проблеме подключения проверьте сеть и стратегию ByeByeDPI отдельно. Обновлятор не выключает VPN и не обходит TLS. [Подпись](SIGNING.md) · [Каналы](RELEASE_CHANNELS.md) · [Испытания](TESTING.md).

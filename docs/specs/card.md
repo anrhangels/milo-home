@@ -6,7 +6,7 @@ alphabetical grid. The launcher shows a card only after the TV owner has answere
 remembers that answer for the app's signing key.
 
 This document is the contract between a module (the app) and the launcher. The how-to for module
-authors is [`docs/modules.md`](../modules.md).
+authors is [`docs/modules.md`](../ARCHITECTURE.md).
 
 ## Declaration
 

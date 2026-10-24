@@ -2,7 +2,7 @@
 
 [Overview and compatibility](README.en.md) · [Русский](windows.md)
 
-**Complete the overview’s build/signature checks first. Current public APKs are test-only; no production release exists yet.**
+**Complete the overview’s edition/signature checks first. Commands below use Standard; for byedpi choose its APK and check the paired backend separately.**
 
 ## 1. Prepare ADB
 
@@ -42,8 +42,8 @@ Keep these records locally. If the package exists, compare signing identities an
 Place the compatible production APK and its `.sha256` from the same release in the current directory. This check does not replace apksigner.
 
 ```powershell
-$expected = ((Get-Content .\MiloHome.apk.sha256 -Raw) -split '\s+')[0].ToLowerInvariant()
-$actual = (Get-FileHash .\MiloHome.apk -Algorithm SHA256).Hash.ToLowerInvariant()
+$expected = ((Get-Content .\MiloHome-standard.apk.sha256 -Raw) -split '\s+')[0].ToLowerInvariant()
+$actual = (Get-FileHash .\MiloHome-standard.apk -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actual -ne $expected) { throw 'SHA-256 mismatch: stop installation' }
 ```
 
@@ -52,7 +52,7 @@ if ($actual -ne $expected) { throw 'SHA-256 mismatch: stop installation' }
 Only after successful checks and selecting the correct device:
 
 ```powershell
-.\adb.exe -s "$serial" install -r .\MiloHome.apk
+.\adb.exe -s "$serial" install -r .\MiloHome-standard.apk
 if ($LASTEXITCODE -ne 0) { throw "Installation failed: stop here" }
 .\adb.exe -s "$serial" shell am start -n com.gathin.tvhome/.MainActivity
 ```

@@ -2,7 +2,7 @@
 
 [Overview and compatibility](README.en.md) · [Русский](macos.md)
 
-**Complete the overview’s build/signature checks first. Current public APKs are test-only; no production release exists yet.**
+**Complete the overview’s edition/signature checks first. Commands below use Standard; for byedpi choose its APK and check the paired backend separately.**
 
 ## 1. Prepare ADB
 
@@ -42,7 +42,7 @@ Keep these records locally. If the package exists, compare signing identities an
 Place the compatible production APK and its `.sha256` from the same release in the current directory. This check does not replace apksigner.
 
 ```bash
-shasum -a 256 --check MiloHome.apk.sha256
+shasum -a 256 --check MiloHome-standard.apk.sha256
 ```
 
 ## 5. Install and launch
@@ -50,7 +50,7 @@ shasum -a 256 --check MiloHome.apk.sha256
 Only after successful checks and selecting the correct device:
 
 ```bash
-./adb -s "$serial" install -r ./MiloHome.apk &&
+./adb -s "$serial" install -r ./MiloHome-standard.apk &&
   ./adb -s "$serial" shell am start -n com.gathin.tvhome/.MainActivity
 ```
 

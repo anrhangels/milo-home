@@ -1,15 +1,12 @@
-# Screenshot provenance
+# Происхождение скриншотов
 
-These PNGs are captured from the running Android11 emulator (1280×720, 213dpi), not AI images or hand-drawn mockups.
-UpdaterUiTest supplies a clearly labelled **local test manifest** and streams actual signed APK bytes through an in-process test transport.
-The payload undergoes the same production SHA-256/cryptographic/package/version checks. This demonstrates UI and validation,
-not delivery from an unpublished GitHub Release. Real GitHub delivery gets separate evidence after publishing approval.
-No private device/network data is included. Home uses the existing theme; no wallpaper was replaced.
-The supplementary online-rc-menu.png and online-rc-installer.png were captured during the real published RC download/install
-test on 2026-10-24. They use actual GitHub metadata, unlike the earlier DEMO-labelled UI fixture screenshots.
+- haier-home-fresh.png — свежий прямой ADB-screencap Haier32 Smart TV BX,24.10.2026, YouTube выделен.
+- haier-media-fresh.png — тот же работающий ТВ, стрелками выбран MultiMediaPlayer; приложение не запускалось.
+- byedpi-network.png — опубликованный byedpi Stable1.2.0 на Android11 эмуляторе, парный release-backend отвечает состоянием «Выключен».
+- standard-rc-menu.png — опубликованный Standard Stable1.2.0 предлагает свой RC1.3.0-rc.1 из настоящего GitHub Release.
 
-## Изображения для главной страницы
+На телевизоре остаётся совместимая версия8 с прежним ключом. Скриншоты не утверждают, что новые APK уже установлены на Haier. Для их проверки использовался эмулятор. В главном экране видны реальные установленные YouTube, Play Store и MultiMediaPlayer; программы не открывались ради кадра.
 
-`haier-user-photo.webp` — фотография Haier, которую владелец предоставил24.10.2026 для оформления страницы. Она показывает реальную прежнюю сетевую сборку, а не результат установки нового обновлятора на ТВ. Приложения на фото не запускались заново ради оформления.
+Фотографии владельца не используются в текущих обложках. Рамки и подписи добавлены снаружи исходных скриншотов; содержимое экранов и цветовой ореол не перерисованы. Только маскот создан генерацией изображений. Синие демонстрационные кадры с Камерой/Галереей убраны из текущей витрины.
 
-Обложки в `docs/brand/` используют этот снимок и существующие кадры эмулятора без перерисовки интерфейса. Сгенерирован только новый маскот; UI не сгенерирован. [Оформление](../brand/README.md).
+[Оформление](../brand/README.md) · [Главная](../../README.md).
