@@ -174,6 +174,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     /** config show_inputs_pill: false keeps the Inputs pill hidden even when the TV has inputs. */
     private boolean showInputsPill = true;
     private TextView btnWifi;
+    private UpdateButton btnUpdate;
+    private UpdateUi updateUi;
     /** The network pill's icon as last set, so a refresh that changes nothing does not lay the top bar out again. */
     private int wifiIcon;
     /** The pills have been filled in once; later resumes refresh them after the first frame. */
@@ -435,6 +437,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             });
         }
         btnWifi = findViewById(R.id.btnWifi);
+        btnUpdate = findViewById(R.id.btnUpdate);
+        updateUi = new UpdateUi(this,btnUpdate);
         shamsiDate = findViewById(R.id.shamsiDate);
         stats = findViewById(R.id.stats);
         raceCalendar = cfg.raceCalendar;
@@ -669,17 +673,18 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             }
             int firstButton = btnInputs.getVisibility() == View.VISIBLE ? R.id.btnInputs : firstTopButton().getId();
             int leftButton = rtlMenuBar ? R.id.btnSettings : firstButton;
-            int rightButton = rtlMenuBar ? firstButton : R.id.btnSettings;
+            int rightButton = btnUpdate.getVisibility()==View.VISIBLE ? R.id.btnUpdate : (rtlMenuBar ? firstButton : R.id.btnSettings);
             if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) return v.getId() == leftButton;
             return keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && v.getId() == rightButton;
         };
         btnInputs.setOnKeyListener(pillKeys);
         btnWifi.setOnKeyListener(pillKeys);
         btnSettings.setOnKeyListener(pillKeys);
+        btnUpdate.setOnKeyListener(pillKeys);
         btnReorder.setOnKeyListener(pillKeys);
         btnLibraryTop.setOnKeyListener(pillKeys);
         if (advancedEffects) {
-            for (View button : new View[]{btnInputs, btnWifi, btnReorder, btnLibraryTop, btnSettings}) {
+            for (View button : new View[]{btnInputs, btnWifi, btnReorder, btnLibraryTop, btnSettings, btnUpdate}) {
                 button.setOnFocusChangeListener((view, focused) -> view.animate()
                         .scaleX(focused ? 1.04f : 1f).scaleY(focused ? 1.04f : 1f)
                         .setDuration(reducedMotion ? Motion.REDUCED_MS : 160).start());
@@ -798,6 +803,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onStart() {
         super.onStart();
+        updateUi.start();
         stopped = false;
         started = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -880,6 +886,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==LAUNCHER_SETTINGS_REQUEST && data!=null && data.getBooleanExtra("milo_check_updates",false)) {
+            root.post(() -> updateUi.manualCheck()); return;
+        }
         if (requestCode == 2007) {
             if(resultCode != RESULT_OK) Toast.makeText(this,R.string.dpi_cancelled,Toast.LENGTH_LONG).show();
             root.post(this::openNetworkPill);
@@ -1047,6 +1056,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     @Override
     protected void onStop() {
+        updateUi.stop();
         super.onStop();
         started = false;
         unregisterReceiver(timeReceiver);

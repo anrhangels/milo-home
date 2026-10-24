@@ -1,0 +1,320 @@
+--- a/app/build.gradle.kts
++++ b/app/build.gradle.kts
+@@ -5,12 +5,13 @@
+     id("org.jetbrains.kotlin.android")
+ }
+ 
+-val abis = setOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
++val abis = setOf("armeabi-v7a", "x86_64")
+ 
+ android {
+     namespace = "io.github.romanvht.byedpi"
+     //noinspection GradleDependency
+     compileSdk = 36
++    ndkVersion = "27.0.12077973"
+ 
+     defaultConfig {
+         applicationId = "io.github.romanvht.byedpi"
+@@ -105,6 +106,8 @@
+     }
+     setArgs(listOf(
+         "NDK_PROJECT_PATH=build/intermediates/ndkBuild",
++        "APP_ABI=armeabi-v7a x86_64",
++        "-j4",
+         "NDK_LIBS_OUT=src/main/jniLibs",
+         "APP_BUILD_SCRIPT=src/main/jni/Android.mk",
+         "NDK_APPLICATION_MK=src/main/jni/Application.mk"
+--- a/app/src/main/AndroidManifest.xml
++++ b/app/src/main/AndroidManifest.xml
+@@ -18,6 +18,8 @@
+     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="PackageVisibilityPolicy,QueryAllPackagesPermission" />
+     <uses-feature android:name="android.software.leanback" android:required="false" />
+     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
++
++    <permission android:name="io.github.romanvht.byedpi.permission.TV_CONTROL" android:protectionLevel="signature" />
+ 
+     <application
+         android:allowBackup="true"
+@@ -42,11 +44,12 @@
+ 
+                 <category android:name="android.intent.category.LAUNCHER" />
+                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
++
+             </intent-filter>
+         </activity>
+ 
+         <activity
+-            android:name=".activities.ToggleActivity"
++            android:name=".activities.ToggleActivity" android:permission="io.github.romanvht.byedpi.permission.TV_CONTROL"
+             android:theme="@android:style/Theme.NoDisplay"
+             android:exported="true"
+             android:excludeFromRecents="true"
+@@ -134,6 +137,11 @@
+                 <category android:name="android.intent.category.DEFAULT" />
+             </intent-filter>
+         </receiver>
++        <service android:name=".tv.TvControlService" android:exported="true"
++            android:permission="io.github.romanvht.byedpi.permission.TV_CONTROL" />
++        <activity android:name=".tv.VpnConsentActivity" android:exported="true"
++            android:permission="io.github.romanvht.byedpi.permission.TV_CONTROL" android:excludeFromRecents="true"
++            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+     </application>
+ 
+ </manifest>
+--- a/app/src/main/java/io/github/romanvht/byedpi/receiver/BootReceiver.kt
++++ b/app/src/main/java/io/github/romanvht/byedpi/receiver/BootReceiver.kt
+@@ -33,7 +33,7 @@
+             val preferences = context.getPreferences()
+             val autorunEnabled = preferences.getBoolean("autostart", false)
+ 
+-            if(autorunEnabled) {
++            if(io.github.romanvht.byedpi.tv.ControlPolicy.autoStart(autorunEnabled, preferences.getBoolean("tv_manual_off",false))) {
+                 val mode = preferences.mode()
+                 if (mode == Mode.VPN && VpnService.prepare(context) != null) return
+                 val pending = goAsync()
+--- a/app/src/main/java/io/github/romanvht/byedpi/services/ServiceManager.kt
++++ b/app/src/main/java/io/github/romanvht/byedpi/services/ServiceManager.kt
+@@ -7,6 +7,7 @@
+ import android.net.VpnService
+ import android.os.Build
+ import android.util.Log
++import io.github.romanvht.byedpi.utility.getPreferences
+ import io.github.romanvht.byedpi.R
+ import io.github.romanvht.byedpi.data.*
+ import io.github.romanvht.byedpi.utility.createPauseNotification
+@@ -35,8 +36,20 @@
+         val configured = CompletableDeferred<Boolean>()
+         val started = CompletableDeferred<Boolean>()
+         val stopped = CompletableDeferred<Unit>()
++        var ready = false
+         var stopping = false
+         var job: Job? = null
++    }
++
++    /** State is based on native HELLO/STARTED acknowledgements, never the optimistic appStatus. */
++    fun controlState(context: Context): Pair<Int, Boolean> {
++        restore(context.applicationContext as Application)
++        val current = session
++        val running = current?.ready == true
++        val state = io.github.romanvht.byedpi.tv.ControlSnapshot.state(
++            current != null, current?.ready == true, current?.stopping == true,
++            io.github.romanvht.byedpi.tv.ControlEvents.error.isNotEmpty())
++        return state to running
+     }
+ 
+     fun start(context: Context, mode: Mode) {
+@@ -161,6 +174,7 @@
+ 
+         val current = Session(mode, NativeEngine(app, mode))
+         session = current
++        io.github.romanvht.byedpi.tv.ControlEvents.changed()
+         configure(current, app)
+         publish(mode, AppStatus.Running, STARTED_BROADCAST)
+         (app.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(PAUSE_NOTIFICATION_ID)
+@@ -177,6 +191,7 @@
+     private suspend fun stopSession(current: Session, await: Boolean = true) {
+         if (!current.stopping) {
+             current.stopping = true
++            io.github.romanvht.byedpi.tv.ControlEvents.changed()
+             current.started.complete(false)
+             current.job?.cancel()
+         }
+@@ -240,7 +255,10 @@
+                 }
+                 if (!current.stopping) {
+                     publish(current.mode, AppStatus.Running, STARTED_BROADCAST)
++                    application?.getPreferences()?.edit()?.putBoolean("tv_manual_off",false)?.apply()
++                    current.ready = true
+                     current.started.complete(true)
++                    io.github.romanvht.byedpi.tv.ControlEvents.changed()
+                 }
+                 current.engine.awaitExit()
+             } catch (_: CancellationException) {
+@@ -273,10 +291,12 @@
+         current.engine.onStopping = null
+         if (session === current) {
+             session = null
++            if (failed) io.github.romanvht.byedpi.tv.ControlEvents.error = "Native engine stopped"
+             publish(current.mode, AppStatus.Halted, if (failed) FAILED_BROADCAST else STOPPED_BROADCAST)
+         }
+         current.started.complete(false)
+         current.stopped.complete(Unit)
++        io.github.romanvht.byedpi.tv.ControlEvents.changed()
+     }
+ 
+     private fun publish(mode: Mode, status: AppStatus, action: String) {
+--- /dev/null
++++ b/app/src/main/java/io/github/romanvht/byedpi/tv/ControlEvents.kt
+@@ -0,0 +1,8 @@
++package io.github.romanvht.byedpi.tv
++
++/** Main-thread only. Observers exist only while the network popup is bound. */
++object ControlEvents {
++    var error: String = ""
++    val observers = mutableSetOf<() -> Unit>()
++    fun changed() { observers.toList().forEach { it() } }
++}
+--- /dev/null
++++ b/app/src/main/java/io/github/romanvht/byedpi/tv/ControlOperations.kt
+@@ -0,0 +1,37 @@
++package io.github.romanvht.byedpi.tv
++import android.content.Context
++import android.net.VpnService
++import io.github.romanvht.byedpi.data.Mode
++import io.github.romanvht.byedpi.services.ServiceManager
++import io.github.romanvht.byedpi.utility.getPreferences
++import kotlinx.coroutines.*
++
++object ControlOperations {
++    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
++    var busy = false
++        private set
++    fun request(context: Context, enabled: Boolean) {
++        if (busy) return
++        val app = context.applicationContext
++        if (enabled && VpnService.prepare(app) != null) return
++        busy = true
++        ControlEvents.error = ""
++        // Preserve the user's autostart option; a manual stop suppresses it until a successful start.
++        if (!enabled) app.getPreferences().edit().putBoolean("tv_manual_off",true).apply()
++        scope.launch {
++            try {
++                withTimeout(22_000) {
++                    if (enabled) {
++                        check(ServiceManager.waitStart(app,Mode.VPN)) { "Engine did not confirm startup" }
++                        app.getPreferences().edit().putBoolean("tv_manual_off",false).apply()
++                    } else ServiceManager.waitStop()
++                }
++            } catch (e: Exception) {
++                ControlEvents.error = e.message ?: "Service operation failed"
++            } finally {
++                busy = false
++                ControlEvents.changed()
++            }
++        }
++    }
++}
+--- /dev/null
++++ b/app/src/main/java/io/github/romanvht/byedpi/tv/ControlPolicy.kt
+@@ -0,0 +1,9 @@
++package io.github.romanvht.byedpi.tv
++
++internal object ControlPolicy {
++    fun allows(packages: Array<String>?, matchingSignature: Boolean): Boolean =
++        matchingSignature && packages?.contains("com.gathin.tvhome") == true
++
++    fun autoStart(configured: Boolean, manuallyStopped: Boolean): Boolean =
++        configured && !manuallyStopped
++}
+--- /dev/null
++++ b/app/src/main/java/io/github/romanvht/byedpi/tv/ControlSnapshot.kt
+@@ -0,0 +1,12 @@
++package io.github.romanvht.byedpi.tv
++
++/** Pure engine-state projection, also exercised without Android/native libraries. */
++internal object ControlSnapshot {
++    fun state(hasSession: Boolean, ready: Boolean, stopping: Boolean, failed: Boolean): Int = when {
++        stopping && hasSession -> 3
++        hasSession && ready -> 2
++        hasSession -> 1
++        failed -> 4
++        else -> 0
++    }
++}
+--- /dev/null
++++ b/app/src/main/java/io/github/romanvht/byedpi/tv/TvControlService.kt
+@@ -0,0 +1,45 @@
++package io.github.romanvht.byedpi.tv
++import android.app.Service
++import android.content.Intent
++import android.content.pm.PackageManager
++import android.net.VpnService
++import android.os.*
++import io.github.romanvht.byedpi.services.ServiceManager
++
++/** Version 1 protocol: 1=query/subscribe, 2=enable, 3=disable, 4=unsubscribe; 100=state. */
++class TvControlService : Service() {
++    private val clients = mutableMapOf<IBinder,Messenger>()
++    private val notify: () -> Unit = { sendState() }
++    private val endpoint = Messenger(Handler(Looper.getMainLooper()) { msg ->
++        val uid = msg.sendingUid
++        val allowed = ControlPolicy.allows(packageManager.getPackagesForUid(uid),
++            packageManager.checkSignatures(uid,Process.myUid()) == PackageManager.SIGNATURE_MATCH)
++        if (!allowed) return@Handler true
++        val reply = msg.replyTo ?: return@Handler true
++        if (msg.what == 4) { clients.remove(reply.binder); return@Handler true }
++        if (msg.what !in 1..3) return@Handler true
++        clients[reply.binder] = reply
++        if (msg.what == 2 && VpnService.prepare(this) != null) {
++            sendState(5)
++        } else {
++            if (msg.what == 2 || msg.what == 3) ControlOperations.request(this,msg.what == 2)
++            sendState()
++        }
++        true
++    })
++    override fun onCreate() { super.onCreate(); ControlEvents.observers.add(notify) }
++    override fun onBind(intent: Intent): IBinder = endpoint.binder
++    override fun onDestroy() { ControlEvents.observers.remove(notify); clients.clear(); super.onDestroy() }
++    private fun sendState(overrideState: Int? = null) {
++        val (state,running) = ServiceManager.controlState(this)
++        clients.toMap().forEach { (token,client) ->
++            try {
++                client.send(Message.obtain(null,100).apply { data = Bundle().apply {
++                    putInt("version",1); putInt("state",overrideState ?: state)
++                    putBoolean("running",running); putBoolean("busy",ControlOperations.busy)
++                    putString("error",ControlEvents.error)
++                } })
++            } catch (_: RemoteException) { clients.remove(token) }
++        }
++    }
++}
+--- /dev/null
++++ b/app/src/main/java/io/github/romanvht/byedpi/tv/VpnConsentActivity.kt
+@@ -0,0 +1,24 @@
++package io.github.romanvht.byedpi.tv
++import android.app.Activity
++import android.content.Intent
++import android.net.VpnService
++import android.os.Bundle
++class VpnConsentActivity : Activity() {
++    override fun onCreate(state: Bundle?) {
++        super.onCreate(state)
++        if (callingPackage != "com.gathin.tvhome") { finish(); return }
++        if (state == null) {
++            val consent = VpnService.prepare(this)
++            if (consent == null) complete(true) else startActivityForResult(consent,1)
++        }
++    }
++    @Deprecated("Legacy API for Android TV 11")
++    override fun onActivityResult(request: Int, result: Int, data: Intent?) {
++        super.onActivityResult(request,result,data)
++        if (request == 1) complete(result == RESULT_OK && VpnService.prepare(this) == null)
++    }
++    private fun complete(allowed: Boolean) {
++        if (allowed) ControlOperations.request(this,true)
++        setResult(if(allowed) RESULT_OK else RESULT_CANCELED); finish()
++    }
++}
+--- a/app/src/main/res/layout/activity_file.xml
++++ b/app/src/main/res/layout/activity_file.xml
+@@ -11,7 +11,7 @@
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:ellipsize="start"
+-        android:maxLines="1"
++        android:singleLine="true"
+         android:paddingStart="16dp"
+         android:paddingTop="12dp"
+         android:paddingEnd="16dp"
+--- a/app/src/main/res/values-en/strings.xml
++++ b/app/src/main/res/values-en/strings.xml
+@@ -136,7 +136,7 @@
+     </string>
+     <string name="test_process">Checking %1$d/%2$d</string>
+     <string name="test_proxy_error">Proxy error. Test stopped</string>
+-    <string name="test_good_cmds">Commands with more than 50% success probability</string>
++    <string name="test_good_cmds" formatted="false">Commands with more than 50% success probability</string>
+     <string name="test_complete">Test completed</string>
+     <string name="test_complete_info">Tap on a command to copy or apply it</string>
+     <string name="test_cmd_connect">Apply and run</string>

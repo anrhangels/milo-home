@@ -1,0 +1,9 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="70dp"
+ android:orientation="vertical" android:padding="12dp" android:background="@drawable/input_row_bg"
+ android:focusable="true" android:clickable="true">
+ <TextView android:id="@+id/updateTitle" android:layout_width="match_parent" android:layout_height="wrap_content"
+  android:textSize="15sp" android:fontFamily="@string/font_medium" android:textColor="@drawable/pill_text" android:duplicateParentState="true"/>
+ <TextView android:id="@+id/updateDetail" android:layout_width="match_parent" android:layout_height="wrap_content"
+  android:textSize="13sp" android:maxLines="3" android:ellipsize="end" android:fontFamily="@string/font_body" android:textColor="@color/update_detail" android:duplicateParentState="true"/>
+</LinearLayout>

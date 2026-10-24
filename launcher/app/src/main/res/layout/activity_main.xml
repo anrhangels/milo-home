@@ -343,6 +343,10 @@
                     android:text="@string/settings"
                     android:drawableStart="@drawable/ic_settings"
                     android:nextFocusDown="@+id/grid" />
+                <com.gathin.tvhome.UpdateButton android:id="@+id/btnUpdate" style="@style/TopButtonIcon"
+                    android:visibility="gone" android:background="@drawable/update_pill_bg"
+                    android:drawableStart="@drawable/ic_update" android:drawableTint="@color/pill_icon_online"
+                    android:contentDescription="@string/update_available" android:nextFocusDown="@+id/grid" />
             </LinearLayout>
         </RelativeLayout>
 

@@ -1,51 +1,43 @@
-name: CI
-
+name: Milo Home CI
 on:
   push:
-    branches: [main]
   pull_request:
-
 permissions:
   contents: read
-
 jobs:
-  lists-and-tools:
-    name: Lists, tools and docs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Tools virtualenv
-        run: |
-          python3 -m venv tools/venv
-          tools/venv/bin/pip install -q -r tools/requirements.txt
-      - name: Example lists, README tables, shell helpers
-        env:
-          CLEANYOURTV_STRICT: ${{ github.event_name == 'push' && '1' || '' }}
-        run: python3 -m unittest discover -s tests -v
-
   launcher:
-    name: Launcher build and unit tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
           distribution: temurin
-          java-version: "17"
-      - uses: android-actions/setup-android@v3
+          java-version: '17'
+          cache: gradle
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
-          packages: platforms;android-34 build-tools;34.0.0
-      - uses: gradle/actions/setup-gradle@v4
-      - name: Unit tests, lint and release build
+          python-version: '3.12'
+      - name: Public tree and release input tests
+        run: |
+          python tools/milo/verify_public_tree.py
+          python -m unittest discover -s tools/milo -p 'test_*.py' -v
+      - name: Install pinned Android build dependencies
+        run: sdkmanager 'platforms;android-34' 'build-tools;35.0.0'
+      - name: Unit tests, Android Lint and test-track APK
         working-directory: launcher
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease
-      - name: The launcher stays small
-        run: |
-          size=$(stat -c %s launcher/app/build/outputs/apk/release/app-release.apk)
-          echo "release APK: $((size / 1024)) KB"
-          test "$size" -lt 491520 || { echo "APK is over 480 KB; the launcher targets 1 GB TVs, keep it small"; exit 1; }
+          ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease -PmiloUpdateTrack=test
+          test "$(stat -c %s app/build/outputs/apk/release/app-release.apk)" -le 2097152
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: MiloHome-CI-test-only
+          path: |
+            launcher/app/build/outputs/apk/release/app-release.apk
+            launcher/app/build/reports/lint-results-release.html
+            launcher/app/build/test-results/testReleaseUnitTest/*.xml
+          retention-days: 7

@@ -1,0 +1,19 @@
+<resources>
+<string name="update_available">Update available</string>
+<string name="update_stable">Release</string>
+<string name="update_rc">RC version</string>
+<string name="update_unavailable">No compatible newer build</string>
+<string name="update_confirm">Download update?</string>
+<string name="update_yes">Yes</string>
+<string name="update_no">No</string>
+<string name="update_checking">Checking GitHub Releases…</string>
+<string name="update_none">No compatible updates available</string>
+<string name="update_failure">Update failed. Check your connection and try again.</string>
+<string name="update_in_progress">An update is already downloading or being verified.</string>
+<string name="update_verifying">Verifying APK</string>
+<string name="update_install">Install verified update</string>
+<string name="update_check">Check for updates</string>
+<string name="update_install_permission">Allow installation</string>
+<string name="update_install_permission_help">Android requires permission to install updates from Milo Home. Enable it in the system screen, then select the green update button again.</string>
+<string name="update_installer_missing">System APK installer unavailable</string>
+</resources>

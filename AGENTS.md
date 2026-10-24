@@ -1,3 +1,11 @@
+# Milo Home fork scope
+
+This independent fork preserves the upstream implementation and MIT licence. Its owner explicitly
+requests a GitHub Releases updater, release signing and GitHub Actions workflows. These additions
+are local-fork work, not a proposed upstream core change. Do not publish device backups, signing
+keys or credentials. Keep production and test update tracks separate. Never change physical devices
+or publish releases without the owner approving that operation. Upstream guidance follows for context.
+
 # AGENTS.md
 
 Instructions for coding agents (Claude Code, Codex, Gemini CLI, Cursor, Copilot and others) working in
@@ -145,7 +153,7 @@ Never do these in a PR:
 - **No Private DNS or AdGuard setup, and no install or restore scripts, inside a list folder.** The README
   already has the optional DNS extra; a note that Private DNS works on that TV is fine.
 - **No secrets or identifiers** in commits, lists or screenshots: no IP addresses, Wi-Fi names, account emails,
-  serial numbers, Android IDs, MAC addresses or ADB keys. Use `<tv ip>` or `192.168.1.50` in docs.
+  serial numbers, Android IDs, MAC addresses or ADB keys. Use `<tv ip>` or the documentation address `192.0.2.50` in docs.
 - **Don't edit `.github/workflows/`** or the APK size gate in a normal PR. A PR whose main content is a new CI
   workflow that builds or publishes releases is closed.
 - **No root, no getting around app-store protection, no private builds** others cannot reproduce from this repo.

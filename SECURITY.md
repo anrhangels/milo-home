@@ -1,31 +1,19 @@
 # Security
 
-CleanYourTV talks to TVs over ADB and installs a launcher on them, so a security bug here can
-reach people's living rooms. Please report anything you find privately, not in a public issue.
+Do not post private signing keys, credentials, personal network names, device addresses or unredacted logs in public issues.
+Report reproducible security defects privately through GitHub private vulnerability reporting when enabled;
+otherwise ask the maintainer for a private contact without publishing the exploit or secrets.
 
-## How to report
+Trust boundary: HTTPS GitHub Releases metadata can announce a candidate, but cannot authorize a different signing key.
+The APK is cryptographically verified with apksig and must match the current installed certificate, expected SHA-256,
+package, versionCode, min Android API and device ABI. Key changes require a separately reviewed initial migration.
+No token, private key or publisher secret is shipped in the client. FileProvider grants read access only to verified update files.
 
-Use GitHub's private vulnerability reporting: open the
-[Security tab](https://github.com/Gathin23/cleanyourtv/security) and choose **Report a vulnerability**.
-Only the maintainer sees the report. If that doesn't work for you, email
-[hello@itsgathin.com](mailto:hello@itsgathin.com) with "Security" in the subject.
+Updates use Android's standard installer and its source-permission/confirmation UI. There is no root, silent installer,
+Accessibility automation, package-enabling/disabling logic, debloat script execution or HOME takeover in the updater.
+The test instrumentation can replace an internal HTTP connection factory inside its own signed test process;
+there is no exported production test endpoint, service or setter. Instrumented APKs are rejected by the release publisher.
 
-Please include what is affected (the prompt, a tool in `tools/`, the launcher, a debloat list),
-the steps to reproduce it, and what an attacker could do with it.
-
-## What counts
-
-- The launcher (`com.gathin.tvhome`) doing something it shouldn't: reaching the network, exposing
-  data to other apps, or being made to open something it shouldn't.
-- The tools (`tools/tv.py`, `disable.sh`, `restore.sh`, `theme.sh`, `recovery.py`) running commands
-  on a device or computer they weren't pointed at, or mishandling paths and input.
-- A debloat list or the prompt leading to a TV that can't be restored with `tools/restore.sh`.
-- Anything in a pull request that runs code on a contributor's or maintainer's machine.
-
-ADB itself is powerful by design. Turning on USB or network debugging lets any computer on your
-network ask to connect, and the TV asks you to allow it. Turn debugging off when you're done.
-
-## What happens next
-
-You'll get a reply within a few days. Fixes go into `main` with credit to you, unless you'd rather
-stay anonymous. Please give a fix a reasonable chance to ship before you publish details.
+Production/RC share one permanent signing key; test releases use a separate isolated environment.
+GitHub environments and their signing secrets must be configured by the repository owner before publishing.
+Keep an offline recovery copy of the key/password in addition to the local protected backup.

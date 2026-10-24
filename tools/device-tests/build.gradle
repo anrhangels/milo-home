@@ -1,0 +1,10 @@
+plugins { id 'com.android.application' version '8.5.2' }
+android {
+    useLibrary 'android.test.runner'
+    useLibrary 'android.test.base'
+    namespace 'org.milohome.devicechecks'
+    compileSdk 34
+    defaultConfig { applicationId 'org.milohome.devicechecks'; minSdk 26; targetSdk 34 }
+    if (System.getenv('MILO_TEST_ASSETS')) sourceSets.main.assets.srcDir(System.getenv('MILO_TEST_ASSETS'))
+    buildTypes { release { minifyEnabled false; signingConfig signingConfigs.debug } }
+}

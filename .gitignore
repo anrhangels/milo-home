@@ -19,3 +19,15 @@ traces/
 *.aab
 launcher/hs_err_pid*.log
 launcher/replay_pid*.log
+
+# Milo Home private signing and generated release files
+*.p12
+*.jks
+*.keystore
+*.apk
+*.apk.idsig
+release-output/
+private-preflight/
+private-signing/
+**/build/
+**/.gradle/

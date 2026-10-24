@@ -1,0 +1,19 @@
+<resources>
+<string name="update_available">Доступно обновление</string>
+<string name="update_stable">Релиз</string>
+<string name="update_rc">RC-версия</string>
+<string name="update_unavailable">Нет совместимой новой сборки</string>
+<string name="update_confirm">Скачать обновление?</string>
+<string name="update_yes">Да</string>
+<string name="update_no">Нет</string>
+<string name="update_checking">Проверка GitHub Releases…</string>
+<string name="update_none">Совместимых обновлений нет</string>
+<string name="update_failure">Не удалось обновить. Проверьте подключение и повторите попытку.</string>
+<string name="update_in_progress">Обновление уже загружается или проверяется.</string>
+<string name="update_verifying">Проверка APK</string>
+<string name="update_install">Установить проверенное обновление</string>
+<string name="update_check">Проверить обновления</string>
+<string name="update_install_permission">Разрешить установку</string>
+<string name="update_install_permission_help">Android требует разрешить установку обновлений из Milo Home. Включите разрешение на системном экране, затем снова нажмите зелёную кнопку.</string>
+<string name="update_installer_missing">Системный установщик APK недоступен</string>
+</resources>

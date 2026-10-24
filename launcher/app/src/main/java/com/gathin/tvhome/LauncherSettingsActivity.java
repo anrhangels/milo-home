@@ -139,6 +139,10 @@ public final class LauncherSettingsActivity extends Activity {
         });
         findViewById(R.id.tvSettingsChoice).setOnClickListener(v ->
                 open(SystemSettings.intent(this, Settings.ACTION_SETTINGS)));
+        TextView checkUpdates=new TextView(this,null,0,R.style.SettingsRow);
+        checkUpdates.setText(R.string.update_check);
+        ((android.view.ViewGroup)findViewById(R.id.tvSettingsChoice).getParent()).addView(checkUpdates);
+        checkUpdates.setOnClickListener(v -> { setResult(RESULT_OK,new Intent().putExtra("milo_check_updates",true)); finish(); });
         refresh();
         if (config.launcherSettingsButton) reorderChoice.requestFocus();
         else columnChoices[Math.max(0, Math.min(columns - 4, 3))].requestFocus();
