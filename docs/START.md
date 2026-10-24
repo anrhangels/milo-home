@@ -2,7 +2,7 @@
 
 [Home](../README.md) · [Русский](START.ru.md) · [26 languages](installation/languages.md)
 
-![Download, install, try with your remote](brand/install-steps-en.webp)
+![Download, install, try with your remote](brand/install-steps-en-v2.webp)
 
 You need an Android TV / Google TV (Android 8+), a computer and a way to connect them using Android debugging. Allow about 15–30 minutes for a first installation; device restrictions can make it longer.
 

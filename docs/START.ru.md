@@ -2,7 +2,7 @@
 
 [Главная](../README.ru.md) · [English](START.md) · [26 языков](installation/languages.md)
 
-![Скачать, установить и проверить с пульта](brand/install-steps-ru.webp)
+![Скачать, установить и проверить с пульта](brand/install-steps-ru-v2.webp)
 
 Понадобятся Android TV / Google TV на Android 8 или новее, компьютер и подключение через отладку Android. Для первой установки ориентируйтесь на 15–30 минут; ограничения конкретного ТВ могут увеличить время.
 

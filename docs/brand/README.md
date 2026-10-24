@@ -5,7 +5,7 @@ The mascot comes from the owner's crowned ghost, adapted with OpenAI image gener
 - `milo-mascot.png`: transparent mascot, no square background.
 - `milo-simple-en.webp` / `milo-simple-ru.webp`: minimal bilingual covers.
 - `milo-interface.webp`: two real screen captures in simple frames.
-- `install-steps-en.webp` / `install-steps-ru.webp`: instructional diagrams, not Android screenshots.
+- `install-steps-en-v2.webp` / `install-steps-ru-v2.webp`: instructional diagrams, not Android screenshots.
 - `milo-icon.png`: existing app icon source.
 - `social-preview.png`: previous prepared social card, not a claim that repository settings use it.
 
