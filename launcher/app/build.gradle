@@ -97,7 +97,7 @@ if(miloVariant == 'byedpi') {
         rename { 'backend.apk' }
     }
     tasks.configureEach {
-        if(name.startsWith('merge') && name.endsWith('Assets')) {
+        if((name.startsWith('merge') && name.endsWith('Assets')) || name.toLowerCase().contains('lint')) {
             dependsOn(prepareBackend)
             doFirst { if(!bundledBackend.isPresent() || !file(bundledBackend.get()).isFile()) throw new GradleException('Missing paired backend APK') }
         }
