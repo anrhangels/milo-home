@@ -227,6 +227,7 @@ final class AppLibraryDialog {
                 for (ResolveInfo info : pm.queryIntentActivities(new Intent(Intent.ACTION_MAIN).addCategory(category), 0)) {
                     if (info.activityInfo == null || !info.activityInfo.exported) continue;
                     String pkg = info.activityInfo.packageName;
+                    if (DpiClient.PACKAGE.equals(pkg)) continue;
                     if (Intent.CATEGORY_LEANBACK_LAUNCHER.equals(category)) tv.add(pkg);
                     if (!pkg.equals(self) && !unique.containsKey(pkg)) unique.put(pkg, info);
                 }

@@ -24,7 +24,9 @@
 
     <!-- Android 11+ package visibility: lets the launcher list the TV apps it shows as tiles, and the
          apps that declare a module card (docs/specs/card.md). -->
+    <uses-permission android:name="io.github.romanvht.byedpi.permission.TV_CONTROL" />
     <queries>
+        <package android:name="io.github.romanvht.byedpi" />
         <!-- The standard settings handlers, so package visibility doesn't hide them and send the pills to a vendor fallback by mistake. -->
         <intent>
             <action android:name="android.settings.SETTINGS" />

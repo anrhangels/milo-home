@@ -1,0 +1,15 @@
+<resources>
+<string name="network_menu">Сеть</string>
+<string name="dpi_off">Выключен</string>
+<string name="dpi_starting">Подключение…</string>
+<string name="dpi_on">Включён</string>
+<string name="dpi_stopping">Отключение…</string>
+<string name="dpi_error">Ошибка</string>
+<string name="dpi_missing">Не установлен</string>
+<string name="network_wifi_settings">Настройки Wi-Fi</string>
+<string name="dpi_failure">Не удалось изменить состояние ByeByeDPI. Проверьте совместимость сборок и разрешение VPN.</string>
+<string name="dpi_install_title">Установка ByeByeDPI</string>
+<string name="dpi_install_message">Установите парный локальный APK по INSTALL.md. Официальная версия не содержит защищённого API этого меню.</string>
+<string name="dpi_install_page">Страница проекта</string>
+<string name="dpi_cancelled">Разрешение VPN не предоставлено.</string>
+</resources>

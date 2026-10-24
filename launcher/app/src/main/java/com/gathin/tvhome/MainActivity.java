@@ -454,6 +454,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         vpnApp = cfg.vpnApp;
         moduleCards = cfg.moduleCards;
         hiddenApps = new HashSet<>(cfg.hiddenApps);
+        hiddenApps.add(DpiClient.PACKAGE);
 
         grid = findViewById(R.id.grid);
         rtlAppGrid = getResources().getBoolean(R.bool.rtl_app_grid);
@@ -879,6 +880,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2007) {
+            if(resultCode != RESULT_OK) Toast.makeText(this,R.string.dpi_cancelled,Toast.LENGTH_LONG).show();
+            root.post(this::openNetworkPill);
+            return;
+        }
         if (requestCode == LAUNCHER_SETTINGS_REQUEST && resultCode == RESULT_OK
                 && data != null && data.getBooleanExtra(LauncherSettingsActivity.EXTRA_REORDER, false)) {
             getIntent().putExtra(LauncherSettingsActivity.EXTRA_REORDER, true);
@@ -2532,11 +2538,64 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
-    /** The network pill opens the VPN app when one is configured and installed, otherwise Wi-Fi settings. */
+    /** Local Haier integration: the existing Wi-Fi pill, no module card or separate menu app. */
     private void openNetworkPill() {
-        Intent i = vpnApp.isEmpty() ? null : getPackageManager().getLeanbackLaunchIntentForPackage(vpnApp);
-        if (i == null && !vpnApp.isEmpty()) i = getPackageManager().getLaunchIntentForPackage(vpnApp);
-        open(i != null ? i : systemIntent(Settings.ACTION_WIFI_SETTINGS));
+        if (openPopup != null) openPopup.dismiss();
+        View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
+        LinearLayout rows = panel.findViewById(R.id.rows);
+        PopupWindow popup = glassPopup(panel, (int)(300*density));
+        TextView heading = new TextView(this);
+        heading.setText(R.string.network_menu); heading.setTextColor(0xFFCCCCCC);
+        heading.setTextSize(14); heading.setPadding((int)(12*density),(int)(8*density),0,(int)(8*density));
+        rows.addView(heading);
+        View dpiRow = getLayoutInflater().inflate(R.layout.item_network_dpi,rows,false);
+        rows.addView(dpiRow);
+        TextView status = dpiRow.findViewById(R.id.dpiStatus);
+        android.widget.Switch toggle = dpiRow.findViewById(R.id.dpiSwitch);
+        final DpiState[] current = {new DpiState(DpiState.STARTING,false,true,"")};
+        status.setText(R.string.dpi_starting);
+        DpiClient client = new DpiClient(this,new DpiClient.Listener() {
+            public void state(DpiState value) {
+                current[0]=value; status.setText(value.label()); toggle.setChecked(value.running);
+                toggle.setAlpha(value.busy ? 0.45f : 1f);
+                dpiRow.setContentDescription("ByeByeDPI, "+getString(value.label()));
+                if (!value.error.isEmpty()) Toast.makeText(MainActivity.this,R.string.dpi_failure,Toast.LENGTH_LONG).show();
+            }
+            public void consent() {
+                popup.dismiss();
+                try { startActivityForResult(new Intent().setComponent(new ComponentName(DpiClient.PACKAGE,
+                    DpiClient.PACKAGE+".tv.VpnConsentActivity")),2007); }
+                catch (RuntimeException error) { Toast.makeText(MainActivity.this,R.string.dpi_failure,Toast.LENGTH_LONG).show(); }
+            }
+        });
+        dpiRow.setOnClickListener(v -> {
+            if(current[0].state==DpiState.MISSING) {
+                new android.app.AlertDialog.Builder(this).setTitle(R.string.dpi_install_title)
+                    .setMessage(R.string.dpi_install_message).setNegativeButton(android.R.string.cancel,null)
+                    .setPositiveButton(R.string.dpi_install_page,(dialog,which) -> {
+                        Intent link=new Intent(Intent.ACTION_VIEW,android.net.Uri.parse("https://github.com/romanvht/ByeByeDPI"));
+                        if(link.resolveActivity(getPackageManager())!=null) open(link);
+                    }).show();
+            } else if(current[0].canToggle()) client.toggle(!current[0].running);
+        });
+        addSeparator(rows);
+        addInputRow(rows,popup,R.drawable.ic_wifi,getString(R.string.network_wifi_settings),-1,
+            () -> open(systemIntent(Settings.ACTION_WIFI_SETTINGS)));
+        View wifiRow=rows.getChildAt(rows.getChildCount()-1);
+        dpiRow.setId(View.generateViewId()); wifiRow.setId(View.generateViewId());
+        dpiRow.setNextFocusDownId(wifiRow.getId()); dpiRow.setNextFocusUpId(dpiRow.getId());
+        wifiRow.setNextFocusUpId(dpiRow.getId()); wifiRow.setNextFocusDownId(wifiRow.getId());
+        View.OnKeyListener keys=(v,key,event) -> {
+            if(key==KeyEvent.KEYCODE_BACK) {
+                if(event.getAction()==KeyEvent.ACTION_UP) panel.animate().alpha(0f).translationY(-8*density)
+                    .setDuration(reducedMotion ? Motion.REDUCED_MS : 140).withEndAction(popup::dismiss).start();
+                return true;
+            }
+            return key==KeyEvent.KEYCODE_DPAD_LEFT || key==KeyEvent.KEYCODE_DPAD_RIGHT;
+        };
+        dpiRow.setOnKeyListener(keys); wifiRow.setOnKeyListener(keys);
+        popup.setOnDismissListener(() -> { client.close(); if(openPopup==popup) openPopup=null; btnWifi.requestFocus(); });
+        dropIn(popup,panel,btnWifi,Gravity.END); dpiRow.requestFocus(); client.connect();
     }
 
 

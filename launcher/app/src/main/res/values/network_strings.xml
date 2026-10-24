@@ -1,0 +1,15 @@
+<resources>
+<string name="network_menu">Network</string>
+<string name="dpi_off">Off</string>
+<string name="dpi_starting">Connecting…</string>
+<string name="dpi_on">On</string>
+<string name="dpi_stopping">Disconnecting…</string>
+<string name="dpi_error">Error</string>
+<string name="dpi_missing">Not installed</string>
+<string name="network_wifi_settings">Wi-Fi settings</string>
+<string name="dpi_failure">Could not change ByeByeDPI. Check the paired build and VPN permission.</string>
+<string name="dpi_install_title">Install ByeByeDPI</string>
+<string name="dpi_install_message">Use the paired local APK and INSTALL.md. The official release does not provide this protected control API.</string>
+<string name="dpi_install_page">Project page</string>
+<string name="dpi_cancelled">VPN permission was not granted.</string>
+</resources>
