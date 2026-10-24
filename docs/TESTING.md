@@ -43,12 +43,49 @@ Do not remove a real installation to run fixtures. Fixture APKs are external fil
    you possess; rotate both paired emulator packages, then run testRotatedPair. Never apply this test lineage to Haier.
 9. Run tools/milo/check_apk_fixtures.py with actual APK/tool paths and public certificate fingerprints.
 
-## Pending owner-approved online and physical tests
+## Actual published delivery: passed on 2026-10-24
 
-Repository creation, first push, environment secrets and workflow runs require publication approval.
-Publish test Stable10 and RC11 through Actions; install bootstrap9 only on the isolated emulator, then test actual
-REST detection, asset download, checksum and standard install from those Releases. Keep test metadata separate from production.
-These Actions→Release→download steps have NOT passed yet; no public fork/release URL is claimed.
+Owner-approved public fork: https://github.com/anrhangels/milo-home (default branch milo-main).
+
+| Evidence | Result |
+| --- | --- |
+| [CI](https://github.com/anrhangels/milo-home/actions/runs/40106068402) | Unit tests, lint and optimized assembly passed |
+| [Stable publishing](https://github.com/anrhangels/milo-home/actions/runs/40106068264) | Signed code10 published |
+| [RC publishing](https://github.com/anrhangels/milo-home/actions/runs/40106190790) | Signed code11 published as prerelease |
+| [Stable release](https://github.com/anrhangels/milo-home/releases/tag/test-v1.0.0) | APK + SHA-256 + metadata |
+| [RC release](https://github.com/anrhangels/milo-home/releases/tag/test-v1.1.0-rc.1) | APK + SHA-256 + metadata |
+
+Both releases use the same isolated test certificate and track=test. Neither is a production migration release.
+PublishedReleaseTest, explicitly opted in with publishedReleases=true, cleared the emulator cache, discovered both channels
+using the actual unauthenticated REST response, clicked Stable/Yes, downloaded from the real asset URL and passed the app's verifier.
+No transport/metadata substitution was used. The device's cached Stable SHA-256 matched the published value:
+`bc2a5603b6b9f7347e4930f018204013f566c8b0e1547c540aaf5877fc09c2f9`.
+
+After standard installation to code10, the ordinary optimized launcher UI offered RC, downloaded it after Yes and opened the installer.
+The independent test module verified the cached APK's package/code/certificate and emitted SHA-256:
+`32df912d16b8611edf75f453a599158bbb82f2606e8e36a8f9b281e1f2defd96`, matching the real RC metadata.
+Standard installation reached code11; preferences, columns and HOME checks passed. UID stayed10136 throughout this fresh online run.
+The update button then disappeared because neither channel offered a higher compatible version. Disabled-package lists matched.
+ByeByeDPI manual OFF survived the updates, and ON control successfully started its native foreground service afterwards.
+
+The initial GitHub jobs failed because sdkmanager was not on PATH; both workflows now resolve its explicit SDK path.
+One immediate post-install test raced Android package replacement; waiting for InstallSuccess and rerunning the independent
+instrumentation passed. Do not start instrumentation merely because dumpsys already reports the new versionCode.
+
+### Network limitation
+
+The emulator's fresh/default ByeByeDPI VPN profile caused TLS handshakes to GitHub to close, including a simple upstream API read.
+The actual online delivery tests above therefore ran with ByeByeDPI manually OFF. Earlier same-key local-fixture updates
+proved a running backend's native PID survives ordinary launcher updates, but that does not prove GitHub connectivity with every DPI strategy.
+The updater does not disable VPN, select a different network, weaken TLS or bypass certificate verification automatically.
+Choose/test a suitable backend strategy separately. Nothing was changed on the real television.
+
+To repeat: publish same-key test10/11 through the workflow, install isolated instrumented bootstrap9, run
+PublishedReleaseTest with -e publishedReleases true, then confirm the standard installer. On optimized code10,
+select RC through the ordinary UI, run UpdateChecks#testDownloadedRc and compare its emitted digest with published metadata;
+confirm installation, wait for InstallSuccess, then run testPersistentData. Never install these fixtures on the existing Haier.
+
+## Physical tests still pending
 
 On Haier, only read-only state comparisons have been performed: all22 disabled packages and HOME remain unchanged.
 No updater has been installed there. The missing old private key blocks an in-place transition; see SIGNING.md.

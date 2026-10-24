@@ -23,5 +23,7 @@ asset name and notes. The same JSON is included in a `milo-update:v1` comment bl
 so the client can inspect both channels with bounded API calls without HTML scraping or separate metadata downloads per release.
 The asset URL must match the configured repository/tag/name. APK signature verification remains the final trust anchor.
 
-Before first publication, repository creation, secret upload, Actions execution and real releases are explicitly pending owner approval.
-Do not label local fixture tests as a passed GitHub Actions→Release delivery test.
+The owner approved first publication on 2026-10-24. Both environments and their encrypted GitHub Secrets are configured,
+restricted to the milo-main branch. Test Stable10 and RC11 were published by Actions and installed through the launcher
+on an isolated Android11 emulator. No production release or physical-TV migration has been performed.
+Keep local fixture evidence separate from the actual online delivery evidence in TESTING.md.

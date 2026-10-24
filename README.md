@@ -57,10 +57,13 @@ Installing the launcher does not enable a VPN, change HOME, disable/enable syste
 
 ## Releases
 
-The intended public fork is `anrhangels/milo-home`. Once its first publication is approved:
+Public fork: [`anrhangels/milo-home`](https://github.com/anrhangels/milo-home).
 [Releases](https://github.com/anrhangels/milo-home/releases) · [Actions](https://github.com/anrhangels/milo-home/actions).
 Test-track releases are explicitly labelled and never offered by production-track clients.
 Stable and RC are both optional, manually confirmed updates; RC is never installed automatically.
+The currently published Stable10/RC11 are **isolated test-track builds**, not a migration package for an existing TV.
+Actions→Release→download→Android installer was verified for both on an Android11 emulator; see [test evidence](docs/TESTING.md).
+The old Haier signing key is unavailable: these APKs cannot update that installation in place.
 
 ## Build and contribute
 

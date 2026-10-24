@@ -48,4 +48,16 @@ public class UpdateChecks extends InstrumentationTestCase {
         assertEquals(PackageManager.SIGNATURE_MATCH,pm.checkSignatures(c.getPackageName(),"io.github.romanvht.byedpi"));
         assertEquals(PackageManager.PERMISSION_GRANTED,pm.checkPermission("io.github.romanvht.byedpi.permission.TV_CONTROL",c.getPackageName()));
     }
+    public void testDownloadedRc() throws Exception {
+        Context c=getInstrumentation().getTargetContext();PackageManager pm=c.getPackageManager();
+        assertEquals(10,pm.getPackageInfo(c.getPackageName(),0).versionCode);
+        File apk=new File(c.getCacheDir(),"updates/update.apk");assertTrue(apk.isFile());
+        PackageInfo candidate=pm.getPackageArchiveInfo(apk.getAbsolutePath(),PackageManager.GET_SIGNING_CERTIFICATES);
+        assertNotNull(candidate);assertEquals(c.getPackageName(),candidate.packageName);assertEquals(11,candidate.versionCode);
+        assertEquals(pm.getPackageInfo(c.getPackageName(),PackageManager.GET_SIGNING_CERTIFICATES).signingInfo.getApkContentsSigners()[0],candidate.signingInfo.getApkContentsSigners()[0]);
+        java.security.MessageDigest digest=java.security.MessageDigest.getInstance("SHA-256");
+        try(InputStream in=new FileInputStream(apk)){byte[] b=new byte[32768];int n;while((n=in.read(b))!=-1)digest.update(b,0,n);}
+        StringBuilder hex=new StringBuilder();for(byte b:digest.digest())hex.append(String.format(java.util.Locale.ROOT,"%02x",b&255));
+        android.os.Bundle result=new android.os.Bundle();result.putString("cachedRcSha256",hex.toString());getInstrumentation().sendStatus(0,result);
+    }
 }

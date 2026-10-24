@@ -5,3 +5,5 @@ UpdaterUiTest supplies a clearly labelled **local test manifest** and streams ac
 The payload undergoes the same production SHA-256/cryptographic/package/version checks. This demonstrates UI and validation,
 not delivery from an unpublished GitHub Release. Real GitHub delivery gets separate evidence after publishing approval.
 No private device/network data is included. Home uses the existing theme; no wallpaper was replaced.
+The supplementary online-rc-menu.png and online-rc-installer.png were captured during the real published RC download/install
+test on 2026-10-24. They use actual GitHub metadata, unlike the earlier DEMO-labelled UI fixture screenshots.

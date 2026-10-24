@@ -16,6 +16,13 @@
 Реальные демонстрационные снимки из эмулятора опубликованы в [Screenshots](README.md#screenshots).
 В кадрах используется помеченный локальный тестовый манифест, а не вымышленный опубликованный релиз.
 
+Публичный форк: [anrhangels/milo-home](https://github.com/anrhangels/milo-home).
+Тестовые [Stable10](https://github.com/anrhangels/milo-home/releases/tag/test-v1.0.0) и
+[RC11](https://github.com/anrhangels/milo-home/releases/tag/test-v1.1.0-rc.1) собраны GitHub Actions;
+на эмуляторе проверены настоящая загрузка обоих APK и штатное обновление9→10→11 с сохранением данных и HOME.
+Это отдельный тестовый канал. Эти APK не подходят для обновления текущего Haier: старый приватный ключ не найден.
+Подробные результаты и ограничение доступа к GitHub с профилем ByeByeDPI по умолчанию — в [TESTING](docs/TESTING.md).
+
 Перед установкой прочитайте [UPDATING](docs/UPDATING.md) и [SIGNING](docs/SIGNING.md).
 Идентификатор остаётся `com.gathin.tvhome`. Новый постоянный ключ напрямую не заменяет старую подпись;
 нельзя удалять лаунчер и данные ради обхода несовместимости. Интеграция ByeByeDPI требует защищённой
