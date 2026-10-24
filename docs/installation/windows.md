@@ -73,4 +73,4 @@ Compare-Object (Get-Content before-disabled.txt) (Get-Content after-disabled.txt
 
 Список должен совпасть. Проверьте Wi-Fi, состояние ByeByeDPI, Home, стрелки, OK, Назад и громкость. В конце можно отключить только это ADB-соединение: `.\adb.exe disconnect "$serial"`.
 
-[Восстановление](../ROLLBACK.md) · [Проблемы с подписью](../SIGNING.md) · [На главную](../../README.md).
+[Восстановление](../ROLLBACK.md) · [Проблемы с подписью](../SIGNING.md) · [На главную](../../README.ru.md).

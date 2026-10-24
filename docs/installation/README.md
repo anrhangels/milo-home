@@ -1,6 +1,8 @@
 # Установка Milo Home
 
-[Главная](../../README.md) · [English](README.en.md) · [С помощью ИИ](../AI-INSTALL.ru.md)
+**Первый раз? [Начните с короткой инструкции с картинками](../START.ru.md).**
+
+[Главная](../../README.ru.md) · [English](README.en.md) · [С помощью ИИ](../AI-INSTALL.ru.md)
 
 ## Сначала выберите подходящую сборку
 

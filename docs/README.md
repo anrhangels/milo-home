@@ -1,19 +1,23 @@
-# Документация Milo Home
+# Milo help & documentation
 
-[Главная](../README.md) · [English](../README.en.md)
+[Home](../README.md) · [Русская главная](../README.ru.md)
 
-## Использование
+## Start here
 
-- [Установка](installation/README.md): Windows, Linux, macOS, проверка APK, первый запуск и HOME.
-- [Установка с ИИ](AI-INSTALL.ru.md): готовый промпт с проверкой устройства и подписи.
-- [Варианты и релизы](RELEASE_CHANNELS.md): Standard / ByeByeDPI, Stable / RC.
-- [Обновления](UPDATING.md), [подпись](SIGNING.md), [восстановление](ROLLBACK.md).
-- [Парный ByeByeDPI](BYEBYEDPI.md) и требования к его установке.
+- [Install Milo — illustrated quick start](START.md) · [Русский](START.ru.md)
+- [Installation in 26 languages](installation/languages.md)
+- [Get help or report a problem](https://github.com/anrhangels/milo-home/issues)
 
-## Разработка
+## When you need more detail
 
-- [Архитектура](ARCHITECTURE.md), [сборка](BUILDING.md), [проверки](TESTING.md).
-- [Происхождение снимков](screenshots/README.md), [материалы оформления](brand/README.md).
-- [Авторство и лицензии](../CREDITS.md), [участие](../CONTRIBUTING.md), [безопасность](../SECURITY.md).
+- Computer guides: [Windows](installation/windows.en.md), [Linux](installation/linux.en.md), [macOS](installation/macos.en.md).
+- [AI-assisted installation](AI-INSTALL.en.md).
+- [Updating](UPDATING.md), [switching from an older installation](SIGNING.en.md), [going back](ROLLBACK.md).
+- [Optional ByeByeDPI edition](BYEBYEDPI.md), [Stable and Preview](RELEASE_CHANNELS.md).
 
-Обычные темы, раскладка и управление пультом сохраняются. Старые руководства по очистке чужих ТВ и необязательные наборы upstream не являются частью текущего продукта.
+## Build and contribute
+
+- [Developer starting point and extensions](DEVELOPERS.md).
+- [Build](BUILDING.md), [architecture](ARCHITECTURE.md), [tests and limitations](TESTING.md).
+- [Credits and licenses](../CREDITS.md), [security](../SECURITY.md), [changelog](../CHANGELOG.md).
+- [Screenshot provenance](screenshots/README.md), [visual assets](brand/README.md).

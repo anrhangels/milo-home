@@ -1,5 +1,7 @@
 # Installing Milo Home
 
+**New here? [Start with the illustrated guide](../START.md).**
+
 [Home](../../README.en.md) · [Русский](README.md) · [With an AI assistant](../AI-INSTALL.en.md)
 
 ## Select the right build first

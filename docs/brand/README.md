@@ -1,15 +1,14 @@
-# Оформление Milo Home
+# Milo visual assets
 
-Маскот — предоставленный владельцем призрак с короной; адаптация создана встроенной генерацией изображений OpenAI. Силуэт и подмигивание сохранены. Иконка используется в APK и TV banner.
+The mascot comes from the owner's crowned ghost, adapted with OpenAI image generation. The transparent mascot is used on documentation covers; the installed app icon keeps its existing badge.
 
-Основные цвета оформления: тёмный фон #101321, молочный #F6F3EB, индиго #A8AFF4, тёплый акцент #EBC17E. Это палитра страницы и рамки; тему самого лаунчера она не меняет.
+- `milo-mascot.png`: transparent mascot, no square background.
+- `milo-simple-en.webp` / `milo-simple-ru.webp`: minimal bilingual covers.
+- `milo-interface.webp`: two real screen captures in simple frames.
+- `install-steps-en.webp` / `install-steps-ru.webp`: instructional diagrams, not Android screenshots.
+- `milo-icon.png`: existing app icon source.
+- `social-preview.png`: previous prepared social card, not a claim that repository settings use it.
 
-- milo-icon.png — знак512×512.
-- hero-haier-20261024-ru.webp / hero-haier-20261024-en.webp — обложки1800×1040 с прямым скриншотом работающего Haier.
-- interface-haier-20261024-ru.webp / interface-haier-20261024-en.webp — галерея1800×1000: штатный экран с разными выделенными приложениями.
-- social-preview.png — готовая карточка1280×640 для ссылок.
-- Иконки Android48/72/96/144/192px и banner320×180 — в launcher/app/src/main/res/.
+Run `node tools/branding/simple.cjs` with the dependencies in `tools/branding/package.json` to reproduce the documentation graphics. This does not change app resources. The old `render.cjs` entry point forwards to the same renderer.
 
-Фото владельца не входит в текущие материалы. Исходные screencap сохранены в docs/screenshots: UI не генерировался и не дорисовывался. Рамка остаётся за пределами экрана.
-
-Для экспорта установите зависимости tools/branding/package.json и выполните node tools/branding/render.cjs. Sharp/Node нужны только для документации, не входят в APK. Маскот включён в новые Standard/ByeByeDPI Stable1.2.0 и RC1.3.0-rc.1.
+Screenshots are not AI-generated or retouched. Their provenance and version are recorded in [screenshots](../screenshots/README.md). Decorative frames stay outside the screen; the source UI is unchanged.
