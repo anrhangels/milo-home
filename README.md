@@ -5,7 +5,7 @@
 <h1 align="center">Make room for your TV.</h1>
 <p align="center">A simple, lightweight home screen for Android TV.<br>Your favourite apps. Your remote. A calmer place to start.</p>
 
-<p align="center"><a href="https://github.com/anrhangels/milo-home/releases/tag/standard-v1.2.0"><strong>Download Milo Home</strong></a> · <a href="docs/START.md"><strong>How to install</strong></a> · <a href="#other-options">Other downloads</a></p>
+<p align="center"><a href="https://github.com/anrhangels/milo-home/releases/tag/v0.0.3"><strong>Download Milo Home</strong></a> · <a href="docs/START.md"><strong>How to install</strong></a> · <a href="#other-options">Other downloads</a></p>
 
 ## Less to get in your way
 
@@ -33,12 +33,12 @@ Keep the original launcher available so you can switch back. Already using Clean
 
 ## Pick what suits you
 
-| | Recommended | Try what's next |
-| --- | --- | --- |
-| **Milo Home** — the simple starting point | [Stable](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.2.0) | [Preview](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.3.0-rc.1) |
-| **With ByeByeDPI** — optional network integration | [Stable](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.2.0) | [Preview](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.3.0-rc.1) |
+| Edition | Download |
+| --- | --- |
+| **Milo Home 0.0.3** | [Open release](https://github.com/anrhangels/milo-home/releases/tag/v0.0.3) |
+| **With ByeByeDPI** | Choose `MiloHome-byedpi.apk` in the same release |
 
-**Stable** is for everyday use. **Preview** lets you try upcoming changes and may have bugs. Both editions are alternatives, not apps to install together. [About the network edition](docs/BYEBYEDPI.md) · [Release details](docs/RELEASE_CHANNELS.md).
+One version, two APK options. Install only one. [About the network edition](docs/BYEBYEDPI.md).
 
 ## Small project. Open doors.
 

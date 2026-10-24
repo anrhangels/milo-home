@@ -8,7 +8,7 @@
 
 ## 1. Скачайте рекомендуемую версию
 
-Откройте [Milo Home Stable](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.2.0). В разделе **Assets** скачайте `MiloHome-standard.apk` и файл `.sha256` рядом с ним. Preview для начала не нужна.
+Откройте [Milo Home 0.0.3](https://github.com/anrhangels/milo-home/releases/tag/v0.0.3). В разделе **Assets** скачайте `MiloHome-standard.apk` и файл `.sha256` рядом с ним.
 
 Уже установлен Milo или CleanYourTV? [Сначала проверьте совместимость](SIGNING.md). Если Android отклоняет подпись, остановитесь: удаление приложения удалит и его настройки.
 

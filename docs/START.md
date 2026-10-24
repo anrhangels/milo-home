@@ -8,7 +8,7 @@ You need an Android TV / Google TV (Android 8+), a computer and a way to connect
 
 ## 1. Download the recommended version
 
-Open [Milo Home Stable](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.2.0). Under **Assets**, download `MiloHome-standard.apk` and its `.sha256` file. Preview is optional; you do not need it to get started.
+Open [Milo Home 0.0.3](https://github.com/anrhangels/milo-home/releases/tag/v0.0.3). Under **Assets**, download `MiloHome-standard.apk` and its `.sha256` file.
 
 Already have Milo or CleanYourTV installed? [Check compatibility first](SIGNING.en.md). If Android rejects the signature, stop: deleting the app also deletes its settings.
 

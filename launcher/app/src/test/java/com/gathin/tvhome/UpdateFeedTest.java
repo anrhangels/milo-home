@@ -38,6 +38,26 @@ public class UpdateFeedTest {
         assertEquals(102,UpdateFeed.parse(feed,REPO,PKG,100,30,CERT,"production","standard").get(0).code);
         assertEquals(103,UpdateFeed.parse(feed,REPO,PKG,100,30,CERT,"production","byedpi").get(0).code);
     }
+    @Test public void combinedReleaseSelectsOnlyOwnEdition() throws Exception {
+        JSONObject r=release(104,false);
+        JSONObject legacy=metadata(r).put("variant","standard");
+        JSONObject standard=new JSONObject(legacy.toString());
+        JSONObject byedpi=new JSONObject(legacy.toString()).put("variant","byedpi").put("asset","MiloHome-byedpi.apk");
+        JSONObject extra=new JSONObject(r.getJSONArray("assets").getJSONObject(0).toString())
+            .put("name","MiloHome-byedpi.apk")
+            .put("browser_download_url","https://github.com/"+REPO+"/releases/download/v1.0.0/MiloHome-byedpi.apk");
+        r.getJSONArray("assets").put(extra);
+        legacy.put("editions",new JSONObject().put("standard",standard).put("byedpi",byedpi));
+        r.put("body",UpdateFeed.START+legacy+UpdateFeed.END);
+        String feed=new JSONArray().put(r).toString();
+        assertTrue(UpdateFeed.parse(feed,REPO,PKG,103,30,CERT,"production","standard").get(0).url.endsWith("/MiloHome.apk"));
+        assertTrue(UpdateFeed.parse(feed,REPO,PKG,103,30,CERT,"production","byedpi").get(0).url.endsWith("/MiloHome-byedpi.apk"));
+        byedpi.put("signerSha256",HASH);
+        r.put("body",UpdateFeed.START+legacy+UpdateFeed.END);
+        feed=new JSONArray().put(r).toString();
+        assertTrue(UpdateFeed.parse(feed,REPO,PKG,103,30,CERT,"production","byedpi").isEmpty());
+        assertEquals(1,UpdateFeed.parse(feed,REPO,PKG,103,30,CERT,"production","standard").size());
+    }
     @Test public void stableOnly() throws Exception { assertEquals("stable",parse(release(101,false)).get(0).channel); }
     @Test public void rcOnly() throws Exception { assertEquals("rc",parse(release(102,true)).get(0).channel); }
     @Test public void bothChannelsIndependent() throws Exception { assertEquals(2,parse(release(101,false),release(102,true)).size()); }

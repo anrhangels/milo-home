@@ -2,44 +2,30 @@ name: Publish Milo Home
 on:
   workflow_dispatch:
     inputs:
-      variant:
-        type: choice
-        options: [standard, byedpi]
-        required: true
-      channel:
-        type: choice
-        options: [stable, rc]
-        required: true
-      track:
-        type: choice
-        options: [test, production]
-        default: test
-        required: true
       version_code:
-        description: Monotonic Android versionCode for this track
+        description: Internal code; must exceed every previous build
+        default: "104"
         required: true
       version_name:
-        description: Semver (e.g. 1.0.0 or 1.1.0-rc.1)
+        description: Public version
+        default: "0.0.3"
         required: true
 permissions:
   contents: read
 concurrency:
-  group: milo-release-${{ inputs.variant }}
+  group: milo-release
   cancel-in-progress: false
 jobs:
   publish:
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-24.04
     timeout-minutes: 25
-    environment: ${{ inputs.track == 'test' && 'test-releases' || 'production-releases' }}
+    environment: production-releases
     permissions:
       contents: write
     env:
-      VARIANT: ${{ inputs.variant }}
       VERSION_CODE: ${{ inputs.version_code }}
       VERSION_NAME: ${{ inputs.version_name }}
-      CHANNEL: ${{ inputs.channel }}
-      TRACK: ${{ inputs.track }}
       UPDATE_REPO: ${{ github.repository }}
       EXPECTED_SIGNER: ${{ vars.MILO_SIGNER_SHA256 }}
       GH_TOKEN: ${{ github.token }}
@@ -61,7 +47,7 @@ jobs:
           python tools/milo/verify_public_tree.py
           python -m unittest discover -s tools/milo -p 'test_*.py' -v
           gh api "repos/$UPDATE_REPO/releases?per_page=100" --paginate --slurp > "$RUNNER_TEMP/prior.json"
-          python tools/milo/release.py --code "$VERSION_CODE" --name "$VERSION_NAME" --channel "$CHANNEL" --track "$TRACK" --variant "$VARIANT" --prior "$RUNNER_TEMP/prior.json"
+          python tools/milo/bundle_release.py --code "$VERSION_CODE" --name "$VERSION_NAME" --prior "$RUNNER_TEMP/prior.json"
           test "${#EXPECTED_SIGNER}" -eq 64
       - name: Install pinned Android build dependencies
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;35.0.0"'
@@ -81,20 +67,20 @@ jobs:
           MILO_KEY_PASSWORD: ${{ secrets.MILO_KEY_PASSWORD }}
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease "-PmiloVersionCode=$VERSION_CODE" "-PmiloVersionName=$VERSION_NAME" "-PmiloUpdateRepo=$UPDATE_REPO" "-PmiloUpdateTrack=$TRACK" "-PmiloVariant=$VARIANT"
+          mkdir -p ../release-output
+          for VARIANT in standard byedpi; do
+            ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease "-PmiloVersionCode=$VERSION_CODE" "-PmiloVersionName=$VERSION_NAME" "-PmiloUpdateRepo=$UPDATE_REPO" -PmiloUpdateTrack=production "-PmiloVariant=$VARIANT"
+            cp app/build/outputs/apk/release/app-release.apk "../release-output/MiloHome-$VARIANT.apk"
+          done
       - name: Cryptographic verification, metadata and monotonic version recheck
         run: |
           mkdir -p release-output
-          cp launcher/app/build/outputs/apk/release/app-release.apk "release-output/MiloHome-$VARIANT.apk"
           gh api "repos/$UPDATE_REPO/releases?per_page=100" --paginate --slurp > "$RUNNER_TEMP/prior.json"
-          python tools/milo/release.py --code "$VERSION_CODE" --name "$VERSION_NAME" --channel "$CHANNEL" --track "$TRACK" --variant "$VARIANT" --prior "$RUNNER_TEMP/prior.json" --apk "release-output/MiloHome-$VARIANT.apk" --tools "$ANDROID_HOME/build-tools/35.0.0" --signer "$EXPECTED_SIGNER" --notes docs/releases/next.md --out release-output > "$RUNNER_TEMP/release-tag.txt"
-      - name: Publish only explicitly dispatched release
+          python tools/milo/bundle_release.py --code "$VERSION_CODE" --name "$VERSION_NAME" --prior "$RUNNER_TEMP/prior.json" --tools "$ANDROID_HOME/build-tools/35.0.0" --signer "$EXPECTED_SIGNER" --notes docs/releases/next.md --out release-output > "$RUNNER_TEMP/release-tag.txt"
+      - name: Publish one version with both editions
         run: |
           TAG="$(cat "$RUNNER_TEMP/release-tag.txt")"
-          flags=(--latest=false)
-          if [ "$CHANNEL" = rc ]; then flags+=(--prerelease); fi
-          if [ "$CHANNEL" = stable ] && [ "$TRACK" = production ] && [ "$VARIANT" = standard ]; then flags=(--latest); fi
-          gh release create "$TAG" "release-output/MiloHome-$VARIANT.apk" "release-output/MiloHome-$VARIANT.apk".sha256 release-output/update.json --repo "$UPDATE_REPO" --target "$GITHUB_SHA" --title "Milo Home $VERSION_NAME ($VARIANT / $TRACK / $CHANNEL)" --notes-file release-output/release-notes.md "${flags[@]}"
+          gh release create "$TAG" release-output/*.apk release-output/*.sha256 release-output/update.json --repo "$UPDATE_REPO" --target "$GITHUB_SHA" --title "Milo Home $VERSION_NAME" --notes-file release-output/release-notes.md --latest
       - name: Remove temporary signing material
         if: always()
         run: rm -f "$RUNNER_TEMP/milo-signing.p12"

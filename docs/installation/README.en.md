@@ -6,7 +6,7 @@
 
 ## Select the right build first
 
-**Production Standard and ByeByeDPI editions are available: Stable1.2.0 / RC1.3.0-rc.1.** Tags beginning with `test-` are for an isolated emulator/test device, not your working launcher. Select the edition and compatible signing identity; do not substitute a test APK.
+**Production Standard and ByeByeDPI editions are available: Milo Home 0.0.3.** Tags beginning with `test-` are for an isolated emulator/test device, not your working launcher. Select the edition and compatible signing identity; do not substitute a test APK.
 
 1. Read the channel and notes in [Releases](https://github.com/anrhangels/milo-home/releases).
 2. Choose **production / Stable** for normal use. RC is an explicitly chosen preview.

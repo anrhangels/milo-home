@@ -6,7 +6,7 @@ Standard не содержит управления ByeByeDPI. Вариант by
 
 Нужна модифицированная сборка romanvht/ByeByeDPI, а не произвольный официальный APK. Связь — bound Messenger service с signature-permission и проверкой пакета/UID/подписи. Подтверждение VPN остаётся системным диалогом Android.
 
-В [Stable](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.2.0) и [RC](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.3.0-rc.1) есть отдельные ByeByeDPI-paired-armeabi-v7a.apk и ByeByeDPI-paired-x86_64.apk. Выбирайте по ABI; arm64-only backend в этом наборе не заявлен. APK не debuggable, подписаны тем же постоянным ключом, что лаунчер. Суммы и соответствующие исходники приложены рядом. Backend собран локально, не в workflow лаунчера.
+В [Stable](https://github.com/anrhangels/milo-home/releases/tag/v0.0.3) и [RC](https://github.com/anrhangels/milo-home/releases/tag/v0.0.3) есть отдельные ByeByeDPI-paired-armeabi-v7a.apk и ByeByeDPI-paired-x86_64.apk. Выбирайте по ABI; arm64-only backend в этом наборе не заявлен. APK не debuggable, подписаны тем же постоянным ключом, что лаунчер. Суммы и соответствующие исходники приложены рядом. Backend собран локально, не в workflow лаунчера.
 
 Для новой совместимой установки backend ставится первым, затем лаунчер: Android должен выдать signature-permission. Если официальный/прежний backend уже установлен с другим ключом, остановитесь и отдельно согласуйте миграцию его данных. Не удаляйте его автоматически. Сам лаунчер backend не скачивает и не переустанавливает.
 

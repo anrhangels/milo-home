@@ -25,6 +25,7 @@ final class UpdateFeed {
                 int start=body.indexOf(START),end=start<0?-1:body.indexOf(END,start+START.length());
                 if(start<0 || end<0 || end-start>32768) continue;
                 JSONObject m=new JSONObject(body.substring(start+START.length(),end));
+                if(m.has("editions")) m=m.getJSONObject("editions").getJSONObject(variant);
                 if(m.getInt("schema")!=1) continue;
                 if(!variant.equals(m.optString("variant","byedpi"))) continue;
                 boolean prerelease=release.optBoolean("prerelease",false);

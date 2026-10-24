@@ -1,30 +1,19 @@
-# Варианты и каналы Milo Home
+# Milo Home releases
 
-**Stable — для обычного использования. Preview — новые возможности, возможны ошибки.** В текущих технических тегах и установленных версиях Preview называется RC; это тот же предварительный канал, а не дополнительная третья версия. Метки существующих релизов не переименовываются.
+Current version: **Milo Home 0.0.3**. [Download](https://github.com/anrhangels/milo-home/releases/tag/v0.0.3).
 
-Есть два варианта одного приложения:
+One public release contains two alternatives:
+- `MiloHome-standard.apk`: recommended for most people.
+- `MiloHome-byedpi.apk`: optional paired network integration; see [setup](BYEBYEDPI.md).
 
-| Вариант | Stable | RC |
-| --- | --- | --- |
-| Standard: системные настройки Wi-Fi, без управления ByeByeDPI | [1.2.0](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.2.0) | [1.3.0-rc.1](https://github.com/anrhangels/milo-home/releases/tag/standard-v1.3.0-rc.1) |
-| ByeByeDPI: меню сети с парным backend | [1.2.0](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.2.0) | [1.3.0-rc.1](https://github.com/anrhangels/milo-home/releases/tag/byedpi-v1.3.0-rc.1) |
+Install only one launcher APK. Each has a checksum file; `update.json` is for the updater.
 
-Stable102, RC103; новые официальные APK подписаны постоянным ключом. RC — prerelease, а не обязательное автоматическое обновление. Одновременно эти варианты не устанавливаются: applicationId одинаков. Встроенный обновлятор предлагает только свой вариант и совместимую подпись. Ручной переход между вариантами требует проверки подписи и неуменьшающегося versionCode.
+## Maintainers
 
-## Что скачивать
+Dispatch **Publish Milo Home** with the version name and a strictly increasing internal code. Actions tests, lints, signs and verifies both editions, then publishes one release titled `Milo Home X.Y.Z`, tagged `vX.Y.Z`. Preview is not published automatically.
 
-MiloHome-standard.apk или MiloHome-byedpi.apk и соответствующий .sha256; update.json описывает конкретный файл. В релизах byedpi отдельно приложены парные backend APK для armeabi-v7a и x86_64, контрольные суммы и архив исходников GPL. Backend собран локально из опубликованной модификации; четыре APK лаунчера собраны GitHub Actions. Backend не встроен в APK лаунчера и не ставится автоматически.
+Public version 0.0.3 uses Android code 104, above previous 102/103 builds. Future codes must continue increasing. Both editions use the existing permanent production certificate.
 
-## Версии и метаданные
+Metadata retains a top-level Standard record for older clients and separate records in `editions.standard` and `editions.byedpi`. Each edition retains its own asset, hash, size and APK verification. Early separate-edition clients, particularly ByeByeDPI, may need one manual download of 0.0.3. New clients select their edition from the shared release.
 
-Теги: standard-vX.Y.Z / byedpi-vX.Y.Z, для RC — суффикс -rc.N. Track=test добавляет префикс test-; эти сборки production-клиент игнорирует. Старые тестовые релизы без variant считаются legacy byedpi, не Standard.
-
-versionCode возрастает через оба канала внутри варианта. Metadata schema1 содержит variant, track, channel, package, version, размер, SHA-256 и сертификат. Блок milo-update:v1 в теле REST Release позволяет проверить кандидатов без HTML-парсинга. По размеру и хешу проверяется настоящий release-asset, затем подпись и manifest APK.
-
-## Выпуск
-
-Workflow Publish Milo Home запускается вручную из milo-main с variant, channel, track, version_code, version_name. Окружения production-releases / test-releases содержат MILO_KEYSTORE_B64, MILO_STORE_PASSWORD, MILO_KEY_ALIAS, MILO_KEY_PASSWORD и публичную переменную MILO_SIGNER_SHA256. Прямые push и PR не публикуют релиз.
-
-Каждая публикация повторно проверяет монотонность версии и подпись; ключ удаляется из временного каталога runner. CI собирает оба варианта без секретов. Ключи и пароли не являются артефактами. По умолчанию Latest указывает на Standard Stable; у GitHub один общий Latest, поэтому второй Stable выбирайте по таблице выше.
-
-Старый ключ установленного Haier не найден; наличие новых релизов не делает его текущую установку совместимой. [Миграция](SIGNING.md) · [Испытания](TESTING.md).
+Previous experimental releases are retained as maintainer drafts. Their numbers are outside the new public version sequence. Historical evidence remains in [testing](TESTING.md); RC support in code is retained for future testing, but no Preview is published now.

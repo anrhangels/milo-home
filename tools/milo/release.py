@@ -20,7 +20,9 @@ def prior_max(releases,track,variant=None):
         if start<0 or end<0: continue
         try:
             m=json.loads(body[start+len(START):end])
-            if m['track']==track and m['applicationId']=='com.gathin.tvhome' and (variant is None or m.get('variant','byedpi')==variant): highest=max(highest,int(m['versionCode']))
+            records=m.get('editions',{}).values() if 'editions' in m else [m]
+            for m in records:
+                if m['track']==track and m['applicationId']=='com.gathin.tvhome' and (variant is None or m.get('variant','byedpi')==variant): highest=max(highest,int(m['versionCode']))
         except (ValueError,KeyError,TypeError): continue
     return highest
 
