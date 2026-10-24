@@ -4,6 +4,8 @@ plugins {
 
 def miloVersion = new Properties()
 rootProject.file('../version.properties').withInputStream { miloVersion.load(it) }
+def bundledBackend = providers.environmentVariable('MILO_BACKEND_APK')
+
 def instrumentedMilo = providers.gradleProperty('miloInstrumented').isPresent()
 def miloVariant = providers.gradleProperty('miloVariant').getOrElse('standard')
 if (!(miloVariant in ['standard', 'byedpi'])) throw new GradleException('Unknown Milo variant')
@@ -19,6 +21,7 @@ android {
     testBuildType 'release'
     if(System.getenv('MILO_TEST_ASSETS')) sourceSets.androidTest.assets.srcDir(System.getenv('MILO_TEST_ASSETS'))
     if(miloVariant == 'standard') sourceSets.release.manifest.srcFile 'src/standard/AndroidManifest.xml'
+    if(miloVariant == 'byedpi') sourceSets.main.assets.srcDir(layout.buildDirectory.dir('milo-backend-assets'))
     defaultConfig {
         // Opt-in identity for firmware with a package-name HOME allowlist; see docs/devices/xiaomi-mitv-aetp0-dofus.md.
         applicationId providers.gradleProperty('launcherApplicationId').getOrElse('com.gathin.tvhome')
@@ -81,4 +84,22 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.6.2'
     androidTestImplementation 'androidx.test:rules:1.6.1'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+}
+
+if(miloVariant == 'byedpi') {
+    def prepareBackend = tasks.register('prepareBundledBackend', Copy) {
+        doFirst {
+            if(!bundledBackend.isPresent() || !file(bundledBackend.get()).isFile())
+                throw new GradleException('ByeByeDPI edition requires MILO_BACKEND_APK: build and sign the paired backend first')
+        }
+        from({ bundledBackend.isPresent() ? bundledBackend.get() : '__missing_backend__' })
+        into(layout.buildDirectory.dir('milo-backend-assets/byedpi'))
+        rename { 'backend.apk' }
+    }
+    tasks.configureEach {
+        if(name.startsWith('merge') && name.endsWith('Assets')) {
+            dependsOn(prepareBackend)
+            doFirst { if(!bundledBackend.isPresent() || !file(bundledBackend.get()).isFile()) throw new GradleException('Missing paired backend APK') }
+        }
+    }
 }

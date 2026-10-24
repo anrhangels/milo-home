@@ -1,8 +1,23 @@
-A simpler home for your Android TV.
+# Milo Home 0.0.4
 
-- **Milo-Home.apk** — recommended for most people.
-- **Milo-Home-ByeByeDPI.apk** — integration with an already installed compatible paired ByeByeDPI backend; it does not include the VPN app.
+Вариант **Milo-Home-ByeByeDPI.apk** теперь содержит совместимый установщик ByeByeDPI.
 
-Install one launcher APK, not both.
+1. Установите лаунчер и откройте **Wi-Fi**.
+2. Выберите **«Установить ByeByeDPI»** и подтвердите установку Android. Дополнительно скачивать файлы не нужно.
+3. Вернитесь в Wi-Fi, включите ByeByeDPI и подтвердите запрос VPN на экране ТВ.
 
-[How to install](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.md) · [На русском](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.ru.md)
+**Milo-Home.apk** — обычный лаунчер без VPN-интеграции. Устанавливайте один из двух APK. Уже установленную несовместимую версию VPN приложение не удаляет.
+
+[Инструкция](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.ru.md)
+
+---
+
+The **Milo-Home-ByeByeDPI.apk** edition now includes the compatible ByeByeDPI installer.
+
+1. Install the launcher and open **Wi-Fi**.
+2. Select **Install ByeByeDPI** and confirm Android installation. No additional download is needed.
+3. Return to Wi-Fi, turn on ByeByeDPI and approve the VPN request on your TV.
+
+**Milo-Home.apk** is the regular launcher without VPN integration. Install one of the two APKs. An existing incompatible VPN app is never removed automatically.
+
+[Installation guide](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.md)

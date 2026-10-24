@@ -8,8 +8,12 @@
 <string name="dpi_missing">Не установлен</string>
 <string name="network_wifi_settings">Настройки Wi-Fi</string>
 <string name="dpi_failure">Не удалось изменить состояние ByeByeDPI. Проверьте совместимость сборок и разрешение VPN.</string>
-<string name="dpi_install_title">Установка ByeByeDPI</string>
-<string name="dpi_install_message">Установите парный локальный APK по INSTALL.md. Официальная версия не содержит защищённого API этого меню.</string>
-<string name="dpi_install_page">Страница проекта</string>
+<string name="dpi_install_title">Установить ByeByeDPI</string>
+<string name="dpi_install_message">Совместимая версия уже находится внутри Milo. Установите её в следующем окне Android, затем вернитесь в меню Wi-Fi и включите ByeByeDPI. Разрешение VPN подтвердите на экране ТВ.</string>
+<string name="dpi_install_page">Установить</string>
 <string name="dpi_cancelled">Разрешение VPN не предоставлено.</string>
+<string name="dpi_install_offline">Без дополнительного скачивания</string>
+<string name="dpi_preparing">Подготовка установщика…</string>
+<string name="dpi_allow_install">Разрешите Milo устанавливать приложения в настройках Android. После возврата откроется установщик ByeByeDPI.</string>
+<string name="dpi_install_failed">Установка недоступна. Возможно, уже установлена версия с другой подписью, сборка повреждена или устройство несовместимо. Ничего не удалено. Обратитесь к инструкции Milo.</string>
 </resources>

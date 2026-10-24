@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Validate immutable release inputs and create metadata from a verified signed APK."""
-import argparse, hashlib, json, os, re, subprocess
+import argparse, hashlib, json, os, re, subprocess, tempfile, zipfile
 from pathlib import Path
 
 START='<!-- milo-update:v1\n'; END='\n-->'
@@ -44,13 +44,28 @@ def verify_apk(apk,code,name,signer,tools,variant=None):
     expected=f"package: name='com.gathin.tvhome' versionCode='{code}' versionName='{name}'"
     if expected not in badging or "sdkVersion:'26'" not in badging: raise ValueError('APK package/version/minSdk mismatch')
     if 'application-debuggable' in badging: raise ValueError('Instrumented/debuggable APK must never be published')
-    if apk.stat().st_size>2*1024*1024: raise ValueError('APK exceeds 2 MiB fork budget')
+    if apk.stat().st_size>(10 if variant=='byedpi' else 2)*1024*1024: raise ValueError('APK exceeds edition size budget')
     if variant is not None:
         xml=subprocess.check_output([str(tools/aapt),'dump','xmltree',str(apk),'AndroidManifest.xml'],text=True,encoding='utf-8')
         match=re.search(r'android:name[^\n]*="com\.milohome\.variant"[^\n]*\n\s*A: android:value[^\n]*="([^"]+)"',xml)
         if not match or match.group(1)!=variant: raise ValueError('APK variant mismatch')
         permission='io.github.romanvht.byedpi.permission.TV_CONTROL'
         if (permission in badging)!=(variant=='byedpi'): raise ValueError('Unexpected ByeByeDPI permission')
+    if variant is not None:
+        with zipfile.ZipFile(apk) as archive:
+            included='assets/byedpi/backend.apk' in archive.namelist()
+            if included != (variant=='byedpi'): raise ValueError('Incorrect bundled backend presence')
+            if included:
+                with tempfile.TemporaryDirectory() as temp:
+                    backend=Path(temp)/'backend.apk';backend.write_bytes(archive.read('assets/byedpi/backend.apk'))
+                    check=subprocess.check_output([str(tools/('apksigner'+suffix)),'verify','--print-certs',str(backend)],text=True)
+                    cert=re.findall(r'Signer #\d+ certificate SHA-256 digest: ([0-9a-fA-F]+)',check)
+                    if len(cert)!=1 or cert[0].lower()!=signer.lower():raise ValueError('Bundled backend signer mismatch')
+                    info=subprocess.check_output([str(tools/aapt),'dump','badging',str(backend)],text=True,encoding='utf-8')
+                    if "package: name='io.github.romanvht.byedpi' versionCode='1821'" not in info or 'application-debuggable' in info:
+                        raise ValueError('Incorrect bundled backend identity')
+                    for abi in ('armeabi-v7a','arm64-v8a','x86','x86_64'):
+                        if abi not in info:raise ValueError('Missing bundled native ABI')
     return verified
 
 def main():

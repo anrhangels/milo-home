@@ -4,11 +4,11 @@ on:
     inputs:
       version_code:
         description: Internal code; must exceed every previous build
-        default: "104"
+        default: "105"
         required: true
       version_name:
         description: Public version
-        default: "0.0.3"
+        default: "0.0.4"
         required: true
 permissions:
   contents: read
@@ -19,7 +19,7 @@ jobs:
   publish:
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 40
     environment: production-releases
     permissions:
       contents: write
@@ -50,7 +50,9 @@ jobs:
           python tools/milo/bundle_release.py --code "$VERSION_CODE" --name "$VERSION_NAME" --prior "$RUNNER_TEMP/prior.json"
           test "${#EXPECTED_SIGNER}" -eq 64
       - name: Install pinned Android build dependencies
-        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;35.0.0"'
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "platforms;android-36" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1"'
+      - name: Build corresponding GPL backend from included source
+        run: python tools/milo/build_backend.py --out "$RUNNER_TEMP/backend-source"
       - name: Restore signing key to temporary runner storage
         env:
           KEY_B64: ${{ secrets.MILO_KEYSTORE_B64 }}
@@ -66,6 +68,8 @@ jobs:
           MILO_KEY_ALIAS: ${{ secrets.MILO_KEY_ALIAS }}
           MILO_KEY_PASSWORD: ${{ secrets.MILO_KEY_PASSWORD }}
         run: |
+          python ../tools/milo/sign_backend.py --input "$RUNNER_TEMP/backend-source/ByeByeDPI/app/build/outputs/apk/release/app-universal-release-unsigned.apk" --output "$RUNNER_TEMP/backend.apk"
+          export MILO_BACKEND_APK="$RUNNER_TEMP/backend.apk"
           chmod +x gradlew
           mkdir -p ../release-output
           for VARIANT in standard byedpi; do

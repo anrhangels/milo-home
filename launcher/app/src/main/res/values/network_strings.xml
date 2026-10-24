@@ -9,7 +9,11 @@
 <string name="network_wifi_settings">Wi-Fi settings</string>
 <string name="dpi_failure">Could not change ByeByeDPI. Check the paired build and VPN permission.</string>
 <string name="dpi_install_title">Install ByeByeDPI</string>
-<string name="dpi_install_message">Use the paired local APK and INSTALL.md. The official release does not provide this protected control API.</string>
-<string name="dpi_install_page">Project page</string>
+<string name="dpi_install_message">The compatible app is included in Milo. Install it in the next Android window, then return to Wi-Fi and turn on ByeByeDPI. Confirm VPN access on your TV.</string>
+<string name="dpi_install_page">Install</string>
 <string name="dpi_cancelled">VPN permission was not granted.</string>
+<string name="dpi_install_offline">Included. No download needed</string>
+<string name="dpi_preparing">Preparing installer…</string>
+<string name="dpi_allow_install">Allow Milo to install apps in Android settings. When you return, the ByeByeDPI installer will open.</string>
+<string name="dpi_install_failed">Cannot prepare installation. An existing app may use another signing key, the bundle may be damaged, or the device may be incompatible. Nothing was removed. See the Milo guide.</string>
 </resources>

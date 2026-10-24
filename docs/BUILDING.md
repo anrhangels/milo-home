@@ -29,3 +29,7 @@ MILO_TEST_ASSETS может указывать на внешний катало�
 CI проверяет оба варианта. tools/milo/release.py проверяет настоящий APK, включая variant, и создаёт метаданные. Ключи не попадают в артефакты. Подробности: [каналы](RELEASE_CHANNELS.md) и [подпись](SIGNING.md).
 
 tools/branding — только экспорт документации; Node/Sharp не входят в Android-приложение. Изменение изображений не должно менять тему или раскладку в продукте. [Снимки](screenshots/README.md).
+
+## Bundled VPN installer
+
+The ByeByeDPI edition now requires `MILO_BACKEND_APK` pointing to the signed universal backend built from `integrations/byebye-dpi/source.zip`. See that directory’s README. Standard needs no backend. Backend and launcher must share a signing certificate. Never ship a test-signed backend inside a production-signed launcher.

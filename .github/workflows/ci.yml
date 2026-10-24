@@ -10,7 +10,7 @@ jobs:
       matrix:
         variant: [standard, byedpi]
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -30,12 +30,21 @@ jobs:
           python -m unittest discover -s tools/milo -p 'test_*.py' -v
       - name: Install pinned Android build dependencies
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;35.0.0"'
+      - name: Build and test-sign bundled backend for network edition
+        if: matrix.variant == 'byedpi'
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "ndk;27.0.12077973" "cmake;3.22.1"
+          python tools/milo/build_backend.py --out "$RUNNER_TEMP/backend-source"
+          python tools/milo/sign_backend.py --test --input "$RUNNER_TEMP/backend-source/ByeByeDPI/app/build/outputs/apk/release/app-universal-release-unsigned.apk" --output "$RUNNER_TEMP/backend.apk"
+          echo "MILO_BACKEND_APK=$RUNNER_TEMP/backend.apk" >> "$GITHUB_ENV"
       - name: Unit tests, Android Lint and test-track APK
         working-directory: launcher
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease -PmiloUpdateTrack=test -PmiloVariant=${{ matrix.variant }}
-          test "$(stat -c %s app/build/outputs/apk/release/app-release.apk)" -le 2097152
+          BUDGET=2097152
+          if [ "${{ matrix.variant }}" = byedpi ]; then BUDGET=10485760; fi
+          test "$(stat -c %s app/build/outputs/apk/release/app-release.apk)" -le "$BUDGET"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: MiloHome-${{ matrix.variant }}-CI-test-only

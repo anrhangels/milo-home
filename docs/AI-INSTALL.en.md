@@ -4,7 +4,7 @@
 
 An assistant with terminal access can choose commands for your OS, inspect the TV and prepare installation. A person confirms Android debugging and VPN consent on the TV.
 
-**Production Milo Home 0.0.3 are available in two editions.** Select Standard or ByeByeDPI and check signing identity. For an incompatible certificate, follow the [migration guide](SIGNING.en.md); uninstalling and data loss need separate explicit consent.
+**Production Milo Home 0.0.4 are available in two editions.** Select Standard or ByeByeDPI and check signing identity. For an incompatible certificate, follow the [migration guide](SIGNING.en.md); uninstalling and data loss need separate explicit consent.
 
 ## Get started
 

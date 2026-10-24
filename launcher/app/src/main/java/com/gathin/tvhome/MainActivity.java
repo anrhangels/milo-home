@@ -889,6 +889,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if(requestCode==LAUNCHER_SETTINGS_REQUEST && data!=null && data.getBooleanExtra("milo_check_updates",false)) {
             root.post(() -> updateUi.manualCheck()); return;
         }
+        if (BuildConfig.BYEDPI_ENABLED && requestCode == DpiInstaller.PERMISSION) {
+            if(getPackageManager().canRequestPackageInstalls()) DpiInstaller.start(this);
+            else root.post(this::openNetworkPill);
+            return;
+        }
+        if (BuildConfig.BYEDPI_ENABLED && requestCode == DpiInstaller.INSTALL) {
+            root.post(this::openNetworkPill); return;
+        }
         if (BuildConfig.BYEDPI_ENABLED && requestCode == 2007) {
             if(resultCode != RESULT_OK) Toast.makeText(this,R.string.dpi_cancelled,Toast.LENGTH_LONG).show();
             root.post(this::openNetworkPill);
@@ -2548,7 +2556,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
-    /** Local Haier integration: the existing Wi-Fi pill, no module card or separate menu app. */
+    /** Optional paired VPN integration in the existing Wi-Fi pill. */
     private void openNetworkPill() {
         if (!BuildConfig.BYEDPI_ENABLED) {
             open(systemIntent(Settings.ACTION_WIFI_SETTINGS));
@@ -2570,7 +2578,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         status.setText(R.string.dpi_starting);
         DpiClient client = new DpiClient(this,new DpiClient.Listener() {
             public void state(DpiState value) {
-                current[0]=value; status.setText(value.label()); toggle.setChecked(value.running);
+                current[0]=value; status.setText(value.state==DpiState.MISSING ? R.string.dpi_install_offline : value.label()); toggle.setChecked(value.running);
+                ((TextView)dpiRow.findViewById(R.id.dpiTitle)).setText(value.state==DpiState.MISSING ? getString(R.string.dpi_install_title) : "ByeByeDPI");
+                toggle.setVisibility(value.state==DpiState.MISSING ? View.GONE : View.VISIBLE);
                 toggle.setAlpha(value.busy ? 0.45f : 1f);
                 dpiRow.setContentDescription("ByeByeDPI, "+getString(value.label()));
                 if (!value.error.isEmpty()) Toast.makeText(MainActivity.this,R.string.dpi_failure,Toast.LENGTH_LONG).show();
@@ -2586,10 +2596,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if(current[0].state==DpiState.MISSING) {
                 new android.app.AlertDialog.Builder(this).setTitle(R.string.dpi_install_title)
                     .setMessage(R.string.dpi_install_message).setNegativeButton(android.R.string.cancel,null)
-                    .setPositiveButton(R.string.dpi_install_page,(dialog,which) -> {
-                        Intent link=new Intent(Intent.ACTION_VIEW,android.net.Uri.parse("https://github.com/romanvht/ByeByeDPI"));
-                        if(link.resolveActivity(getPackageManager())!=null) open(link);
-                    }).show();
+                    .setPositiveButton(R.string.dpi_install_page,(dialog,which) -> { popup.dismiss(); DpiInstaller.start(this); }).show();
             } else if(current[0].canToggle()) client.toggle(!current[0].running);
         });
         addSeparator(rows);

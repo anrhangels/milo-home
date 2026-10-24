@@ -6,7 +6,7 @@
   android:tint="@drawable/pill_text" android:duplicateParentState="true" android:contentDescription="@null"/>
  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
   android:orientation="vertical" android:layout_marginStart="10dp" android:duplicateParentState="true">
-  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="ByeByeDPI"
+  <TextView android:id="@+id/dpiTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="ByeByeDPI"
    android:textColor="@drawable/pill_text" android:duplicateParentState="true" android:textSize="15sp" android:fontFamily="@string/font_medium"/>
   <TextView android:id="@+id/dpiStatus" android:layout_width="match_parent" android:layout_height="wrap_content"
    android:textColor="@drawable/pill_text_dim" android:duplicateParentState="true" android:textSize="12sp" android:fontFamily="@string/font_body"/>

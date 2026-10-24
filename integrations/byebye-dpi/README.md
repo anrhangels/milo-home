@@ -23,3 +23,11 @@ Changed files:
 - app/src/main/java/io/github/romanvht/byedpi/tv/VpnConsentActivity.kt
 - app/src/main/res/layout/activity_file.xml
 - app/src/main/res/values-en/strings.xml
+
+## Included installer source
+
+`source.zip` contains the complete corresponding patched backend source and native dependencies (GPLv3), without APKs, keys or build outputs. It is included inside GitHub's normal Source code archives, so no extra release assets are required.
+
+Build with `python tools/milo/build_backend.py --out build/backend-source` from the repository root. Install Android platform 36, NDK 27.0.12077973 and CMake 3.22.1 first. The helper normalizes line endings, enables ARM32/ARM64/x86/x86_64 and sets backend version 1821 / 1.8.2-milo.1. It runs backend tests and produces an unsigned universal APK. Sign with the coordinated launcher key using `tools/milo/sign_backend.py`, then pass its absolute path in `MILO_BACKEND_APK` when building the ByeByeDPI launcher edition. Production Actions performs these steps automatically. Standard never includes the backend APK.
+
+Source archive SHA-256: `0d60961a08aff6a90306b4d268dca77ad54f790abab96a0ebaa3ed5aac1551d1`.
