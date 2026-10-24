@@ -34,7 +34,7 @@
 | Вариант | Скачать |
 | --- | --- |
 | **Milo Home 0.0.3** | [Открыть релиз](https://github.com/anrhangels/milo-home/releases/tag/v0.0.3) |
-| **С ByeByeDPI** | В том же релизе выберите `MiloHome-byedpi.apk` |
+| **С ByeByeDPI** | В том же релизе выберите `Milo-Home-ByeByeDPI.apk` |
 
 Одна версия, два варианта APK. Устанавливайте только один. [О сетевой версии](docs/BYEBYEDPI.md).
 

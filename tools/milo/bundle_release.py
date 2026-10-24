@@ -35,7 +35,7 @@ def main():
         if not a.tools or not a.signer or not a.notes:p.error('Output requires tools, signer and notes')
         notes=a.notes.read_text(encoding='utf-8');records={}
         for variant in ('standard','byedpi'):
-            apk=a.out/('MiloHome-'+variant+'.apk')
+            apk=a.out/('Milo-Home.apk' if variant=='standard' else 'Milo-Home-ByeByeDPI.apk')
             release.verify_apk(apk,a.code,a.name,a.signer,a.tools,variant)
             m=release.metadata(apk,a.code,a.name,'stable','production',release.validate(a.code,a.name,'stable','production',variant),a.signer,notes,variant)
             records[variant]=m

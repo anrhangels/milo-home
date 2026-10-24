@@ -39,10 +39,10 @@ Keep these records locally. If the package exists, compare signing identities an
 
 ## 4. Verify the download
 
-Place the compatible production APK and its `.sha256` from the same release in the current directory. This check does not replace apksigner.
+Place the APK in the current directory. Compare the SHA-256 shown below with the digest displayed by GitHub beneath that APK in Assets. If they differ, stop. This does not replace apksigner.
 
 ```bash
-sha256sum --check MiloHome-standard.apk.sha256
+sha256sum Milo-Home.apk
 ```
 
 ## 5. Install and launch
@@ -50,7 +50,7 @@ sha256sum --check MiloHome-standard.apk.sha256
 Only after successful checks and selecting the correct device:
 
 ```bash
-./adb -s "$serial" install -r ./MiloHome-standard.apk &&
+./adb -s "$serial" install -r ./Milo-Home.apk &&
   ./adb -s "$serial" shell am start -n com.gathin.tvhome/.MainActivity
 ```
 

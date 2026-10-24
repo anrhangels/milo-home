@@ -20,11 +20,11 @@ A matching app name is not proof of compatibility. A file SHA-256 checksum and a
 Download the chosen APK from [Releases](https://github.com/anrhangels/milo-home/releases) and verify its file checksum using the OS installation guide. Android SDK Build-Tools supplies `apksigner` and `aapt` separately from Platform-Tools:
 
 ```text
-apksigner verify --print-certs MiloHome-standard.apk
-aapt dump badging MiloHome-standard.apk
+apksigner verify --print-certs Milo-Home.apk
+aapt dump badging Milo-Home.apk
 ```
 
-For ByeByeDPI use `MiloHome-byedpi.apk`. The official production certificate for both editions and Stable/RC is:
+For ByeByeDPI use `Milo-Home-ByeByeDPI.apk`. The official production certificate for both editions and Stable/RC is:
 
 `0eb3e4397a0f1f2c05925c47da6bebeea0e757c41967642af051c774d72b36db`
 
@@ -62,7 +62,7 @@ Save every split APK with a distinct filename when multiple paths appear. Compar
 Use the same package, compatible signing and a higher versionCode. The built-in updater also keeps the current edition.
 
 ```text
-adb -s SERIAL install -r MiloHome-standard.apk
+adb -s SERIAL install -r Milo-Home.apk
 ```
 
 Continue only after `Success`. Stop on `INSTALL_FAILED_UPDATE_INCOMPATIBLE` or `VERSION_DOWNGRADE`; do not add `-d` or automatically uninstall. Recheck the certificate and version, then perform the final checks below.
@@ -117,7 +117,7 @@ adb -s SERIAL uninstall com.gathin.tvhome
 After `Success`:
 
 ```text
-adb -s SERIAL install MiloHome-standard.apk
+adb -s SERIAL install Milo-Home.apk
 ```
 
 Use the matching APK and separately verified backend for ByeByeDPI. An incompatible existing backend needs its own data/migration agreement. Stop on any error and leave the fallback functioning.

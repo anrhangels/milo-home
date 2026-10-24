@@ -70,7 +70,9 @@ jobs:
           mkdir -p ../release-output
           for VARIANT in standard byedpi; do
             ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease "-PmiloVersionCode=$VERSION_CODE" "-PmiloVersionName=$VERSION_NAME" "-PmiloUpdateRepo=$UPDATE_REPO" -PmiloUpdateTrack=production "-PmiloVariant=$VARIANT"
-            cp app/build/outputs/apk/release/app-release.apk "../release-output/MiloHome-$VARIANT.apk"
+            ASSET=Milo-Home.apk
+            if [ "$VARIANT" = byedpi ]; then ASSET=Milo-Home-ByeByeDPI.apk; fi
+            cp app/build/outputs/apk/release/app-release.apk "../release-output/$ASSET"
           done
       - name: Cryptographic verification, metadata and monotonic version recheck
         run: |
@@ -80,7 +82,7 @@ jobs:
       - name: Publish one version with both editions
         run: |
           TAG="$(cat "$RUNNER_TEMP/release-tag.txt")"
-          gh release create "$TAG" release-output/*.apk release-output/*.sha256 release-output/update.json --repo "$UPDATE_REPO" --target "$GITHUB_SHA" --title "Milo Home $VERSION_NAME" --notes-file release-output/release-notes.md --latest
+          gh release create "$TAG" release-output/*.apk --repo "$UPDATE_REPO" --target "$GITHUB_SHA" --title "Milo Home $VERSION_NAME" --notes-file release-output/release-notes.md --latest
       - name: Remove temporary signing material
         if: always()
         run: rm -f "$RUNNER_TEMP/milo-signing.p12"

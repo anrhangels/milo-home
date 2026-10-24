@@ -3,10 +3,10 @@
 Current version: **Milo Home 0.0.3**. [Download](https://github.com/anrhangels/milo-home/releases/tag/v0.0.3).
 
 One public release contains two alternatives:
-- `MiloHome-standard.apk`: recommended for most people.
-- `MiloHome-byedpi.apk`: optional paired network integration; see [setup](BYEBYEDPI.md).
+- `Milo-Home.apk`: recommended for most people.
+- `Milo-Home-ByeByeDPI.apk`: optional integration for an already installed compatible paired backend; see [setup](BYEBYEDPI.md).
 
-Install only one launcher APK. Each has a checksum file; `update.json` is for the updater.
+Install only one launcher APK. GitHub shows the SHA-256 beneath each APK. Updater metadata is embedded in a hidden release-body comment, not uploaded as an extra asset.
 
 ## Maintainers
 

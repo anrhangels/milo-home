@@ -10,7 +10,7 @@
 
 1. Откройте [Releases](https://github.com/anrhangels/milo-home/releases) и прочитайте назначение канала и примечания.
 2. Выберите **Milo Home 0.0.3** — текущую общедоступную версию.
-3. Выберите Standard или byedpi. Ниже показан Standard: скачайте из одного релиза `MiloHome-standard.apk`, `MiloHome-standard.apk.sha256` и `update.json`. Проверьте размер, SHA-256 и подпись.
+3. Выберите обычный вариант или вариант с ByeByeDPI. Ниже показан обычный: скачайте `Milo-Home.apk`. GitHub показывает SHA-256 под файлом в Assets; подпись проверяется отдельно.
 4. Если `com.gathin.tvhome` уже установлен, сравните сертификаты и версии **до установки**. Нужны совместимая подпись и больший `versionCode`.
 
 Если подпись установленного приложения отличается, обычное обновление поверх невозможно. Не удаляйте приложение автоматически: сначала подготовьте запасной HOME и согласуйте потерю данных. [Почему и как планировать миграцию](../SIGNING.md).
@@ -39,13 +39,13 @@
 Контрольная сумма показывает целостность файла. Она **не заменяет** проверку подписи. В Android SDK Build-Tools есть `apksigner` и `aapt`; в Windows используйте `apksigner.bat` / `aapt.exe`, в Linux/macOS — `apksigner` / `aapt` по полному пути:
 
 ```text
-apksigner verify --verbose --print-certs MiloHome-standard.apk
-aapt dump badging MiloHome-standard.apk
+apksigner verify --verbose --print-certs Milo-Home.apk
+aapt dump badging Milo-Home.apk
 ```
 
 Проверьте package `com.gathin.tvhome`, `versionCode`, minSdk, ABI и сертификат. Сверяйте сертификат также с закреплённым значением в [SIGNING](../SIGNING.md), а не только с JSON рядом с APK. Для production используется постоянный сертификат `0eb3e4397a0f1f2c05925c47da6bebeea0e757c41967642af051c774d72b36db`.
 
-Чтобы сравнить с установленным приложением, получите его путь командой `shell pm path com.gathin.tvhome`, скачайте указанный `base.apk` через `adb -s SERIAL pull "ФАКТИЧЕСКИЙ_ПУТЬ" before-MiloHome-standard.apk` и проверьте его тем же `apksigner`. SDK Build-Tools — отдельный компонент, внутри обычного platform-tools его нет. Если проверить подпись самостоятельно трудно, используйте [сценарий с ИИ](../AI-INSTALL.ru.md); не угадывайте совместимость.
+Чтобы сравнить с установленным приложением, получите его путь командой `shell pm path com.gathin.tvhome`, скачайте указанный `base.apk` через `adb -s SERIAL pull "ФАКТИЧЕСКИЙ_ПУТЬ" before-Milo-Home.apk` и проверьте его тем же `apksigner`. SDK Build-Tools — отдельный компонент, внутри обычного platform-tools его нет. Если проверить подпись самостоятельно трудно, используйте [сценарий с ИИ](../AI-INSTALL.ru.md); не угадывайте совместимость.
 
 APK старой версии и сведения о HOME полезны для восстановления, но **не являются копией частных данных**. У приложения может быть выключен backup. Не обещайте сохранение настроек при смене ключа или удалении.
 

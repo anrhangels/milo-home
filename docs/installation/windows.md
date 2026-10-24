@@ -39,12 +39,10 @@ $serial = "TV_IP:ADB_PORT"
 
 ## 4. Проверьте скачанный файл
 
-Поместите совместимый production APK и его `.sha256` из одного релиза в текущую папку. Эта проверка не заменяет apksigner.
+Поместите APK в текущую папку. Сравните SHA-256 из команды ниже со значением, которое GitHub показывает под этим APK в Assets. При несовпадении остановитесь. Эта проверка не заменяет apksigner.
 
 ```powershell
-$expected = ((Get-Content .\MiloHome-standard.apk.sha256 -Raw) -split '\s+')[0].ToLowerInvariant()
-$actual = (Get-FileHash .\MiloHome-standard.apk -Algorithm SHA256).Hash.ToLowerInvariant()
-if ($actual -ne $expected) { throw 'SHA-256 mismatch: stop installation' }
+Get-FileHash .\Milo-Home.apk -Algorithm SHA256
 ```
 
 ## 5. Установите и запустите
@@ -52,7 +50,7 @@ if ($actual -ne $expected) { throw 'SHA-256 mismatch: stop installation' }
 Только после успешных проверок и выбора правильного устройства:
 
 ```powershell
-.\adb.exe -s "$serial" install -r .\MiloHome-standard.apk
+.\adb.exe -s "$serial" install -r .\Milo-Home.apk
 if ($LASTEXITCODE -ne 0) { throw "Installation failed: stop here" }
 .\adb.exe -s "$serial" shell am start -n com.gathin.tvhome/.MainActivity
 ```

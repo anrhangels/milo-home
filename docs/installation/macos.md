@@ -39,10 +39,10 @@ serial="TV_IP:ADB_PORT"
 
 ## 4. Проверьте скачанный файл
 
-Поместите совместимый production APK и его `.sha256` из одного релиза в текущую папку. Эта проверка не заменяет apksigner.
+Поместите APK в текущую папку. Сравните SHA-256 из команды ниже со значением, которое GitHub показывает под этим APK в Assets. При несовпадении остановитесь. Эта проверка не заменяет apksigner.
 
 ```bash
-shasum -a 256 --check MiloHome-standard.apk.sha256
+shasum -a 256 Milo-Home.apk
 ```
 
 ## 5. Установите и запустите
@@ -50,7 +50,7 @@ shasum -a 256 --check MiloHome-standard.apk.sha256
 Только после успешных проверок и выбора правильного устройства:
 
 ```bash
-./adb -s "$serial" install -r ./MiloHome-standard.apk &&
+./adb -s "$serial" install -r ./Milo-Home.apk &&
   ./adb -s "$serial" shell am start -n com.gathin.tvhome/.MainActivity
 ```
 

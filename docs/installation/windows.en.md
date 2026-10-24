@@ -39,12 +39,10 @@ Keep these records locally. If the package exists, compare signing identities an
 
 ## 4. Verify the download
 
-Place the compatible production APK and its `.sha256` from the same release in the current directory. This check does not replace apksigner.
+Place the APK in the current directory. Compare the SHA-256 shown below with the digest displayed by GitHub beneath that APK in Assets. If they differ, stop. This does not replace apksigner.
 
 ```powershell
-$expected = ((Get-Content .\MiloHome-standard.apk.sha256 -Raw) -split '\s+')[0].ToLowerInvariant()
-$actual = (Get-FileHash .\MiloHome-standard.apk -Algorithm SHA256).Hash.ToLowerInvariant()
-if ($actual -ne $expected) { throw 'SHA-256 mismatch: stop installation' }
+Get-FileHash .\Milo-Home.apk -Algorithm SHA256
 ```
 
 ## 5. Install and launch
@@ -52,7 +50,7 @@ if ($actual -ne $expected) { throw 'SHA-256 mismatch: stop installation' }
 Only after successful checks and selecting the correct device:
 
 ```powershell
-.\adb.exe -s "$serial" install -r .\MiloHome-standard.apk
+.\adb.exe -s "$serial" install -r .\Milo-Home.apk
 if ($LASTEXITCODE -ne 0) { throw "Installation failed: stop here" }
 .\adb.exe -s "$serial" shell am start -n com.gathin.tvhome/.MainActivity
 ```

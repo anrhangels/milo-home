@@ -36,7 +36,7 @@ Keep the original launcher available so you can switch back. Already using Clean
 | Edition | Download |
 | --- | --- |
 | **Milo Home 0.0.3** | [Open release](https://github.com/anrhangels/milo-home/releases/tag/v0.0.3) |
-| **With ByeByeDPI** | Choose `MiloHome-byedpi.apk` in the same release |
+| **With ByeByeDPI** | Choose `Milo-Home-ByeByeDPI.apk` in the same release |
 
 One version, two APK options. Install only one. [About the network edition](docs/BYEBYEDPI.md).
 

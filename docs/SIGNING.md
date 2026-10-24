@@ -20,11 +20,11 @@
 Скачайте APK выбранного варианта из [Releases](https://github.com/anrhangels/milo-home/releases), проверьте хеш файла по инструкции для своей ОС. `apksigner` и `aapt` входят в Android SDK Build-Tools, отдельно от Platform-Tools.
 
 ```text
-apksigner verify --print-certs MiloHome-standard.apk
-aapt dump badging MiloHome-standard.apk
+apksigner verify --print-certs Milo-Home.apk
+aapt dump badging Milo-Home.apk
 ```
 
-Для ByeByeDPI замените имя файла на `MiloHome-byedpi.apk`. У официальных production Stable и RC обоих вариантов сертификат:
+Для ByeByeDPI замените имя файла на `Milo-Home-ByeByeDPI.apk`. У официальных production Stable и RC обоих вариантов сертификат:
 
 `0eb3e4397a0f1f2c05925c47da6bebeea0e757c41967642af051c774d72b36db`
 
@@ -62,7 +62,7 @@ apksigner verify --print-certs old-apks/base.apk
 Нужны тот же package, совместимая подпись и больший `versionCode`. Встроенный обновлятор дополнительно сохраняет выбранный вариант. Для ручной установки:
 
 ```text
-adb -s SERIAL install -r MiloHome-standard.apk
+adb -s SERIAL install -r Milo-Home.apk
 ```
 
 Продолжайте только после `Success`. При `INSTALL_FAILED_UPDATE_INCOMPATIBLE` или `VERSION_DOWNGRADE` остановитесь: не добавляйте `-d` и не удаляйте приложение автоматически. Проверьте подпись и код версии. После установки выполните проверки из последнего раздела.
@@ -121,7 +121,7 @@ adb -s SERIAL uninstall com.gathin.tvhome
 После `Success` установите выбранный APK:
 
 ```text
-adb -s SERIAL install MiloHome-standard.apk
+adb -s SERIAL install Milo-Home.apk
 ```
 
 Для ByeByeDPI используйте соответствующий APK и отдельно проверенный backend. При конфликте ключа существующего backend нужен собственный план сохранения/удаления его данных. При любой ошибке остановитесь и оставьте запасной HOME работающим.
