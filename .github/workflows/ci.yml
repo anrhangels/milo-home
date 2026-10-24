@@ -26,7 +26,7 @@ jobs:
           python tools/milo/verify_public_tree.py
           python -m unittest discover -s tools/milo -p 'test_*.py' -v
       - name: Install pinned Android build dependencies
-        run: sdkmanager 'platforms;android-34' 'build-tools;35.0.0'
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;35.0.0"'
       - name: Unit tests, Android Lint and test-track APK
         working-directory: launcher
         run: |

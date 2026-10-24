@@ -59,7 +59,7 @@ jobs:
           python tools/milo/release.py --code "$VERSION_CODE" --name "$VERSION_NAME" --channel "$CHANNEL" --track "$TRACK" --prior "$RUNNER_TEMP/prior.json"
           test "${#EXPECTED_SIGNER}" -eq 64
       - name: Install pinned Android build dependencies
-        run: sdkmanager 'platforms;android-34' 'build-tools;35.0.0'
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;35.0.0"'
       - name: Restore signing key to temporary runner storage
         env:
           KEY_B64: ${{ secrets.MILO_KEYSTORE_B64 }}
