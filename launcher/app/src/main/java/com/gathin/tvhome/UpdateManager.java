@@ -21,7 +21,8 @@ final class UpdateManager {
     }
     private final Context context;
     private final SharedPreferences prefs;
-    private final ExecutorService worker=Executors.newSingleThreadExecutor();
+    private final ThreadPoolExecutor worker=new ThreadPoolExecutor(1,1,15L,TimeUnit.SECONDS,
+        new ArrayBlockingQueue<>(2),task -> new Thread(task,"Milo-updates"));
     private final Handler main=new Handler(Looper.getMainLooper());
     volatile List<UpdateRelease> releases=Collections.emptyList();
     volatile int state=IDLE,percent=-1;
@@ -30,7 +31,8 @@ final class UpdateManager {
     volatile UpdateRelease selected;
     private volatile boolean cancelled,checking;
     private Listener listener;
-    private UpdateManager(Context context) { this.context=context; prefs=context.getSharedPreferences("milo_updates",Context.MODE_PRIVATE); }
+    private UpdateManager(Context context) { this.context=context; prefs=context.getSharedPreferences("milo_updates",Context.MODE_PRIVATE); worker.allowCoreThreadTimeOut(true); }
+    boolean isChecking() { return checking; }
     void attach(Listener value) { listener=value; check(false); notifyChanged(); }
     void detach(Listener value) { if(listener==value) listener=null; cancelDownload(); }
     private void notifyChanged() { main.post(() -> { if(listener!=null) listener.changed(); }); }
@@ -43,6 +45,10 @@ final class UpdateManager {
                 String certificate=UpdateApk.installedSigner(context);
                 PackageInfo installed=context.getPackageManager().getPackageInfo(context.getPackageName(),0);
                 long code=installed.versionCode,now=System.currentTimeMillis();
+                UpdateCache.clean(new File(context.getCacheDir(),"updates"),code,file -> {
+                    PackageInfo archive=context.getPackageManager().getPackageArchiveInfo(file.getAbsolutePath(),0);
+                    return archive!=null && context.getPackageName().equals(archive.packageName)?archive.versionCode:-1;
+                });
                 String cache=prefs.getString("feed","");
                 if(!cache.isEmpty()) releases=UpdateFeed.parse(cache,BuildConfig.UPDATE_REPO,context.getPackageName(),code,Build.VERSION.SDK_INT,certificate,BuildConfig.UPDATE_TRACK,BuildConfig.UPDATE_VARIANT);
                 if(now<prefs.getLong("blocked_until",0)) return;

@@ -1,23 +1,25 @@
-# Milo Home 0.0.4
+# Milo Home 0.0.5
 
-Вариант **Milo-Home-ByeByeDPI.apk** теперь содержит совместимый установщик ByeByeDPI.
+Небольшое обновление без изменения привычного интерфейса.
 
-1. Установите лаунчер и откройте **Wi-Fi**.
-2. Выберите **«Установить ByeByeDPI»** и подтвердите установку Android. Дополнительно скачивать файлы не нужно.
-3. Вернитесь в Wi-Fi, включите ByeByeDPI и подтвердите запрос VPN на экране ТВ.
+- После установки обновления Milo убирает свой устаревший установочный файл.
+- После успешной установки ByeByeDPI удаляется временная распакованная копия установщика.
+- Поток проверки обновлений освобождается после простоя; постоянной фоновой службы по-прежнему нет.
+- Ручная проверка обновлений точнее сообщает о завершении запроса.
 
-**Milo-Home.apk** — обычный лаунчер без VPN-интеграции. Устанавливайте один из двух APK. Уже установленную несовместимую версию VPN приложение не удаляет.
+Данные приложений, темы и системные кэши не очищаются. Обычный APK не содержит VPN; вариант с ByeByeDPI сохраняет встроенный установщик.
 
-[Инструкция](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.ru.md)
+[Установка и помощь](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.ru.md)
 
 ---
 
-The **Milo-Home-ByeByeDPI.apk** edition now includes the compatible ByeByeDPI installer.
+A small maintenance update with the familiar interface unchanged.
 
-1. Install the launcher and open **Wi-Fi**.
-2. Select **Install ByeByeDPI** and confirm Android installation. No additional download is needed.
-3. Return to Wi-Fi, turn on ByeByeDPI and approve the VPN request on your TV.
+- Milo removes its obsolete update APK after the update is installed.
+- The temporary extracted ByeByeDPI installer is removed after successful installation.
+- The update-check worker thread exits after being idle; there is still no persistent background service.
+- Manual update checks report completion more accurately.
 
-**Milo-Home.apk** is the regular launcher without VPN integration. Install one of the two APKs. An existing incompatible VPN app is never removed automatically.
+App data, themes and system caches are not cleared. The regular APK has no VPN; the ByeByeDPI edition keeps its bundled installer.
 
-[Installation guide](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.md)
+[Installation and help](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.md)

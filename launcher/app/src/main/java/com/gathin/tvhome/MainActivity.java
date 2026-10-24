@@ -895,6 +895,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             return;
         }
         if (BuildConfig.BYEDPI_ENABLED && requestCode == DpiInstaller.INSTALL) {
+            DpiInstaller.cleanInstalled(this);
             root.post(this::openNetworkPill); return;
         }
         if (BuildConfig.BYEDPI_ENABLED && requestCode == 2007) {

@@ -34,14 +34,14 @@ final class UpdateUi implements UpdateManager.Listener {
         int label=manager.state==UpdateManager.VERIFYING?R.string.update_verifying:
             manager.state==UpdateManager.READY?R.string.update_install:R.string.update_available;
         button.setContentDescription(activity.getString(label)+(active&&manager.percent>=0?" "+manager.percent+"%":""));
-        if(manual && manager.state!=UpdateManager.CHECKING) {
+        if(manual && !manager.isChecking()) {
             manual=false;
             Toast.makeText(activity,manager.state==UpdateManager.ERROR?R.string.update_failure:
                 manager.releases.isEmpty()?R.string.update_none:R.string.update_available,Toast.LENGTH_LONG).show();
         }
     }
     private void menu() {
-        if(manager.state==UpdateManager.CHECKING) { Toast.makeText(activity,R.string.update_checking,Toast.LENGTH_SHORT).show(); return; }
+        if(manager.isChecking()) { Toast.makeText(activity,R.string.update_checking,Toast.LENGTH_SHORT).show(); return; }
         if(manager.state==UpdateManager.DOWNLOADING || manager.state==UpdateManager.VERIFYING) {
             Toast.makeText(activity,R.string.update_in_progress,Toast.LENGTH_SHORT).show(); return;
         }

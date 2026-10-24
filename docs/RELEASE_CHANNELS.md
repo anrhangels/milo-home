@@ -1,6 +1,6 @@
 # Milo Home releases
 
-Current version: **Milo Home 0.0.4**. [Download](https://github.com/anrhangels/milo-home/releases/tag/v0.0.4).
+Current version: **Milo Home 0.0.5**. [Download](https://github.com/anrhangels/milo-home/releases/tag/v0.0.5).
 
 One public release contains two alternatives:
 - `Milo-Home.apk`: recommended for most people.
@@ -12,7 +12,7 @@ Install only one launcher APK. GitHub shows the SHA-256 beneath each APK. Update
 
 Dispatch **Publish Milo Home** with the version name and a strictly increasing internal code. Actions tests, lints, signs and verifies both editions, then publishes one release titled `Milo Home X.Y.Z`, tagged `vX.Y.Z`. Preview is not published automatically.
 
-Public version 0.0.4 uses Android code 105, above previous 102/103 builds. Future codes must continue increasing. Both editions use the existing permanent production certificate.
+Public version 0.0.5 uses Android code 106, above previous 102/103 builds. Future codes must continue increasing. Both editions use the existing permanent production certificate.
 
 Metadata retains a top-level Standard record for older clients and separate records in `editions.standard` and `editions.byedpi`. Each edition retains its own asset, hash, size and APK verification. Early separate-edition clients, particularly ByeByeDPI, may need one manual download of 0.0.3. New clients select their edition from the shared release.
 

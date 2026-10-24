@@ -5,7 +5,7 @@
 <h1 align="center">Больше места для вашего ТВ.</h1>
 <p align="center">Простой и лёгкий домашний экран для Android TV.<br>Любимые приложения. Привычный пульт. Ничего лишнего.</p>
 
-<p align="center"><a href="https://github.com/anrhangels/milo-home/releases/tag/v0.0.4"><strong>Скачать Milo Home</strong></a> · <a href="docs/START.ru.md"><strong>Как установить</strong></a> · <a href="#другие-варианты">Другие версии</a></p>
+<p align="center"><a href="https://github.com/anrhangels/milo-home/releases/tag/v0.0.5"><strong>Скачать Milo Home</strong></a> · <a href="docs/START.ru.md"><strong>Как установить</strong></a> · <a href="#другие-варианты">Другие версии</a></p>
 
 ## Всё нужное — под рукой
 
@@ -33,7 +33,7 @@
 
 | Вариант | Скачать |
 | --- | --- |
-| **Milo Home 0.0.4** | [Открыть релиз](https://github.com/anrhangels/milo-home/releases/tag/v0.0.4) |
+| **Milo Home 0.0.5** | [Открыть релиз](https://github.com/anrhangels/milo-home/releases/tag/v0.0.5) |
 | **С ByeByeDPI** | В том же релизе выберите `Milo-Home-ByeByeDPI.apk` |
 
 Одна версия, два варианта APK. Устанавливайте только один. [О сетевой версии](docs/BYEBYEDPI.md).

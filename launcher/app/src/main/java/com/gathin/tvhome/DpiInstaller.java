@@ -59,6 +59,13 @@ final class DpiInstaller {
             }); }
         },"Milo-backend-installer").start();
     }
+    static void cleanInstalled(Context context) {
+        try {
+            PackageInfo installed=context.getPackageManager().getPackageInfo(DpiClient.PACKAGE,0);
+            if(installed.versionCode>=1821 && context.getPackageManager().checkSignatures(context.getPackageName(),DpiClient.PACKAGE)==PackageManager.SIGNATURE_MATCH)
+                new File(context.getCacheDir(),"updates/byedpi-paired.apk").delete();
+        } catch(PackageManager.NameNotFoundException absent) { /* Keep a staged installer if installation was cancelled. */ }
+    }
     static void verify(Context activity,File file) throws Exception {
         ApkVerifier.Result verified=new ApkVerifier.Builder(file).setMinCheckedPlatformVersion(Build.VERSION.SDK_INT)
             .setMaxCheckedPlatformVersion(Build.VERSION.SDK_INT).build().verify();
