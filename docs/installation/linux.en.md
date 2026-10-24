@@ -70,4 +70,4 @@ diff -u before-disabled.txt after-disabled.txt
 
 The lists should match. Check Wi-Fi, ByeByeDPI state, Home, arrows, OK, Back and volume. Afterwards you may disconnect just this ADB connection: `./adb disconnect "$serial"`.
 
-[Recovery](../ROLLBACK.md) · [Signing issues](../SIGNING.md) · [Home](../../README.en.md).
+[Recovery](../ROLLBACK.md) · [Signing issues](../SIGNING.en.md) · [Home](../../README.en.md).

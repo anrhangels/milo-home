@@ -73,4 +73,4 @@ Compare-Object (Get-Content before-disabled.txt) (Get-Content after-disabled.txt
 
 The lists should match. Check Wi-Fi, ByeByeDPI state, Home, arrows, OK, Back and volume. Afterwards you may disconnect just this ADB connection: `.\adb.exe disconnect "$serial"`.
 
-[Recovery](../ROLLBACK.md) · [Signing issues](../SIGNING.md) · [Home](../../README.en.md).
+[Recovery](../ROLLBACK.md) · [Signing issues](../SIGNING.en.md) · [Home](../../README.en.md).

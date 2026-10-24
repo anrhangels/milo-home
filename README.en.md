@@ -62,7 +62,7 @@ The cover and gallery use fresh direct ADB captures from the running Haier 32 Sm
 
 Both editions include the new icon. They are alternative builds of one app; the updater only offers its own edition. Choose Stable for everyday use. [Channels](docs/RELEASE_CHANNELS.md).
 
-> Updating an installed app requires a compatible signing identity. The old key for the specific Haier was not found; these releases cannot replace that installation in place. [Signing and initial migration →](docs/SIGNING.md)
+> An in-place update requires a compatible signing identity. With a different certificate, prepare a working fallback HOME and migration plan first: reinstalling deletes app data. [Signing and initial migration →](docs/SIGNING.en.md)
 
 The [installation overview](docs/installation/README.en.md) covers compatibility, HOME selection and returning to the original screen. A new launcher does not require removing the factory launcher. Installation itself does not select HOME or disable system packages.
 
@@ -86,7 +86,7 @@ The fresh/default ByeByeDPI emulator profile interrupted GitHub TLS. Actual onli
 | Get started | Build and release |
 | --- | --- |
 | [Installation](docs/installation/README.en.md) · [AI-assisted installation](docs/AI-INSTALL.en.md) | [Building](docs/BUILDING.md) · [Contributing](CONTRIBUTING.md) |
-| [Updating](docs/UPDATING.md) · [Recovery](docs/ROLLBACK.md) | [Channels and Actions](docs/RELEASE_CHANNELS.md) · [Signing](docs/SIGNING.md) |
+| [Updating](docs/UPDATING.md) · [Recovery](docs/ROLLBACK.md) | [Channels and Actions](docs/RELEASE_CHANNELS.md) · [Signing](docs/SIGNING.en.md) |
 | [ByeByeDPI](docs/BYEBYEDPI.md) · [Testing](docs/TESTING.md) | [Changelog](CHANGELOG.md) · [Security](SECURITY.md) |
 
 ---

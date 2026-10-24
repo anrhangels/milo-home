@@ -11,7 +11,7 @@
 3. Choose Standard or byedpi. Examples use Standard: download `MiloHome-standard.apk`, `MiloHome-standard.apk.sha256` and `update.json` from the same release. Verify size, SHA-256 and signing identity.
 4. If `com.gathin.tvhome` is installed, compare certificates and versions **before installing**. Updates need a compatible signing identity and a higher `versionCode`.
 
-The current Haier signing key is unavailable, so the new APK cannot update it in place. Do not uninstall to bypass this. [Signing and migration](../SIGNING.md).
+If the installed app has an incompatible signature, an in-place update is unavailable. Do not uninstall automatically: first prepare a fallback HOME and obtain explicit consent to data loss. [Signing and migration](../SIGNING.en.md).
 
 ## Choose your system
 
@@ -41,7 +41,7 @@ apksigner verify --verbose --print-certs MiloHome-standard.apk
 aapt dump badging MiloHome-standard.apk
 ```
 
-Check package `com.gathin.tvhome`, versionCode, minSdk, ABI and certificate. Also compare the certificate with [SIGNING](../SIGNING.md), not just metadata beside the APK. The production certificate is `0eb3e4397a0f1f2c05925c47da6bebeea0e757c41967642af051c774d72b36db`.
+Check package `com.gathin.tvhome`, versionCode, minSdk, ABI and certificate. Also compare the certificate with [SIGNING](../SIGNING.en.md), not just metadata beside the APK. The production certificate is `0eb3e4397a0f1f2c05925c47da6bebeea0e757c41967642af051c774d72b36db`.
 
 To inspect an installed APK, obtain its path with `shell pm path com.gathin.tvhome`, download the reported base.apk using `adb -s SERIAL pull "ACTUAL_PATH" before-MiloHome-standard.apk`, then verify it with the same apksigner. SDK Build-Tools is a separate component, not part of standalone platform-tools. Use the [AI-assisted workflow](../AI-INSTALL.en.md) if needed; do not guess compatibility.
 
