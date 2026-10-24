@@ -37,7 +37,7 @@ async function main() {
       <rect x="738" y="258" width="1006" height="576" rx="30" fill="#090B12" stroke="#535672" stroke-width="2" filter="url(#shadow)"/>
       ${image(photo,750,270,982,552,'clip-path="url(#photo)" preserveAspectRatio="xMidYMid slice"')}
       ${text(760,885,ru?'Прямой скриншот · Haier 32 Smart TV BX':'Direct screen capture · Haier 32 Smart TV BX',20,'#A9AEC0')}`;
-    await sharp(svg(1800,1040,content)).webp({quality:92}).toFile(path.join(brand,`hero-${lang}.webp`));
+    await sharp(svg(1800,1040,content)).webp({quality:92}).toFile(path.join(brand,`hero-haier-20261024-${lang}.webp`));
     const gallery=`${text(76,108,ru?'Привычный экран. Родные цвета.':'The familiar home. Its original colors.',64,'#F6F3EB',600)}
       ${text(78,168,ru?'Подсветка меняется вместе с выбранным приложением.':'The glow follows the selected app.',29,'#B9BED2')}
       ${text(78,260,ru?'01 / ВЫДЕЛЕН YOUTUBE':'01 / YOUTUBE FOCUSED',18,'#A8AFF4',600,'letter-spacing="1.5"')}
@@ -48,7 +48,7 @@ async function main() {
       ${text(78,850,ru?'Реальные установленные приложения':'Real installed applications',28,'#F6F3EB',600)}
       ${text(928,850,ru?'Без изменения темы лаунчера':'The launcher theme stays unchanged',28,'#F6F3EB',600)}
       ${text(78,932,ru?'Свежие ADB-скриншоты работающего Haier. Приложения не запускались.':'Fresh ADB captures from the running Haier. Apps were not launched.',22,'#959BAF')}`;
-    await sharp(svg(1800,1000,gallery)).webp({quality:93}).toFile(path.join(brand,`updates-${lang}.webp`));
+    await sharp(svg(1800,1000,gallery)).webp({quality:93}).toFile(path.join(brand,`interface-haier-20261024-${lang}.webp`));
   }
   const banner=`${image(logo,12,22,136,136)}${text(155,86,'Milo',34,'#F6F3EB',600)}${text(155,126,'Home',34,'#F6F3EB',600)}<rect x="161" y="143" width="52" height="3" rx="1.5" fill="#EBC17E"/>`;
   await sharp(svg(320,180,banner)).png().toFile(path.join(root,'launcher/app/src/main/res/drawable-nodpi/banner.png'));

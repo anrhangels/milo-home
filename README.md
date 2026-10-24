@@ -1,6 +1,6 @@
 <p align="center"><strong>Русский</strong> · <a href="README.en.md">English</a></p>
 
-![Milo Home — ваш ТВ, ничего лишнего](docs/brand/hero-ru.webp)
+![Milo Home — ваш ТВ, ничего лишнего](docs/brand/hero-haier-20261024-ru.webp)
 
 <h1 align="center">Milo Home</h1>
 <p align="center">Спокойный домашний экран для Android TV.<br>Ваши приложения, привычный пульт и обновления под вашим контролем.</p>
@@ -34,7 +34,7 @@ Milo Home — самостоятельный проект для Android TV: н�
 
 На обложке и ниже — свежие прямые ADB-скриншоты работающего Haier 32 Smart TV BX. Интерфейс и приложения не дорисованы. Декоративная рамка находится за пределами экрана.
 
-![Штатный экран с YouTube, Play Store и MultiMediaPlayer](docs/brand/updates-ru.webp)
+![Штатный экран с YouTube, Play Store и MultiMediaPlayer](docs/brand/interface-haier-20261024-ru.webp)
 
 *Слева выделен YouTube, справа — MultiMediaPlayer. Штатный ореол меняет цвет вместе с карточкой; приложения не запускались. На Haier сохранена его совместимая рабочая версия, новые сборки проверены отдельно на эмуляторе.*
 

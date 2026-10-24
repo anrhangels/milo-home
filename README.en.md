@@ -1,6 +1,6 @@
 <p align="center"><a href="README.md">Русский</a> · <strong>English</strong></p>
 
-![Milo Home — your TV, less noise, more home](docs/brand/hero-en.webp)
+![Milo Home — your TV, less noise, more home](docs/brand/hero-haier-20261024-en.webp)
 
 <h1 align="center">Milo Home</h1>
 <p align="center">A calmer home screen for Android TV.<br>Your apps, your remote, and updates on your terms.</p>
@@ -34,7 +34,7 @@ There is no persistent updater service. Launch-time checks are asynchronous, wit
 
 The cover and gallery use fresh direct ADB captures from the running Haier 32 Smart TV BX. App tiles and interface content were not painted in. Decorative frames stay outside the screen.
 
-![Original home with YouTube, Play Store and MultiMediaPlayer](docs/brand/updates-en.webp)
+![Original home with YouTube, Play Store and MultiMediaPlayer](docs/brand/interface-haier-20261024-en.webp)
 
 *Left: YouTube focused. Right: MultiMediaPlayer focused. The original glow follows the selected app; neither app was launched. The Haier keeps its compatible working build; new editions were tested separately on an emulator.*
 
