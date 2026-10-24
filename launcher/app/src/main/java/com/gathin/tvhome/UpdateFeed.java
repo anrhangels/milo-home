@@ -10,6 +10,10 @@ final class UpdateFeed {
     static final String START="<!-- milo-update:v1\n", END="\n-->";
     static List<UpdateRelease> parse(String json,String repo,String pkg,long installed,int sdk,
             String certificate,String track) throws Exception {
+        return parse(json,repo,pkg,installed,sdk,certificate,track,"byedpi");
+    }
+    static List<UpdateRelease> parse(String json,String repo,String pkg,long installed,int sdk,
+            String certificate,String track,String variant) throws Exception {
         if(json.length()>2*1024*1024) throw new IllegalArgumentException("Feed too large");
         JSONArray releases=new JSONArray(json);
         UpdateRelease stable=null,rc=null;
@@ -22,6 +26,7 @@ final class UpdateFeed {
                 if(start<0 || end<0 || end-start>32768) continue;
                 JSONObject m=new JSONObject(body.substring(start+START.length(),end));
                 if(m.getInt("schema")!=1) continue;
+                if(!variant.equals(m.optString("variant","byedpi"))) continue;
                 boolean prerelease=release.optBoolean("prerelease",false);
                 String channel=m.getString("channel");
                 if(!channel.equals(prerelease?"rc":"stable")) continue;

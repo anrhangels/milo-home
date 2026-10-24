@@ -1,0 +1,4 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="io.github.romanvht.byedpi.permission.TV_CONTROL" tools:node="remove" />
+    <queries><package android:name="io.github.romanvht.byedpi" tools:node="remove" /></queries>
+</manifest>

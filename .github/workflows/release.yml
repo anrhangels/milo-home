@@ -2,6 +2,10 @@ name: Publish Milo Home
 on:
   workflow_dispatch:
     inputs:
+      variant:
+        type: choice
+        options: [standard, byedpi]
+        required: true
       channel:
         type: choice
         options: [stable, rc]
@@ -20,7 +24,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: milo-release-publishing
+  group: milo-release-${{ inputs.variant }}
   cancel-in-progress: false
 jobs:
   publish:
@@ -31,6 +35,7 @@ jobs:
     permissions:
       contents: write
     env:
+      VARIANT: ${{ inputs.variant }}
       VERSION_CODE: ${{ inputs.version_code }}
       VERSION_NAME: ${{ inputs.version_name }}
       CHANNEL: ${{ inputs.channel }}
@@ -56,7 +61,7 @@ jobs:
           python tools/milo/verify_public_tree.py
           python -m unittest discover -s tools/milo -p 'test_*.py' -v
           gh api "repos/$UPDATE_REPO/releases?per_page=100" --paginate --slurp > "$RUNNER_TEMP/prior.json"
-          python tools/milo/release.py --code "$VERSION_CODE" --name "$VERSION_NAME" --channel "$CHANNEL" --track "$TRACK" --prior "$RUNNER_TEMP/prior.json"
+          python tools/milo/release.py --code "$VERSION_CODE" --name "$VERSION_NAME" --channel "$CHANNEL" --track "$TRACK" --variant "$VARIANT" --prior "$RUNNER_TEMP/prior.json"
           test "${#EXPECTED_SIGNER}" -eq 64
       - name: Install pinned Android build dependencies
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;35.0.0"'
@@ -76,20 +81,20 @@ jobs:
           MILO_KEY_PASSWORD: ${{ secrets.MILO_KEY_PASSWORD }}
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease "-PmiloVersionCode=$VERSION_CODE" "-PmiloVersionName=$VERSION_NAME" "-PmiloUpdateRepo=$UPDATE_REPO" "-PmiloUpdateTrack=$TRACK"
+          ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease "-PmiloVersionCode=$VERSION_CODE" "-PmiloVersionName=$VERSION_NAME" "-PmiloUpdateRepo=$UPDATE_REPO" "-PmiloUpdateTrack=$TRACK" "-PmiloVariant=$VARIANT"
       - name: Cryptographic verification, metadata and monotonic version recheck
         run: |
           mkdir -p release-output
-          cp launcher/app/build/outputs/apk/release/app-release.apk release-output/MiloHome.apk
+          cp launcher/app/build/outputs/apk/release/app-release.apk "release-output/MiloHome-$VARIANT.apk"
           gh api "repos/$UPDATE_REPO/releases?per_page=100" --paginate --slurp > "$RUNNER_TEMP/prior.json"
-          python tools/milo/release.py --code "$VERSION_CODE" --name "$VERSION_NAME" --channel "$CHANNEL" --track "$TRACK" --prior "$RUNNER_TEMP/prior.json" --apk release-output/MiloHome.apk --tools "$ANDROID_HOME/build-tools/35.0.0" --signer "$EXPECTED_SIGNER" --notes docs/releases/next.md --out release-output > "$RUNNER_TEMP/release-tag.txt"
+          python tools/milo/release.py --code "$VERSION_CODE" --name "$VERSION_NAME" --channel "$CHANNEL" --track "$TRACK" --variant "$VARIANT" --prior "$RUNNER_TEMP/prior.json" --apk "release-output/MiloHome-$VARIANT.apk" --tools "$ANDROID_HOME/build-tools/35.0.0" --signer "$EXPECTED_SIGNER" --notes docs/releases/next.md --out release-output > "$RUNNER_TEMP/release-tag.txt"
       - name: Publish only explicitly dispatched release
         run: |
           TAG="$(cat "$RUNNER_TEMP/release-tag.txt")"
           flags=(--latest=false)
           if [ "$CHANNEL" = rc ]; then flags+=(--prerelease); fi
-          if [ "$CHANNEL" = stable ] && [ "$TRACK" = production ]; then flags=(--latest); fi
-          gh release create "$TAG" release-output/MiloHome.apk release-output/MiloHome.apk.sha256 release-output/update.json --repo "$UPDATE_REPO" --target "$GITHUB_SHA" --title "Milo Home $VERSION_NAME ($TRACK/$CHANNEL)" --notes-file release-output/release-notes.md "${flags[@]}"
+          if [ "$CHANNEL" = stable ] && [ "$TRACK" = production ] && [ "$VARIANT" = standard ]; then flags=(--latest); fi
+          gh release create "$TAG" "release-output/MiloHome-$VARIANT.apk" "release-output/MiloHome-$VARIANT.apk".sha256 release-output/update.json --repo "$UPDATE_REPO" --target "$GITHUB_SHA" --title "Milo Home $VERSION_NAME ($VARIANT / $TRACK / $CHANNEL)" --notes-file release-output/release-notes.md "${flags[@]}"
       - name: Remove temporary signing material
         if: always()
         run: rm -f "$RUNNER_TEMP/milo-signing.p12"

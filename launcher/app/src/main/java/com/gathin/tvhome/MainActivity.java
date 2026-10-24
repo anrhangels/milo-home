@@ -458,7 +458,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         vpnApp = cfg.vpnApp;
         moduleCards = cfg.moduleCards;
         hiddenApps = new HashSet<>(cfg.hiddenApps);
-        hiddenApps.add(DpiClient.PACKAGE);
+        if(BuildConfig.BYEDPI_ENABLED) hiddenApps.add(DpiClient.PACKAGE);
 
         grid = findViewById(R.id.grid);
         rtlAppGrid = getResources().getBoolean(R.bool.rtl_app_grid);
@@ -889,7 +889,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if(requestCode==LAUNCHER_SETTINGS_REQUEST && data!=null && data.getBooleanExtra("milo_check_updates",false)) {
             root.post(() -> updateUi.manualCheck()); return;
         }
-        if (requestCode == 2007) {
+        if (BuildConfig.BYEDPI_ENABLED && requestCode == 2007) {
             if(resultCode != RESULT_OK) Toast.makeText(this,R.string.dpi_cancelled,Toast.LENGTH_LONG).show();
             root.post(this::openNetworkPill);
             return;
@@ -2550,6 +2550,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     /** Local Haier integration: the existing Wi-Fi pill, no module card or separate menu app. */
     private void openNetworkPill() {
+        if (!BuildConfig.BYEDPI_ENABLED) {
+            open(systemIntent(Settings.ACTION_WIFI_SETTINGS));
+            return;
+        }
         if (openPopup != null) openPopup.dismiss();
         View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
         LinearLayout rows = panel.findViewById(R.id.rows);

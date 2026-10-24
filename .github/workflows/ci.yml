@@ -6,6 +6,9 @@ permissions:
   contents: read
 jobs:
   launcher:
+    strategy:
+      matrix:
+        variant: [standard, byedpi]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -31,11 +34,11 @@ jobs:
         working-directory: launcher
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease -PmiloUpdateTrack=test
+          ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease -PmiloUpdateTrack=test -PmiloVariant=${{ matrix.variant }}
           test "$(stat -c %s app/build/outputs/apk/release/app-release.apk)" -le 2097152
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: MiloHome-CI-test-only
+          name: MiloHome-${{ matrix.variant }}-CI-test-only
           path: |
             launcher/app/build/outputs/apk/release/app-release.apk
             launcher/app/build/reports/lint-results-release.html

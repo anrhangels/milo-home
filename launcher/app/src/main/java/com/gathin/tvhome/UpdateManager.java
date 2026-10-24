@@ -44,7 +44,7 @@ final class UpdateManager {
                 PackageInfo installed=context.getPackageManager().getPackageInfo(context.getPackageName(),0);
                 long code=installed.versionCode,now=System.currentTimeMillis();
                 String cache=prefs.getString("feed","");
-                if(!cache.isEmpty()) releases=UpdateFeed.parse(cache,BuildConfig.UPDATE_REPO,context.getPackageName(),code,Build.VERSION.SDK_INT,certificate,BuildConfig.UPDATE_TRACK);
+                if(!cache.isEmpty()) releases=UpdateFeed.parse(cache,BuildConfig.UPDATE_REPO,context.getPackageName(),code,Build.VERSION.SDK_INT,certificate,BuildConfig.UPDATE_TRACK,BuildConfig.UPDATE_VARIANT);
                 if(now<prefs.getLong("blocked_until",0)) return;
                 if(!force && now>=prefs.getLong("success",0) && now-prefs.getLong("success",0)<86400000L) return;
                 // Failed automatic checks back off for one hour. Manual checks cannot be spammed within a minute.
@@ -60,7 +60,7 @@ final class UpdateManager {
                 }
                 String feed=combined.toString();
                 if(feed.length()>2*1024*1024) throw new IOException("Feed too large");
-                releases=UpdateFeed.parse(feed,BuildConfig.UPDATE_REPO,context.getPackageName(),code,Build.VERSION.SDK_INT,certificate,BuildConfig.UPDATE_TRACK);
+                releases=UpdateFeed.parse(feed,BuildConfig.UPDATE_REPO,context.getPackageName(),code,Build.VERSION.SDK_INT,certificate,BuildConfig.UPDATE_TRACK,BuildConfig.UPDATE_VARIANT);
                 prefs.edit().putString("feed",feed).putLong("success",now).apply();
                 error=""; state=readyFile!=null&&readyFile.isFile()?READY:IDLE;
             } catch(Exception failure) {

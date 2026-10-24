@@ -38,13 +38,15 @@ final class UpdateApk {
         if(!result.isVerified() || result.getSignerCertificates().size()!=1) throw new SecurityException("Invalid APK signature");
         String signer=hex(MessageDigest.getInstance("SHA-256").digest(result.getSignerCertificates().get(0).getEncoded()));
         if(!signer.equals(release.signer) || !signer.equals(installedSigner(context))) throw new SecurityException("Incompatible signing key; migration required");
-        PackageInfo info=context.getPackageManager().getPackageArchiveInfo(file.getAbsolutePath(),0);
+        PackageInfo info=context.getPackageManager().getPackageArchiveInfo(file.getAbsolutePath(),PackageManager.GET_META_DATA);
         PackageInfo installed=context.getPackageManager().getPackageInfo(context.getPackageName(),0);
         if(info==null || !context.getPackageName().equals(info.packageName)
                 || ((long)info.versionCode)!=release.code || !release.name.equals(info.versionName)
                 || ((long)info.versionCode)<=((long)installed.versionCode)
                 || info.applicationInfo.minSdkVersion>Build.VERSION.SDK_INT)
             throw new SecurityException("Incompatible APK identity/version/Android API");
+        String variant=info.applicationInfo.metaData==null?"byedpi":info.applicationInfo.metaData.getString("com.milohome.variant","byedpi");
+        if(!BuildConfig.UPDATE_VARIANT.equals(variant)) throw new SecurityException("Wrong launcher edition");
         try(ZipFile zip=new ZipFile(file)) {
             Set<String> abis=new HashSet<>(); java.util.Enumeration<? extends java.util.zip.ZipEntry> entries=zip.entries();
             while(entries.hasMoreElements()) {

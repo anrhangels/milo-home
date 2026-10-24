@@ -3,6 +3,13 @@ from pathlib import Path
 spec=importlib.util.spec_from_file_location('milo_release',Path(__file__).with_name('release.py'))
 release=importlib.util.module_from_spec(spec);spec.loader.exec_module(release)
 class ReleaseTest(unittest.TestCase):
+    def test_edition_tags_are_distinct(self):
+        self.assertEqual('standard-v1.2.0',release.validate(102,'1.2.0','stable','production','standard'))
+        self.assertEqual('byedpi-v1.3.0-rc.1',release.validate(103,'1.3.0-rc.1','rc','production','byedpi'))
+    def test_edition_codes_do_not_block_each_other(self):
+        record={'body':release.START+json.dumps({'track':'production','applicationId':'com.gathin.tvhome','variant':'standard','versionCode':102})+release.END}
+        self.assertEqual(0,release.prior_max([record],'production','byedpi'))
+        self.assertEqual(102,release.prior_max([record],'production','standard'))
     def test_stable_tag(self): self.assertEqual(release.validate(100,'1.0.0','stable','production'),'v1.0.0')
     def test_rc_tag(self): self.assertEqual(release.validate(101,'1.1.0-rc.1','rc','production'),'v1.1.0-rc.1')
     def test_test_track_tag(self): self.assertEqual(release.validate(9001,'1.0.0','stable','test'),'test-v1.0.0')

@@ -5,6 +5,8 @@ plugins {
 def miloVersion = new Properties()
 rootProject.file('../version.properties').withInputStream { miloVersion.load(it) }
 def instrumentedMilo = providers.gradleProperty('miloInstrumented').isPresent()
+def miloVariant = providers.gradleProperty('miloVariant').getOrElse('byedpi')
+if (!(miloVariant in ['standard', 'byedpi'])) throw new GradleException('Unknown Milo variant')
 if(instrumentedMilo && providers.gradleProperty('miloUpdateTrack').getOrElse('production') != 'test') {
     throw new GradleException('Instrumented builds are restricted to the isolated test track')
 }
@@ -16,6 +18,7 @@ android {
     buildFeatures { buildConfig true }
     testBuildType 'release'
     if(System.getenv('MILO_TEST_ASSETS')) sourceSets.androidTest.assets.srcDir(System.getenv('MILO_TEST_ASSETS'))
+    if(miloVariant == 'standard') sourceSets.release.manifest.srcFile 'src/standard/AndroidManifest.xml'
     defaultConfig {
         // Opt-in identity for firmware with a package-name HOME allowlist; see docs/devices/xiaomi-mitv-aetp0-dofus.md.
         applicationId providers.gradleProperty('launcherApplicationId').getOrElse('com.gathin.tvhome')
@@ -26,6 +29,9 @@ android {
         versionName providers.gradleProperty('miloVersionName').getOrElse(miloVersion['versionName'])
         buildConfigField 'String', 'UPDATE_REPO', '"' + providers.gradleProperty('miloUpdateRepo').getOrElse('anrhangels/milo-home') + '"'
         buildConfigField 'String', 'UPDATE_TRACK', '"' + providers.gradleProperty('miloUpdateTrack').getOrElse('production') + '"'
+        buildConfigField 'String', 'UPDATE_VARIANT', '"' + miloVariant + '"'
+        buildConfigField 'boolean', 'BYEDPI_ENABLED', (miloVariant == 'byedpi').toString()
+        manifestPlaceholders = [miloVariant: miloVariant, miloAppLabel: miloVariant == 'byedpi' ? 'Milo Home + ByeByeDPI' : 'Milo Home']
     }
 
     signingConfigs {

@@ -27,6 +27,17 @@ public class UpdateFeedTest {
         JSONObject m=metadata(release).put(key,value); release.put("body",UpdateFeed.START+m+UpdateFeed.END); return release;
     }
     @Test public void noUpdateHidesButtonData() throws Exception { assertTrue(parse(release(100,false)).isEmpty()); }
+    @Test public void standardNeverReceivesByedpiOrLegacy() throws Exception {
+        String feed=new JSONArray().put(release(101,false)).toString();
+        assertTrue(UpdateFeed.parse(feed,REPO,PKG,100,30,CERT,"production","standard").isEmpty());
+    }
+    @Test public void editionsRemainSeparateWithinEachChannel() throws Exception {
+        JSONObject standard=replace(release(102,false),"variant","standard");
+        JSONObject byedpi=replace(release(103,true),"variant","byedpi");
+        String feed=new JSONArray().put(standard).put(byedpi).toString();
+        assertEquals(102,UpdateFeed.parse(feed,REPO,PKG,100,30,CERT,"production","standard").get(0).code);
+        assertEquals(103,UpdateFeed.parse(feed,REPO,PKG,100,30,CERT,"production","byedpi").get(0).code);
+    }
     @Test public void stableOnly() throws Exception { assertEquals("stable",parse(release(101,false)).get(0).channel); }
     @Test public void rcOnly() throws Exception { assertEquals("rc",parse(release(102,true)).get(0).channel); }
     @Test public void bothChannelsIndependent() throws Exception { assertEquals(2,parse(release(101,false),release(102,true)).size()); }
