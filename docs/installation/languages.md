@@ -265,4 +265,3 @@ These are short translated starting instructions, not 26 independently tested de
 3. Milo を開いてリモコンを試し、ホームアプリに設定してください。元のランチャーは残してください。
 
 > Milo または CleanYourTV がすでにありますか？先に署名の互換性を確認し、自動的に削除しないでください。 [Signing / migration](../SIGNING.en.md)
-
