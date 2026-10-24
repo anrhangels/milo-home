@@ -15,3 +15,6 @@
   and does not embed ByeDPI/heV native source. The integration patch directory includes the backend's GPLv3 licence.
 
 Milo Home is not an official product of Gathin23, OpenAI, GitHub, Haier or Google.
+- Mascot artwork supplied by the project owner. The crowned ghost adaptation was created using OpenAI image generation.
+  Documentation covers combine the owner's real Haier photograph and actual emulator captures; application UI was not generated.
+  Branding export tools are documentation-only and add no Android runtime dependency.

@@ -1,0 +1,7 @@
+{
+  "name": "milo-brand-assets",
+  "private": true,
+  "description": "Documentation artwork export only; never included in the Android app",
+  "scripts": { "render": "node render.cjs" },
+  "dependencies": { "sharp": "0.35.5" }
+}

@@ -12,3 +12,10 @@
 - Public attribution, preserved MIT/font licences, signing migration and forward-recovery documentation.
 
 Release notes say "published" only after an actual Release URL and Actions result exist.
+
+## Unreleased — Milo Home identity and documentation
+
+- New crowned-ghost app icon and Android TV banner based on the owner's mascot.
+- Russian-first README with matching English edition, real-photo cover and screenshot gallery.
+- Windows, Linux and macOS installation guides and bilingual AI-assisted installation prompts.
+- Existing test release APKs remain unchanged; current branding is in source and future builds.

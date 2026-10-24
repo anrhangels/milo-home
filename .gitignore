@@ -31,3 +31,4 @@ private-preflight/
 private-signing/
 **/build/
 **/.gradle/
+**/node_modules/

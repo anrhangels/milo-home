@@ -7,3 +7,9 @@ not delivery from an unpublished GitHub Release. Real GitHub delivery gets separ
 No private device/network data is included. Home uses the existing theme; no wallpaper was replaced.
 The supplementary online-rc-menu.png and online-rc-installer.png were captured during the real published RC download/install
 test on 2026-10-24. They use actual GitHub metadata, unlike the earlier DEMO-labelled UI fixture screenshots.
+
+## Изображения для главной страницы
+
+`haier-user-photo.webp` — фотография Haier, которую владелец предоставил24.10.2026 для оформления страницы. Она показывает реальную прежнюю сетевую сборку, а не результат установки нового обновлятора на ТВ. Приложения на фото не запускались заново ради оформления.
+
+Обложки в `docs/brand/` используют этот снимок и существующие кадры эмулятора без перерисовки интерфейса. Сгенерирован только новый маскот; UI не сгенерирован. [Оформление](../brand/README.md).
