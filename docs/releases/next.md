@@ -1,29 +1,31 @@
-# Milo Home 0.0.6
+# Milo Home 0.0.7
 
-Новая панель настроек — всё нужное под рукой.
+Настройки лаунчера стали удобнее и нагляднее.
 
-- Короткое нажатие «Настройки» открывает боковую панель: Wi-Fi, Bluetooth, источники и громкость.
-- Широкий ползунок громкости со значком и процентами управляется стрелками пульта.
-- Две отдельные кнопки: «Настройки лаунчера» и «Все настройки» телевизора.
-- Удерживайте OK на карточке, чтобы переместить приложение, заменить его в избранном ряду или убрать с главного экрана. Вернуть его можно из библиотеки приложений.
-- В настройках лаунчера доступны стиль часов, яркость, время появления заставки на главном экране и предпросмотр.
-- «Тёмный экран» показывает чёрный фон до нажатия любой кнопки. Телевизор при этом остаётся включённым — это не аппаратный сон.
+- Шесть разделов: оформление, главный экран, заставка, плавность и комфорт, обновления, дополнительно.
+- Предпросмотр показывает изменения дока, количества карточек, подписей и часов.
+- Настройте прозрачность дока, кнопки главного экрана, подписи приложений и анимации. Прозрачность теперь работает и для стеклянного дока.
+- Выберите режим обновлений: только вручную, при открытии Milo, раз в сутки или каждые 6 часов в фоне.
+- По умолчанию сохранена проверка при открытии, не чаще раза в сутки. Фоновые режимы включаются по вашему выбору; Android может отложить запуск. Скачивание и установка — только по подтверждению.
+- Старое меню по удержанию OK на кнопке настроек убрано. Редактирование приложений, дока и карточек дополнений доступно в новых разделах.
+- Можно сбросить оформление, сохранив приложения, VPN, режим обновлений и настройки телевизора.
 
-Обычная версия — **Milo-Home.apk**. Версия со встроенным установщиком ByeByeDPI — **Milo-Home-ByeByeDPI.apk**. Для обновления выбирайте тот же вариант, который уже установлен.
+**Milo-Home.apk** — обычная версия. **Milo-Home-ByeByeDPI.apk** — со встроенным установщиком ByeByeDPI. Для обновления выбирайте уже установленный вариант.
 
 [Установка и помощь](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.ru.md)
 
 ---
 
-A new settings panel puts everyday controls within reach.
+Launcher settings are now clearer and easier to use.
 
-- Press Settings to open the side panel: Wi-Fi, Bluetooth, inputs and volume.
-- A wide volume capsule with a speaker icon and percentage works with the remote arrows.
-- Separate buttons open launcher settings and the TV's Android settings.
-- Hold OK on an app tile to move it, replace a favourite in the dock or remove it from Home. Restore hidden shortcuts from the app library.
-- Launcher settings now include clock style, brightness, a Home-only screensaver timer and preview.
-- Dark screen displays black until any remote key is pressed. The TV stays powered on; this is not hardware standby.
+- Six sections: appearance, Home, screensaver, motion and comfort, updates, and more.
+- Live examples show changes to the dock, card layout, labels and clock.
+- Customise dock opacity, Home shortcuts, app names and animations. Opacity now also works with glass docks.
+- Choose manual checks, checks when Milo opens, daily background checks or background checks every six hours.
+- The default remains a check when Milo opens, at most once a day. Background modes are opt-in and Android may delay them. Downloads and installation always need confirmation.
+- The old Settings long-press menu is gone. App ordering, dock editing and module cards are available in the new sections.
+- Reset appearance without changing apps, VPN, update preferences or TV settings.
 
-Choose **Milo-Home.apk** for the regular edition or **Milo-Home-ByeByeDPI.apk** for the bundled ByeByeDPI installer. When updating, keep your existing edition.
+Choose **Milo-Home.apk** for the regular edition or **Milo-Home-ByeByeDPI.apk** for the bundled ByeByeDPI installer. Keep your existing edition when updating.
 
 [Installation and help](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.md)
