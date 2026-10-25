@@ -26,6 +26,7 @@ final class ClockScene {
     private final Random random = new Random();
     private final View content;
     private final GradientDrawable glow;
+    private final float brightness;
     private int colorIndex;
     private int glowColor;
 
@@ -41,6 +42,10 @@ final class ClockScene {
     /** root is the inflated dream_clock layout. */
     ClockScene(View root) {
         content = root.findViewById(R.id.dreamContent);
+        android.content.SharedPreferences prefs = root.getContext().getSharedPreferences(Config.SETTINGS_NAME, 0);
+        brightness = Math.max(20, Math.min(100, prefs.getInt("milo_clock_brightness", 80))) / 100f;
+        android.widget.TextClock clock = root.findViewById(R.id.miloDreamClock);
+        clock.setTypeface(android.graphics.Typeface.create(prefs.getBoolean("milo_clock_bold", false) ? "sans-serif-medium" : "sans-serif-thin", android.graphics.Typeface.NORMAL));
         View ambient = root.findViewById(R.id.dreamAmbient);
         glow = new GradientDrawable();
         glow.setGradientType(GradientDrawable.RADIAL_GRADIENT);
@@ -55,7 +60,7 @@ final class ClockScene {
         content.setAlpha(0f);
         content.post(() -> {
             placeClock();
-            content.animate().alpha(1f).setDuration(1200).start();
+            content.animate().alpha(brightness).setDuration(1200).start();
         });
         handler.removeCallbacks(tick);
         handler.postDelayed(tick, MOVE_MS);
@@ -69,7 +74,7 @@ final class ClockScene {
     private void moveClock() {
         content.animate().alpha(0f).setDuration(900).withLayer().withEndAction(() -> {
             placeClock();
-            content.animate().alpha(1f).setDuration(1200).withLayer().start();
+            content.animate().alpha(brightness).setDuration(1200).withLayer().start();
         }).start();
     }
 

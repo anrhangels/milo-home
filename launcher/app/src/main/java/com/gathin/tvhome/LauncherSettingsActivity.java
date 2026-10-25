@@ -143,9 +143,46 @@ public final class LauncherSettingsActivity extends Activity {
         checkUpdates.setText(R.string.update_check);
         ((android.view.ViewGroup)findViewById(R.id.tvSettingsChoice).getParent()).addView(checkUpdates);
         checkUpdates.setOnClickListener(v -> { setResult(RESULT_OK,new Intent().putExtra("milo_check_updates",true)); finish(); });
+        addScreensaverSettings();
         refresh();
         if (config.launcherSettingsButton) reorderChoice.requestFocus();
         else columnChoices[Math.max(0, Math.min(columns - 4, 3))].requestFocus();
+    }
+
+
+    private void addScreensaverSettings() {
+        LinearLayout parent = (LinearLayout) findViewById(R.id.tvSettingsChoice).getParent();
+        TextView heading = new TextView(this);
+        heading.setText(R.string.milo_screensaver); heading.setTextColor(-1); heading.setTextSize(23);
+        heading.setPadding(18,28,18,12); parent.addView(heading);
+        setting(parent, R.string.milo_clock_style, () ->
+            new AlertDialog.Builder(this).setTitle(R.string.milo_clock_style)
+                .setSingleChoiceItems(new String[]{getString(R.string.milo_clock_light),getString(R.string.milo_clock_bold)},
+                    choices.getBoolean("milo_clock_bold",false)?1:0,(dialog,which)->{
+                        choices.edit().putBoolean("milo_clock_bold",which==1).apply(); changed(); dialog.dismiss();
+                    }).setNegativeButton(android.R.string.cancel,null).show());
+        setting(parent, R.string.milo_brightness, () ->
+            new AlertDialog.Builder(this).setTitle(R.string.milo_brightness)
+                .setSingleChoiceItems(new String[]{"30%","50%","80%","100%"},
+                    java.util.Arrays.asList(30,50,80,100).indexOf(choices.getInt("milo_clock_brightness",80)),
+                    (dialog,which)->{choices.edit().putInt("milo_clock_brightness",new int[]{30,50,80,100}[which]).apply(); changed(); dialog.dismiss();})
+                .setNegativeButton(android.R.string.cancel,null).show());
+        setting(parent, R.string.milo_idle, () -> {
+            int[] minutes={0,1,3,5,10,15,30};
+            String[] labels=new String[minutes.length];
+            for(int i=0;i<minutes.length;i++) labels[i]=i==0?getString(R.string.milo_off):getString(R.string.milo_minutes,minutes[i]);
+            new AlertDialog.Builder(this).setTitle(R.string.milo_idle).setSingleChoiceItems(labels,
+                java.util.Arrays.asList(0,1,3,5,10,15,30).indexOf(choices.getInt("milo_idle_minutes",Config.load(this).homeIdleClockMinutes)),
+                (dialog,which)->{choices.edit().putInt("milo_idle_minutes",minutes[which]).apply(); changed(); dialog.dismiss();})
+                .setNegativeButton(android.R.string.cancel,null).show();
+        });
+        TextView hint=new TextView(this); hint.setText(R.string.milo_idle_hint);
+        hint.setTextColor(0xffbbbbbb); hint.setPadding(18,8,18,12); parent.addView(hint);
+        setting(parent,R.string.milo_preview,()->startActivity(new Intent(this,ClockActivity.class)));
+    }
+    private void setting(LinearLayout parent,int title,Runnable action) {
+        TextView row=new TextView(this,null,0,R.style.SettingsRow); row.setText(title);
+        parent.addView(row); row.setOnClickListener(v->action.run());
     }
 
     private void reverseRow(TextView[] views) {

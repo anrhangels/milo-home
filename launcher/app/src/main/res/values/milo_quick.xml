@@ -1,0 +1,19 @@
+<resources>
+<string name="milo_bluetooth">Bluetooth</string>
+<string name="milo_dark_screen">Dark screen</string>
+<string name="milo_volume">Volume</string>
+<string name="milo_all_settings">All settings</string>
+<string name="milo_screensaver">Screensaver</string>
+<string name="milo_clock_style">Clock style</string>
+<string name="milo_clock_light">Light</string>
+<string name="milo_clock_bold">Bold</string>
+<string name="milo_brightness">Clock brightness</string>
+<string name="milo_idle">Start on Home after</string>
+<string name="milo_idle_hint">Only while Milo is open. System screensaver timing stays in Android settings.</string>
+<string name="milo_preview">Preview</string>
+<string name="milo_minutes">%1$d minutes</string>
+<string name="milo_off">Off</string>
+<string name="milo_dark_hint">Black screen; any remote key returns. The TV stays powered on.</string>
+<string name="milo_launcher_settings">Milo settings</string>
+<string name="milo_wifi">Wi-Fi</string>
+</resources>

@@ -98,6 +98,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     private static final int LAUNCHER_SETTINGS_REQUEST = 42;
     /** Sent by QuickSettingsActivity: open Launcher settings from here so Home rebuilds when they close. */
+    static final String ACTION_NETWORK_PANEL = "com.gathin.tvhome.action.NETWORK_PANEL";
     static final String ACTION_LAUNCHER_SETTINGS = "com.gathin.tvhome.action.LAUNCHER_SETTINGS";
     /** The system input switcher, forwarded here by InputsRequestActivity while handle_view_inputs is on. */
     static final String ACTION_VIEW_INPUTS = "com.android.tv.action.VIEW_INPUTS";
@@ -604,13 +605,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         });
         launcherSettingsButton = cfg.launcherSettingsButton;
         if (launcherSettingsButton) {
-            ((TextView) btnSettings).setText(R.string.launcher_settings);
+            ((TextView) btnSettings).setText(R.string.settings);
             ((TextView) btnSettings).setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_home_settings_pill, 0, 0, 0);
         }
         btnSettings.setOnClickListener(v -> {
-            if (launcherSettingsButton) startActivityForResult(
-                    new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST);
-            else open(systemIntent(Settings.ACTION_SETTINGS));
+            startActivity(new Intent(this, QuickSettingsActivity.class));
         });
         btnReorder = findViewById(R.id.btnReorder);
         btnReorder.setOnClickListener(v -> toggleReorder());
@@ -640,7 +639,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             ((TextView) btnSettings).setText(R.string.settings);
             ((TextView) btnSettings).setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_settings, 0, 0, 0);
             if (!iconOnlyButtons) makeIconOnly((TextView) btnSettings);
-            btnSettings.setOnClickListener(v -> showTopMenu());
+            btnSettings.setOnClickListener(v -> startActivity(new Intent(this, QuickSettingsActivity.class)));
             // The lone gear sits at the header's middle, not on its bottom line like the row of pills.
             LinearLayout topButtons = findViewById(R.id.topButtons);
             RelativeLayout.LayoutParams tlp = (RelativeLayout.LayoutParams) topButtons.getLayoutParams();
@@ -748,8 +747,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean openInputsIfAsked(Intent intent) {
         if (intent == null || !ACTION_VIEW_INPUTS.equals(intent.getAction())) return false;
         setIntent(new Intent(Intent.ACTION_MAIN));
-        View anchor = topMenu ? findViewById(R.id.btnSettings) : btnInputs;
-        if (anchor.getVisibility() != View.VISIBLE) return true;
+        View anchor = topMenu || btnInputs.getVisibility() != View.VISIBLE
+                ? findViewById(R.id.btnSettings) : btnInputs;
         if (anchor.isLaidOut()) {
             anchor.requestFocus();
             showInputs();
@@ -771,6 +770,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     }
 
     private boolean openLauncherSettingsIfAsked(Intent intent) {
+        if (intent != null && ACTION_NETWORK_PANEL.equals(intent.getAction())) {
+            setIntent(new Intent(Intent.ACTION_MAIN));
+            root.post(this::openNetworkPill);
+            return true;
+        }
         if (intent == null || !ACTION_LAUNCHER_SETTINGS.equals(intent.getAction())) return false;
         setIntent(new Intent(Intent.ACTION_MAIN));
         startActivityForResult(new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST);
@@ -2780,7 +2784,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // top_menu: the pill is gone, so the list hangs under the gear, growing inward from the right.
         // Read the switch, not the pill: show_inputs_pill=false hides the pill too, and there the list
         // keeps its usual place.
-        boolean underGear = topMenu;
+        boolean underGear = topMenu || btnInputs.getVisibility() != View.VISIBLE;
         View anchor = findViewById(underGear ? R.id.btnSettings : R.id.btnInputs);
         View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
         LinearLayout rows = panel.findViewById(R.id.rows);

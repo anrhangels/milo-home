@@ -1,0 +1,19 @@
+<resources>
+<string name="milo_bluetooth">Bluetooth</string>
+<string name="milo_dark_screen">Тёмный экран</string>
+<string name="milo_volume">Громкость</string>
+<string name="milo_all_settings">Все настройки</string>
+<string name="milo_screensaver">Заставка</string>
+<string name="milo_clock_style">Стиль часов</string>
+<string name="milo_clock_light">Тонкий</string>
+<string name="milo_clock_bold">Жирный</string>
+<string name="milo_brightness">Яркость часов</string>
+<string name="milo_idle">Показывать на главном экране через</string>
+<string name="milo_idle_hint">Только когда открыт Milo. Время системной заставки — в настройках Android.</string>
+<string name="milo_preview">Предпросмотр</string>
+<string name="milo_minutes">%1$d мин.</string>
+<string name="milo_off">Выключено</string>
+<string name="milo_dark_hint">Чёрный экран; любая кнопка возвращает назад. Телевизор остаётся включённым.</string>
+<string name="milo_launcher_settings">Настройки Milo</string>
+<string name="milo_wifi">Wi-Fi</string>
+</resources>

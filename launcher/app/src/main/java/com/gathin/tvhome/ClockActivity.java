@@ -21,18 +21,21 @@ public class ClockActivity extends Activity {
         setContentView(R.layout.dream_clock);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE);
-        scene = new ClockScene(getWindow().getDecorView());
+        if (getIntent().getBooleanExtra("dark_screen", false)) {
+            findViewById(R.id.dreamContent).setVisibility(View.GONE);
+            findViewById(R.id.dreamAmbient).setVisibility(View.GONE);
+        } else scene = new ClockScene(getWindow().getDecorView());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        scene.start();
+        if (scene != null) scene.start();
     }
 
     @Override
     protected void onPause() {
-        scene.stop();
+        if (scene != null) scene.stop();
         super.onPause();
         finish();   // never left behind in the back stack
     }
