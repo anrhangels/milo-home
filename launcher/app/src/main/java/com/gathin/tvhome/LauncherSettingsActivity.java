@@ -161,6 +161,8 @@ public final class LauncherSettingsActivity extends Activity implements UpdateMa
         safety.setPadding(dp(4),dp(6),dp(4),dp(12));content.addView(safety);
     }
     private void more() {
+        action(0,R.string.report_title,R.string.report_settings_hint,
+            ()->startActivity(new Intent(this,BugReportActivity.class)));
         action(R.id.defaultHomeChoice,R.string.home_settings,R.string.home_settings_help,
             ()->open(new Intent(Settings.ACTION_HOME_SETTINGS)));
         action(R.id.tvSettingsChoice,R.string.milo_all_settings,0,

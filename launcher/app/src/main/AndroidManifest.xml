@@ -102,6 +102,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".BugReportActivity" android:exported="false"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".LauncherSettingsActivity"
             android:exported="false"

@@ -1,0 +1,20 @@
+<resources>
+    <string name="report_title">Report a problem</string>
+    <string name="report_settings_hint">Review device details and scan a QR code to describe a bug on your phone.</string>
+    <string name="report_intro">Review the snapshot, then open the GitHub form on your phone.</string>
+    <string name="report_privacy">Only the details shown here enter the QR. No accounts, network addresses, serial numbers, app lists or logs.</string>
+    <string name="report_loading">Preparing…</string>
+    <string name="report_qr">QR code for a prefilled GitHub bug report</string>
+    <string name="report_review">Check the details on the left and select Show QR code. Nothing is published automatically.</string>
+    <string name="report_show_qr">Show QR code</string>
+    <string name="report_scan">Scan with your phone. Sign in to GitHub, describe what happened and submit the issue yourself.</string>
+    <string name="report_done">Back to settings</string>
+    <string name="report_error">Could not prepare the QR code. Try again.</string>
+    <string name="report_version">Milo Home version</string>
+    <string name="report_edition">Edition</string>
+    <string name="report_device">Manufacturer / model reported by Android</string>
+    <string name="report_android">Android</string>
+    <string name="report_ram">RAM: total / available now</string>
+    <string name="report_storage">Storage available now</string>
+    <string name="report_unknown">Unavailable</string>
+</resources>

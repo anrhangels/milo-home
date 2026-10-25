@@ -1,0 +1,20 @@
+<resources>
+    <string name="report_title">Сообщить о проблеме</string>
+    <string name="report_settings_hint">Проверьте характеристики и отсканируйте QR, чтобы описать проблему на телефоне.</string>
+    <string name="report_intro">Проверьте данные, затем откройте форму GitHub на телефоне.</string>
+    <string name="report_privacy">В QR попадут только показанные данные. Без аккаунтов, сетевых адресов, серийных номеров, списка приложений и журналов.</string>
+    <string name="report_loading">Подготовка…</string>
+    <string name="report_qr">QR-код для заполненной формы обращения на GitHub</string>
+    <string name="report_review">Проверьте данные слева и нажмите «Показать QR-код». Ничего не публикуется автоматически.</string>
+    <string name="report_show_qr">Показать QR-код</string>
+    <string name="report_scan">Сканируйте телефоном. Войдите в GitHub, допишите, что случилось, и отправьте обращение самостоятельно.</string>
+    <string name="report_done">Вернуться в настройки</string>
+    <string name="report_error">Не удалось подготовить QR-код. Попробуйте ещё раз.</string>
+    <string name="report_version">Версия Milo Home</string>
+    <string name="report_edition">Вариант</string>
+    <string name="report_device">Производитель / модель по данным Android</string>
+    <string name="report_android">Android</string>
+    <string name="report_ram">Оперативная память: всего / доступно сейчас</string>
+    <string name="report_storage">Свободное место сейчас</string>
+    <string name="report_unknown">Недоступно</string>
+</resources>

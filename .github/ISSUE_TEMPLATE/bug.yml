@@ -12,8 +12,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: Версия и канал
-      placeholder: "1.2.0 Stable, versionCode102"
+      label: Версия Milo Home
+      placeholder: "0.0.8, versionCode 109"
     validations:
       required: true
   - type: input

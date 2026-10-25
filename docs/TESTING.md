@@ -89,3 +89,11 @@
 ## Воспроизводимость
 
 [Сборка](BUILDING.md) описывает miloVariant, miloUpdateTrack и инструменты. tools/device-tests проверяет variant/permission, сохранение данных и HOME после обновления. Используйте отдельный эмулятор с явным -s, устанавливайте backend перед byedpi-лаунчером и ждите InstallSuccess до запуска инструментальных тестов. Не подменяйте рабочую установку ТВ ради фикстур.
+
+## Milo Home 0.0.8 — simple bug report
+
+On an isolated Android 11 emulator, both Standard and ByeByeDPI editions passed the path Launcher settings → More → Report a problem → Show QR code → Return to settings. Back and reopening the screen were also checked. The displayed version and edition matched the installed APK. A QR reader decoded the actual full-screen capture to the expected GitHub issue URL in both editions. No issue was submitted during testing.
+
+To reproduce: install a test build on a disposable emulator, disconnect its network, open the report screen, check the six displayed device facts and generate the QR. Scan it on a connected phone; verify the destination is `github.com/anrhangels/milo-home/issues/new`, the title and device facts are filled in, and submission still requires the user's GitHub login and action. Do not publish test reports to the project.
+
+`BugReportTest` covers sanitisation, unavailable metrics, the fixed field allowlist and destination, maximum-length Unicode input, and QR round-trip decoding. No new Android permissions, background service or reporting server were added. These checks do not claim physical-TV or phone-camera validation for this release.

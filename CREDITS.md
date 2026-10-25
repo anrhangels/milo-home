@@ -18,3 +18,7 @@ Milo Home is not an official product of Gathin23, OpenAI, GitHub, Haier or Googl
 - Mascot artwork supplied by the project owner. The crowned ghost adaptation was created using OpenAI image generation.
   Documentation covers combine fresh ADB captures of the running TV and actual emulator captures; application UI was not generated.
   Branding export tools are documentation-only and add no Android runtime dependency.
+
+## QR code generation
+
+Report QR codes use [ZXing Core 3.5.3](https://github.com/zxing/zxing), Apache License 2.0. Only offline QR encoding is included in the app; no scanner or camera integration. [License](docs/licenses/zxing-LICENSE.txt).

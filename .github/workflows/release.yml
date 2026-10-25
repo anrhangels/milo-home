@@ -4,11 +4,11 @@ on:
     inputs:
       version_code:
         description: Internal code; must exceed every previous build
-        default: "108"
+        default: "109"
         required: true
       version_name:
         description: Public version
-        default: "0.0.7"
+        default: "0.0.8"
         required: true
 permissions:
   contents: read

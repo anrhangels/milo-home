@@ -1,30 +1,28 @@
-# Milo Home 0.0.7
+# Milo Home 0.0.8
 
-Настройки лаунчера стали удобнее и нагляднее.
+Сообщить о проблеме теперь можно прямо с телевизора.
 
-- Шесть разделов: оформление, главный экран, заставка, плавность и комфорт, обновления, дополнительно.
-- Предпросмотр показывает изменения дока, количества карточек, подписей и часов.
-- Настройте прозрачность дока, кнопки главного экрана, подписи приложений и анимации. Прозрачность теперь работает и для стеклянного дока.
-- Выберите режим обновлений: только вручную, при открытии Milo, раз в сутки или каждые 6 часов в фоне.
-- По умолчанию сохранена проверка при открытии, не чаще раза в сутки. Фоновые режимы включаются по вашему выбору; Android может отложить запуск. Скачивание и установка — только по подтверждению.
-- Старое меню по удержанию OK на кнопке настроек убрано. Редактирование приложений, дока и карточек дополнений доступно в новых разделах.
-- Можно сбросить оформление, сохранив приложения, VPN, режим обновлений и настройки телевизора.
+- Откройте «Настройки лаунчера → Дополнительно → Сообщить о проблеме».
+- Проверьте версию Milo, вариант, модель, Android, объём оперативной памяти и свободное место.
+- Нажмите «Показать QR-код» и отсканируйте его телефоном.
+- На телефоне откроется форма GitHub с подготовленными характеристиками. Войдите в GitHub, допишите, что случилось, и отправьте обращение самостоятельно.
 
-**Milo-Home.apk** — обычная версия. **Milo-Home-ByeByeDPI.apk** — со встроенным установщиком ByeByeDPI. Для обновления выбирайте уже установленный вариант.
+QR создаётся на телевизоре без подключения к серверу. Не собираются аккаунты, IP/MAC, имя Wi-Fi, серийные номера, список приложений и системные журналы. Новых разрешений и фоновой службы нет.
+
+**Milo-Home.apk** — обычная версия. **Milo-Home-ByeByeDPI.apk** — со встроенным установщиком ByeByeDPI. Для обновления выбирайте свой вариант.
 
 [Установка и помощь](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.ru.md)
 
 ---
 
-Launcher settings are now clearer and easier to use.
+Report a problem directly from your TV.
 
-- Six sections: appearance, Home, screensaver, motion and comfort, updates, and more.
-- Live examples show changes to the dock, card layout, labels and clock.
-- Customise dock opacity, Home shortcuts, app names and animations. Opacity now also works with glass docks.
-- Choose manual checks, checks when Milo opens, daily background checks or background checks every six hours.
-- The default remains a check when Milo opens, at most once a day. Background modes are opt-in and Android may delay them. Downloads and installation always need confirmation.
-- The old Settings long-press menu is gone. App ordering, dock editing and module cards are available in the new sections.
-- Reset appearance without changing apps, VPN, update preferences or TV settings.
+- Open Launcher settings → More → Report a problem.
+- Review the Milo version, edition, device model, Android version, RAM and free storage.
+- Select Show QR code and scan it with your phone.
+- The QR opens a prefilled GitHub issue form. Sign in to GitHub, describe what happened and submit the issue yourself.
+
+The QR is generated locally, without a reporting server. No accounts, IP/MAC addresses, Wi-Fi names, serial numbers, app inventory or system logs are collected. No new permissions or background service.
 
 Choose **Milo-Home.apk** for the regular edition or **Milo-Home-ByeByeDPI.apk** for the bundled ByeByeDPI installer. Keep your existing edition when updating.
 

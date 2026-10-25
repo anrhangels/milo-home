@@ -9,6 +9,7 @@ Milo Home — нативное Java-приложение для Android TV с An
 | MainActivity, AppAdapter, Config | Домашний экран, карточки, фокус пульта, встроенные настройки и совместимые конфигурации |
 | LauncherSettingsActivity, SettingsPreview | Разделы настроек, сохранение выбора и статичный предпросмотр оформления |
 | UpdatePolicy, UpdateSchedule, UpdateJobService | Добровольные фоновые проверки через Android JobScheduler; 6/24ч, без постоянного процесса |
+| BugReportActivity, BugReportSnapshot, BugReportQr | Разовый локальный снимок разрешённых характеристик и QR для заполненного пользователем обращения GitHub; без серверной отправки |
 | UpdateManager, UpdateHttp | Асинхронная проверка Releases, кэш, ограниченные запросы и загрузка |
 | UpdateFeed, UpdateRelease | Отбор канала, подписи, версии и варианта |
 | UpdateApk | SHA-256, криптографическая подпись и проверка реального содержимого APK |
