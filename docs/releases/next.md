@@ -10,7 +10,7 @@
 - Ошибка запуска объясняет причину и предлагает убрать карточку, не удаляя приложение.
 - Обновления показывают нехватку места, продолжают прерванную загрузку при поддержке сервера и восстанавливают готовый проверенный APK без повторного скачивания.
 
-Проверенная Preview прошла установку на Android TV 11 через настоящий GitHub Release. HOME и состояние системных пакетов сохранились; владелец проверил пульт и меню. Автоматически прошли 261 JVM-тест, 17 проверок инструментов и семь Android-тестов. Процент снижения CPU/RAM не заявляется: для такого сравнения нужны одинаковые условия измерения.
+Preview и стабильная 0.0.9 установлены на Android TV 11 через настоящий GitHub Release; установленные APK совпали с опубликованными по SHA-256. HOME и состояние системных пакетов сохранились; владелец проверил пульт и меню. Автоматически прошли 261 JVM-тест, 17 проверок инструментов и семь Android-тестов. Процент снижения CPU/RAM не заявляется: для такого сравнения нужны одинаковые условия измерения.
 
 **Milo-Home.apk** — обычная версия. **Milo-Home-ByeByeDPI.apk** — со встроенным установщиком ByeByeDPI. Обновляйте свой вариант поверх установленного приложения, без удаления данных.
 
@@ -27,6 +27,6 @@ Lighter in the background, easier to use. The familiar Home layout is preserved.
 - Stable automatically filled dock positions, a move destination and actionable launch errors.
 - Storage feedback, validated Range resume and recovery of a fully verified cached APK.
 
-The Preview implementation passed a real GitHub Release upgrade on Android TV 11, preserving HOME and system-package state; the owner checked remote controls and menus. Validation includes 261 JVM tests, 17 tooling tests and seven Android tests. No device-specific CPU/RAM percentage improvement is claimed.
+Both Preview and Stable 0.0.9 were installed from genuine GitHub Releases on Android TV 11 and matched their published APK hashes, preserving HOME and system-package state; the owner checked remote controls and menus. Validation includes 261 JVM tests, 17 tooling tests and seven Android tests. No device-specific CPU/RAM percentage improvement is claimed.
 
 Choose Milo-Home.apk or Milo-Home-ByeByeDPI.apk to match your existing edition. Update in place without uninstalling.
