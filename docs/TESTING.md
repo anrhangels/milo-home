@@ -101,4 +101,4 @@ To reproduce: install a test build on a disposable emulator, disconnect its netw
 
 ## 0.0.9 Preview
 
-[Coverage, limits and reproduction](releases/0.0.9-preview.md) include actual APK-upgrade checks and lifecycle, shared-artwork, library and resumable-download instrumentation. Physical-TV acceptance is pending.
+[Coverage, limits and reproduction](releases/0.0.9-preview.md) include actual APK-upgrade checks and lifecycle, shared-artwork, library and resumable-download instrumentation. Preview acceptance on Android TV 11 is complete; Stable uses the same implementation under a new monotonic version code.

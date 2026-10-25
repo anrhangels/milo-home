@@ -38,11 +38,13 @@ public class ResumeDownloadTest {
   Context c=InstrumentationRegistry.getInstrumentation().getTargetContext();
   c.getSharedPreferences("milo_updates",0).edit().clear().commit();c.getSharedPreferences(Config.SETTINGS_NAME,0).edit().putInt(UpdatePolicy.KEY,0).commit();
   byte[] bytes;try(InputStream in=InstrumentationRegistry.getInstrumentation().getContext().getAssets().open("resume-next.apk");ByteArrayOutputStream out=new ByteArrayOutputStream()){byte[] block=new byte[32768];int n;while((n=in.read(block))!=-1)out.write(block,0,n);bytes=out.toByteArray();}
+  File candidate=new File(c.getCacheDir(),"resume-candidate.apk");try(FileOutputStream output=new FileOutputStream(candidate)){output.write(bytes);}
+  android.content.pm.PackageInfo candidateInfo=c.getPackageManager().getPackageArchiveInfo(candidate.getAbsolutePath(),0);assertNotNull(candidateInfo);candidate.delete();assertTrue("Fixture must be newer than target",candidateInfo.versionCode>BuildConfig.VERSION_CODE);
   int half=bytes.length/2;String hash=UpdateApk.hex(MessageDigest.getInstance("SHA-256").digest(bytes));String signer=UpdateApk.installedSigner(c);
-  String asset=BuildConfig.BYEDPI_ENABLED?"Milo-Home-ByeByeDPI.apk":"Milo-Home.apk",tag="v0.0.9-rc.2";
+  String asset=BuildConfig.BYEDPI_ENABLED?"Milo-Home-ByeByeDPI.apk":"Milo-Home.apk",tag="v"+candidateInfo.versionName;
   String address="https://github.com/"+BuildConfig.UPDATE_REPO+"/releases/download/"+tag+"/"+asset;
-  UpdateRelease release=new UpdateRelease(111,bytes.length,26,"0.0.9-rc.2","rc",hash,signer,address,"local test","2026-10-26","test",c.getPackageName());
-  org.json.JSONObject metadata=new org.json.JSONObject().put("schema",1).put("variant",BuildConfig.UPDATE_VARIANT).put("channel","rc").put("track","test").put("tag",tag).put("asset",asset).put("size",bytes.length).put("sha256",hash).put("signerSha256",signer).put("versionCode",111).put("versionName",release.name).put("minSdk",26).put("applicationId",c.getPackageName());
+  UpdateRelease release=new UpdateRelease(candidateInfo.versionCode,bytes.length,26,candidateInfo.versionName,"rc",hash,signer,address,"local test","2026-10-26","test",c.getPackageName());
+  org.json.JSONObject metadata=new org.json.JSONObject().put("schema",1).put("variant",BuildConfig.UPDATE_VARIANT).put("channel","rc").put("track","test").put("tag",tag).put("asset",asset).put("size",bytes.length).put("sha256",hash).put("signerSha256",signer).put("versionCode",candidateInfo.versionCode).put("versionName",release.name).put("minSdk",26).put("applicationId",c.getPackageName());
   String feed=new org.json.JSONArray().put(new org.json.JSONObject().put("tag_name",tag).put("prerelease",true).put("body",UpdateFeed.START+metadata+UpdateFeed.END).put("assets",new org.json.JSONArray().put(new org.json.JSONObject().put("name",asset).put("size",bytes.length).put("browser_download_url",address)))).toString();
   File dir=new File(c.getCacheDir(),"updates");dir.mkdirs();new File(dir,"download.part").delete();new File(dir,"update.apk").delete();
   Field singleton=UpdateManager.class.getDeclaredField("instance");singleton.setAccessible(true);singleton.set(null,null);
@@ -60,7 +62,7 @@ public class ResumeDownloadTest {
    assertEquals(second.error,UpdateManager.READY,second.state);assertEquals(hash,UpdateApk.digest(second.readyFile));assertEquals(2,calls.get());
    c.getSharedPreferences("milo_updates",0).edit().putString("feed",feed).commit();singleton.set(null,null);
    UpdateManager recovered=UpdateManager.get(c);recovered.check(false);end=System.currentTimeMillis()+20000;while(recovered.isChecking() && System.currentTimeMillis()<end)Thread.sleep(40);
-   assertEquals(recovered.error,UpdateManager.READY,recovered.state);assertNotNull(recovered.readyFile);assertEquals(hash,UpdateApk.digest(recovered.readyFile));assertEquals(2,calls.get());assertEquals(110,c.getPackageManager().getPackageInfo(c.getPackageName(),0).versionCode);
+   assertEquals(recovered.error,UpdateManager.READY,recovered.state);assertNotNull(recovered.readyFile);assertEquals(hash,UpdateApk.digest(recovered.readyFile));assertEquals(2,calls.get());assertEquals(BuildConfig.VERSION_CODE,c.getPackageManager().getPackageInfo(c.getPackageName(),0).versionCode);
    factory.set(null,(UpdateHttp.ConnectionFactory)url->{throw new IOException("offline after verified download");});
    recovered.check(true);end=System.currentTimeMillis()+10000;while(recovered.isChecking() && System.currentTimeMillis()<end)Thread.sleep(30);
    assertEquals("An offline feed must not lose the verified installer",UpdateManager.READY,recovered.state);assertEquals(hash,UpdateApk.digest(recovered.readyFile));
