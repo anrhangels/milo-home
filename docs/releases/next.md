@@ -1,25 +1,29 @@
-# Milo Home 0.0.5
+# Milo Home 0.0.6
 
-Небольшое обновление без изменения привычного интерфейса.
+Новая панель настроек — всё нужное под рукой.
 
-- После установки обновления Milo убирает свой устаревший установочный файл.
-- После успешной установки ByeByeDPI удаляется временная распакованная копия установщика.
-- Поток проверки обновлений освобождается после простоя; постоянной фоновой службы по-прежнему нет.
-- Ручная проверка обновлений точнее сообщает о завершении запроса.
+- Короткое нажатие «Настройки» открывает боковую панель: Wi-Fi, Bluetooth, источники и громкость.
+- Широкий ползунок громкости со значком и процентами управляется стрелками пульта.
+- Две отдельные кнопки: «Настройки лаунчера» и «Все настройки» телевизора.
+- Удерживайте OK на карточке, чтобы переместить приложение, заменить его в избранном ряду или убрать с главного экрана. Вернуть его можно из библиотеки приложений.
+- В настройках лаунчера доступны стиль часов, яркость, время появления заставки на главном экране и предпросмотр.
+- «Тёмный экран» показывает чёрный фон до нажатия любой кнопки. Телевизор при этом остаётся включённым — это не аппаратный сон.
 
-Данные приложений, темы и системные кэши не очищаются. Обычный APK не содержит VPN; вариант с ByeByeDPI сохраняет встроенный установщик.
+Обычная версия — **Milo-Home.apk**. Версия со встроенным установщиком ByeByeDPI — **Milo-Home-ByeByeDPI.apk**. Для обновления выбирайте тот же вариант, который уже установлен.
 
 [Установка и помощь](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.ru.md)
 
 ---
 
-A small maintenance update with the familiar interface unchanged.
+A new settings panel puts everyday controls within reach.
 
-- Milo removes its obsolete update APK after the update is installed.
-- The temporary extracted ByeByeDPI installer is removed after successful installation.
-- The update-check worker thread exits after being idle; there is still no persistent background service.
-- Manual update checks report completion more accurately.
+- Press Settings to open the side panel: Wi-Fi, Bluetooth, inputs and volume.
+- A wide volume capsule with a speaker icon and percentage works with the remote arrows.
+- Separate buttons open launcher settings and the TV's Android settings.
+- Hold OK on an app tile to move it, replace a favourite in the dock or remove it from Home. Restore hidden shortcuts from the app library.
+- Launcher settings now include clock style, brightness, a Home-only screensaver timer and preview.
+- Dark screen displays black until any remote key is pressed. The TV stays powered on; this is not hardware standby.
 
-App data, themes and system caches are not cleared. The regular APK has no VPN; the ByeByeDPI edition keeps its bundled installer.
+Choose **Milo-Home.apk** for the regular edition or **Milo-Home-ByeByeDPI.apk** for the bundled ByeByeDPI installer. When updating, keep your existing edition.
 
 [Installation and help](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.md)

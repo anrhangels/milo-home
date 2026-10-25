@@ -14,6 +14,6 @@
 <string name="milo_minutes">%1$d мин.</string>
 <string name="milo_off">Выключено</string>
 <string name="milo_dark_hint">Чёрный экран; любая кнопка возвращает назад. Телевизор остаётся включённым.</string>
-<string name="milo_launcher_settings">Настройки Milo</string>
+<string name="milo_launcher_settings">Настройки лаунчера</string>
 <string name="milo_wifi">Wi-Fi</string>
 </resources>
