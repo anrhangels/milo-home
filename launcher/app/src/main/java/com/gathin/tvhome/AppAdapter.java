@@ -257,8 +257,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Set<String> removed = LibraryApps.loadRemoved(ctx);
         if (!added.isEmpty()) {
             Set<String> seen = new HashSet<>(tvPackages);
-            for (ResolveInfo ri : pm.queryIntentActivities(
-                    new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER), 0)) {
+            for (ResolveInfo ri : AppCatalog.query(pm,Intent.CATEGORY_LAUNCHER)) {
                 if (ri.activityInfo != null && added.contains(ri.activityInfo.packageName)
                         && seen.add(ri.activityInfo.packageName)) found.add(ri);
             }
@@ -281,18 +280,23 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // redraw the tile name as something else (#117).
             String label = card != null ? card.label : Cards.cleanLabel(
                     appLabels.containsKey(pkg) ? appLabels.get(pkg) : String.valueOf(ri.loadLabel(pm)), pkg);
+            label=AppNames.get(ctx,pkg,label);
             if (!seen.add(pkg + '\n' + label)) continue;
             Drawable banner = bundledBanner(appBanners.get(pkg));
-            if (banner == null) banner = loadBanner(pm, ri);
+            if (banner == null) banner = AppArtwork.get(ctx, ri, "banner", () -> loadBanner(pm, ri));
             // The icon is only drawn (and sampled for the glow) when there is no banner, so a tile with a
             // banner skips loading and decoding it.
-            Drawable icon = banner == null ? ri.loadIcon(pm) : null;
+            Drawable icon = banner == null ? AppArtwork.get(ctx, ri, "icon", () -> ri.loadIcon(pm)) : null;
             if (card != null) {
                 fresh.add(new Entry(Entry.CARD, label, component, banner, icon, card.caption, card.accent));
             } else {
                 fresh.add(new Entry(label, component, banner, icon));
             }
         }
+        String dockIdentity=String.join(",",favourites);
+        android.content.SharedPreferences dockPrefs=ctx.getSharedPreferences("milo_auto_dock",0);
+        java.util.List<String> stableDock=new java.util.ArrayList<>();
+        if(dockIdentity.equals(dockPrefs.getString("theme",""))){String previous=dockPrefs.getString("packages","");if(!previous.isEmpty())stableDock.addAll(java.util.Arrays.asList(previous.split("\n")));}
         Collections.sort(fresh, (a, b) -> {
             // The owner's own order first; tiles it does not know (new installs) follow by the rule below.
             int saved = Order.compare(savedRanks, a.component.flattenToShortString(), b.component.flattenToShortString());
@@ -303,6 +307,8 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 if (fb < 0) return -1;
                 return Integer.compare(fa, fb);
             }
+            int pa=stableDock.indexOf(a.pkg),pb=stableDock.indexOf(b.pkg);
+            if(pa>=0 || pb>=0){if(pa<0)return 1;if(pb<0)return -1;return Integer.compare(pa,pb);}
             // Cards come right after the configured dock apps, before the alphabetical grid.
             boolean ca = a.kind == Entry.CARD, cb = b.kind == Entry.CARD;
             if (ca != cb) return ca ? -1 : 1;
@@ -317,6 +323,12 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         docked = 0;
         while (docked < fresh.size() && isDocked(fresh.get(docked))) docked++;
+        if(!reordering){
+            java.util.List<String> remember=new java.util.ArrayList<>();
+            int keep=fillDock?Math.min(dockSize,fresh.size()):Math.min(docked,fresh.size());
+            for(int i=0;i<keep;i++)remember.add(fresh.get(i).pkg);
+            dockPrefs.edit().putString("theme",dockIdentity).putString("packages",String.join("\n",remember)).apply();
+        }
         emptySlots = dockRow && !reordering ? DockSlots.empty(docked, dockSize, fresh.size(), fillDock) : 0;
         for (int i = 0; i < emptySlots; i++) {
             fresh.add(docked + i, new Entry(Entry.EMPTY, "", new ComponentName(ctx, "empty-dock-slot-" + i),
@@ -495,7 +507,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 ((Activity) ctx).overridePendingTransition(R.anim.app_open_enter, R.anim.app_open_exit);
             }
         } catch (Exception ex) {
-            Toast.makeText(ctx, ctx.getString(R.string.cant_open, e.label), Toast.LENGTH_SHORT).show();
+            AppLaunchFailure.show(ctx,e.pkg,e.label,()->{if(ctx instanceof MainActivity)((MainActivity)ctx).refreshHomeApps();});
         }
     }
 
@@ -620,7 +632,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     int ambientColorAt(int position) {
         if (position < 0 || position >= items.size()) return 0xFF444444;
         Entry e = items.get(position);
-        if (e.ambient == 0) e.ambient = vividColor(e.banner != null ? e.banner : e.icon);
+        if (e.ambient == 0) e.ambient = AppArtwork.color(e.component.flattenToShortString(), () -> vividColor(e.banner != null ? e.banner : e.icon));
         return e.ambient;
     }
 

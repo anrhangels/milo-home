@@ -5,8 +5,11 @@ import java.io.File;
 final class UpdateCache {
     interface VersionReader { long version(File file) throws Exception; }
     static void clean(File directory,long installed,VersionReader reader) {
+        clean(directory,installed,reader,false);
+    }
+    static void clean(File directory,long installed,VersionReader reader,boolean keepPartial) {
         File partial=new File(directory,"download.part");
-        if(partial.isFile()) partial.delete();
+        if(partial.isFile() && !keepPartial) partial.delete();
         File apk=new File(directory,"update.apk");
         if(!apk.isFile()) return;
         try { long version=reader.version(apk);if(version>0 && version<=installed) apk.delete(); }

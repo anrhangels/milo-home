@@ -114,6 +114,7 @@ public final class QuickSettingsActivity extends Activity {
         volume.setContentDescription(getString(R.string.milo_volume)+", "+Math.round(100f*value/Math.max(1,volume.getMax()))+"%");
     }
     @Override public boolean dispatchKeyEvent(KeyEvent e) {
+        if(RemoteInput.drop(e))return true;
         int key=e.getKeyCode();
         if(key==KeyEvent.KEYCODE_VOLUME_UP || key==KeyEvent.KEYCODE_VOLUME_DOWN || key==KeyEvent.KEYCODE_VOLUME_MUTE) {
             if(e.getAction()==KeyEvent.ACTION_DOWN) {

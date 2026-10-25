@@ -6,8 +6,11 @@ import java.util.function.IntConsumer;
 /** Byte-accurate transfer independent of UI/network, so truncation/cancellation are reproducibly tested. */
 final class UpdateTransfer {
     static long copy(InputStream input,OutputStream output,long expected,BooleanSupplier cancelled,IntConsumer progress) throws IOException {
-        if(expected<=0 || expected>100L*1024*1024) throw new IOException("Invalid expected APK size");
-        byte[] buffer=new byte[32768]; long total=0,last=0; int n;
+        return copy(input,output,expected,0,cancelled,progress);
+    }
+    static long copy(InputStream input,OutputStream output,long expected,long offset,BooleanSupplier cancelled,IntConsumer progress) throws IOException {
+        if(expected<=0 || expected>100L*1024*1024 || offset<0 || offset>expected) throw new IOException("Invalid expected APK size");
+        byte[] buffer=new byte[32768]; long total=offset,last=0; int n;
         while((n=input.read(buffer))!=-1) {
             if(cancelled.getAsBoolean() || Thread.currentThread().isInterrupted()) throw new InterruptedIOException("Download cancelled");
             total+=n;

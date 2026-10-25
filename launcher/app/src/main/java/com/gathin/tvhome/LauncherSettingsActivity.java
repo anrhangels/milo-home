@@ -278,12 +278,15 @@ public final class LauncherSettingsActivity extends Activity implements UpdateMa
     private void markChanged(){choices.edit().putLong(Config.SETTINGS_REVISION_KEY,
         choices.getLong(Config.SETTINGS_REVISION_KEY,0)+1).apply();}
     private void refresh() {
+        int savedY=scroll.getScrollY();
+        View focused=getCurrentFocus();
         config=Config.load(this);
         for(Runnable binding:bindings)binding.run();
         preview.update(config,page);
         previewHint.setText(page==4?(UpdateSchedule.mode(this)==0?R.string.ms_mode_manual_hint:
             UpdateSchedule.mode(this)==1?R.string.ms_mode_open_hint:R.string.ms_mode_hint):R.string.ms_preview_hint);
         updateStatus();
+        scroll.post(()->{if(isFinishing() || isDestroyed())return;scroll.scrollTo(0,savedY);if(focused!=null && focused.isAttachedToWindow())focused.requestFocus();});
     }
     private void open(Intent intent) {
         try {startActivity(intent);}
@@ -309,4 +312,5 @@ public final class LauncherSettingsActivity extends Activity implements UpdateMa
                 choices.edit().remove(Config.WALLPAPER_CHOICE_KEY).apply();markChanged();refresh();
             }).setNegativeButton(android.R.string.cancel,null).show();
     }
+    @Override public boolean dispatchKeyEvent(android.view.KeyEvent event){return RemoteInput.drop(event) || super.dispatchKeyEvent(event);}
 }

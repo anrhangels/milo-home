@@ -1,0 +1,15 @@
+package com.gathin.tvhome;
+import org.junit.Test;import static org.junit.Assert.*;import java.io.*;import java.util.*;
+public class OptimizationPolicyTest {
+ @Test public void staleNavigationOnly(){assertTrue(RemoteInput.stale(true,true,100,501));assertFalse(RemoteInput.stale(true,false,100,1000));assertFalse(RemoteInput.stale(false,true,100,1000));assertFalse(RemoteInput.stale(true,true,100,500));}
+ @Test public void namesCannotInjectControlOrBidi(){assertEquals("Name",AppNames.clean("\u202eNa\nme\u0000"));assertEquals(40,AppNames.clean(String.join("",Collections.nCopies(90,"a"))).length());assertEquals("",AppNames.clean(null));}
+ @Test public void fullResponseRestartsInsteadOfAppending()throws Exception{assertEquals(0,ResumeDownload.start(200,20,null,100,100));}
+ @Test public void exactRangeAccepted()throws Exception{assertEquals(20,ResumeDownload.start(206,20,"bytes 20-99/100",100,80));}
+ @Test public void malformedRangesRejected()throws Exception{for(String range:new String[]{null,"bytes 0-99/100","bytes 20-98/100","bytes 20-99/101"}){try{ResumeDownload.start(206,20,range,100,80);fail();}catch(IOException expected){}}}
+ @Test public void offsetProgressCountsExistingBytes()throws Exception{ByteArrayOutputStream out=new ByteArrayOutputStream();List<Integer> progress=new ArrayList<>();assertEquals(100,UpdateTransfer.copy(new ByteArrayInputStream(new byte[60]),out,100,40,()->false,progress::add));assertEquals(60,out.size());assertEquals(Integer.valueOf(100),progress.get(progress.size()-1));}
+ @Test public void cancelledResumeKeepsOnlyReceivedSuffix()throws Exception{ByteArrayOutputStream out=new ByteArrayOutputStream();try{UpdateTransfer.copy(new ByteArrayInputStream(new byte[60]),out,100,40,()->true,p->{});fail();}catch(InterruptedIOException expected){}assertEquals(0,out.size());}
+ @Test public void aKnownPartialSurvivesCacheSweep()throws Exception{File dir=java.nio.file.Files.createTempDirectory("resume").toFile(),part=new File(dir,"download.part");try{part.createNewFile();UpdateCache.clean(dir,109,f->110,true);assertTrue(part.exists());UpdateCache.clean(dir,110,f->110,false);assertFalse(part.exists());}finally{part.delete();dir.delete();}}
+ @Test public void filterKeepsTvAppsAndExplicitUserChoices(){assertFalse(LibraryFilter.technical(true,true,false,false,"vendor.player"));assertFalse(LibraryFilter.technical(true,false,true,false,"com.android.traceur"));assertFalse(LibraryFilter.technical(false,false,false,false,"my.app"));assertTrue(LibraryFilter.technical(true,true,false,false,"com.android.traceur"));assertTrue(LibraryFilter.technical(true,false,false,false,"com.android.settings"));}
+ @Test public void letterFilterHandlesUnicode(){assertEquals("Я",LibraryFilter.initial("язык"));assertEquals("#",LibraryFilter.initial(""));assertEquals("M",LibraryFilter.initial("media"));}
+ @Test public void storageBudgetAccountsForExistingBytes(){long m=1024*1024;assertEquals(14*m,UpdateManager.requiredSpace(2*m,0));assertEquals(13*m,UpdateManager.requiredSpace(2*m,m));assertEquals(12*m,UpdateManager.requiredSpace(2*m,9*m));}
+}

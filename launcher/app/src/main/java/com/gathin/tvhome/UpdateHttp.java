@@ -14,7 +14,8 @@ final class UpdateHttp {
         final long retryAt;
         RateLimit(long retryAt) { super("GitHub rate limit; retry later"); this.retryAt=retryAt; }
     }
-    static HttpURLConnection open(String address) throws IOException {
+    static HttpURLConnection open(String address) throws IOException {return open(address,0,"");}
+    static HttpURLConnection open(String address,long offset,String validator) throws IOException {
         for(int redirect=0;redirect<6;redirect++) {
             URL url=new URL(address);
             if(!"https".equals(url.getProtocol()) || url.getUserInfo()!=null
@@ -26,6 +27,7 @@ final class UpdateHttp {
             c.setConnectTimeout(8000); c.setReadTimeout(12000); c.setInstanceFollowRedirects(false);
             c.setRequestProperty("User-Agent","MiloHome-Updater/1");
             c.setRequestProperty("Accept",url.getHost().equals("api.github.com")?"application/vnd.github+json":"application/octet-stream");
+            if(offset>0){c.setRequestProperty("Range","bytes="+offset+"-");if(validator!=null && validator.startsWith("\""))c.setRequestProperty("If-Range",validator);}
             int status=c.getResponseCode();
             if(status==301 || status==302 || status==303 || status==307 || status==308) {
                 String next=c.getHeaderField("Location"); c.disconnect();
@@ -38,7 +40,7 @@ final class UpdateHttp {
                 try { retry=Math.max(retry,now+Long.parseLong(c.getHeaderField("Retry-After"))*1000L); } catch(Exception ignored) { }
                 c.disconnect(); throw new RateLimit(Math.min(now+86400000L,retry));
             }
-            if(status!=200) { c.disconnect(); throw new IOException("GitHub HTTP "+status); }
+            if(status!=200 && !(status==206 && offset>0)) { c.disconnect(); throw new IOException("GitHub HTTP "+status); }
             return c;
         }
         throw new IOException("Too many redirects");

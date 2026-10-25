@@ -9,6 +9,24 @@ import java.io.*;
 
 /** Independent framework-only runner: does not share dependencies with a shrinking target APK. */
 public class UpdateChecks extends InstrumentationTestCase {
+    public void testSeedOptimizationUpgrade() throws Exception {
+        Context c=getInstrumentation().getTargetContext();
+        c.getSharedPreferences("launcher_settings",0).edit().putInt("columns",6).putInt("dock_opacity",70)
+            .putBoolean("animations",false).putInt("milo_update_mode",0).putBoolean("milo_clock_bold",true).commit();
+        c.getSharedPreferences("milo_app_names",0).edit().putString("org.milohome.demo.media","My media").commit();
+        c.getSharedPreferences("milo_library",0).edit().putString("selected","org.milohome.demo.media").putInt("offset",24).putBoolean("show_all",true).commit();
+        Intent home=new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME);
+        ResolveInfo r=c.getPackageManager().resolveActivity(home,PackageManager.MATCH_DEFAULT_ONLY);
+        c.getSharedPreferences("upgrade_probe",0).edit().putString("home",r==null?"":r.activityInfo.packageName+"/"+r.activityInfo.name).commit();
+    }
+    public void testVerifyOptimizationUpgrade() throws Exception {
+        Context c=getInstrumentation().getTargetContext();android.content.SharedPreferences p=c.getSharedPreferences("launcher_settings",0);
+        assertEquals(6,p.getInt("columns",0));assertEquals(70,p.getInt("dock_opacity",0));assertFalse(p.getBoolean("animations",true));assertEquals(0,p.getInt("milo_update_mode",-1));assertTrue(p.getBoolean("milo_clock_bold",false));
+        assertEquals("My media",c.getSharedPreferences("milo_app_names",0).getString("org.milohome.demo.media",""));
+        assertEquals(24,c.getSharedPreferences("milo_library",0).getInt("offset",0));assertTrue(c.getSharedPreferences("milo_library",0).getBoolean("show_all",false));
+        ResolveInfo r=c.getPackageManager().resolveActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME),PackageManager.MATCH_DEFAULT_ONLY);
+        assertEquals(c.getSharedPreferences("upgrade_probe",0).getString("home",""),r==null?"":r.activityInfo.packageName+"/"+r.activityInfo.name);
+    }
     public void testConfigureShowcase() throws Exception {
         Context c=getInstrumentation().getTargetContext();
         File dir=c.getExternalFilesDir(null);assertNotNull(dir);dir.mkdirs();

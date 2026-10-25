@@ -97,3 +97,8 @@ On an isolated Android 11 emulator, both Standard and ByeByeDPI editions passed 
 To reproduce: install a test build on a disposable emulator, disconnect its network, open the report screen, check the six displayed device facts and generate the QR. Scan it on a connected phone; verify the destination is `github.com/anrhangels/milo-home/issues/new`, the title and device facts are filled in, and submission still requires the user's GitHub login and action. Do not publish test reports to the project.
 
 `BugReportTest` covers sanitisation, unavailable metrics, the fixed field allowlist and destination, maximum-length Unicode input, and QR round-trip decoding. No new Android permissions, background service or reporting server were added. These checks do not claim physical-TV or phone-camera validation for this release.
+
+
+## 0.0.9 Preview
+
+[Coverage, limits and reproduction](releases/0.0.9-preview.md) include actual APK-upgrade checks and lifecycle, shared-artwork, library and resumable-download instrumentation. Physical-TV acceptance is pending.

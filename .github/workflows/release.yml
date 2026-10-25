@@ -4,11 +4,11 @@ on:
     inputs:
       version_code:
         description: Internal code; must exceed every previous build
-        default: "109"
+        default: "110"
         required: true
       version_name:
         description: Public version
-        default: "0.0.8"
+        default: "0.0.9-rc.1"
         required: true
 permissions:
   contents: read
@@ -86,7 +86,9 @@ jobs:
       - name: Publish one version with both editions
         run: |
           TAG="$(cat "$RUNNER_TEMP/release-tag.txt")"
-          gh release create "$TAG" release-output/*.apk --repo "$UPDATE_REPO" --target "$GITHUB_SHA" --title "Milo Home $VERSION_NAME" --notes-file release-output/release-notes.md --latest
+          FLAGS=(--latest)
+          if [[ "$VERSION_NAME" == *-rc.* ]]; then FLAGS=(--prerelease --latest=false); fi
+          gh release create "$TAG" release-output/*.apk --repo "$UPDATE_REPO" --target "$GITHUB_SHA" --title "Milo Home $VERSION_NAME" --notes-file release-output/release-notes.md "${FLAGS[@]}"
       - name: Remove temporary signing material
         if: always()
         run: rm -f "$RUNNER_TEMP/milo-signing.p12"

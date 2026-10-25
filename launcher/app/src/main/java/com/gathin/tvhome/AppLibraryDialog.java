@@ -73,7 +73,12 @@ final class AppLibraryDialog {
     private final Map<String, Drawable> icons = new HashMap<>();
     private final Set<String> iconsLoading = new HashSet<>();
     private final Runnable dismissed;
-    private boolean closed;
+    private volatile boolean closed;
+    private final java.util.List<java.util.concurrent.Future<?>> tasks=new java.util.concurrent.CopyOnWriteArrayList<>();
+    private final android.content.SharedPreferences retained;
+    private boolean showAll;
+    private String firstLetter="";
+    private List<ResolveInfo> unfiltered=new ArrayList<>();
     /** Only the latest load fills the catalogue, and it shows the popup if an opening is waiting. */
     private final LibraryLoads loads = new LibraryLoads();
     private final Activity activity;
@@ -85,6 +90,7 @@ final class AppLibraryDialog {
     private final boolean animations;
     private final boolean rtl;
     private TextView instructions;
+    private TextView letterControl,allControl;
     private int totalApps;
     final PopupWindow popup;
     private final float density;
@@ -104,6 +110,26 @@ final class AppLibraryDialog {
     private boolean highlightShown;
     private final int catalogWidth;
 
+    private void cancelLoads(){for(java.util.concurrent.Future<?> task:tasks)task.cancel(true);tasks.clear();panel.animate().cancel();}
+    private void remember(){
+        if(catalog!=null && catalog.getLayoutManager() instanceof LinearLayoutManager){
+            LinearLayoutManager manager=(LinearLayoutManager)catalog.getLayoutManager();
+            View focused=catalog.getFocusedChild();int at=focused==null?manager.findFirstVisibleItemPosition():catalog.getChildAdapterPosition(focused);
+            if(at>=0 && at<apps.size()){
+                selectedPosition=at;selectedPackage=apps.get(at).activityInfo.packageName;
+                View card=manager.findViewByPosition(at);if(card!=null)selectedOffset=rtl?catalog.getWidth()-catalog.getPaddingRight()-manager.getDecoratedRight(card):manager.getDecoratedLeft(card)-catalog.getPaddingLeft();
+            }
+        }
+        retained.edit().putString("selected",selectedPackage).putInt("position",selectedPosition).putInt("offset",selectedOffset).apply();
+    }
+    private void chooseLetter(){
+        java.util.SortedSet<String> letters=new java.util.TreeSet<>();
+        for(ResolveInfo app:unfiltered){String n=label(app);if(!n.isEmpty())letters.add(LibraryFilter.initial(n));}
+        java.util.List<String> options=new ArrayList<>();options.add(activity.getString(R.string.opt_all_letters));options.addAll(letters);
+        new android.app.AlertDialog.Builder(activity).setTitle(R.string.opt_letter).setItems(options.toArray(new String[0]),(d,w)->{
+            firstLetter=w==0?"":options.get(w);selectedPackage=null;selectedPosition=0;selectedOffset=0;fill(unfiltered);
+        }).show();
+    }
     private void stopHighlight() {
         if (spring != null) spring.cancel();
         if (catalog != null) catalog.stopScroll();
@@ -145,6 +171,11 @@ final class AppLibraryDialog {
 
     AppLibraryDialog(Activity activity, boolean animations, boolean reducedMotion, boolean selectionMode, Predicate<String> onHome, Runnable changed, Runnable dismissed) {
         this.activity = activity;
+        retained=activity.getSharedPreferences("milo_library",0);
+        showAll=retained.getBoolean("show_all",false);
+        selectedPackage=retained.getString("selected",null);
+        selectedPosition=retained.getInt("position",0);
+        selectedOffset=retained.getInt("offset",0);
         this.animations = animations;
         this.rtl = activity.getResources().getBoolean(R.bool.rtl_app_grid);
         this.reducedMotion = reducedMotion;
@@ -167,7 +198,9 @@ final class AppLibraryDialog {
         popup.setOutsideTouchable(true);
         popup.setAnimationStyle(0);
         popup.setOnDismissListener(() -> {
+            remember();
             closed = true;
+            cancelLoads();
             dismissActions();
             stopHighlight();
             icons.clear();
@@ -181,6 +214,7 @@ final class AppLibraryDialog {
             popup.dismiss();
         } else if (!closed) {
             closed = true;   // still loading: it never shows
+            cancelLoads();
             dismissed.run();
         }
     }
@@ -215,19 +249,23 @@ final class AppLibraryDialog {
      * appears once the latest load has filled it, even when a refresh replaced the opening's own load.
      */
     private void load(boolean reveal) {
+        if(closed)return;
+        if(!reveal)remember();
         dismissActions();
         int load = loads.start(reveal);
         PackageManager pm = activity.getPackageManager();
         String self = activity.getPackageName();
-        LOADER.execute(() -> {
+        tasks.add(LOADER.submit(() -> {
+            if(closed || Thread.currentThread().isInterrupted())return;
             Map<String, ResolveInfo> unique = new LinkedHashMap<>();
             Set<String> tv = new HashSet<>();
             // Prefer the TV entry when an app declares both categories.
             for (String category : new String[]{Intent.CATEGORY_LEANBACK_LAUNCHER, Intent.CATEGORY_LAUNCHER}) {
-                for (ResolveInfo info : pm.queryIntentActivities(new Intent(Intent.ACTION_MAIN).addCategory(category), 0)) {
+                if(closed || Thread.currentThread().isInterrupted())return;
+                for (ResolveInfo info : AppCatalog.query(pm,category)) {
                     if (info.activityInfo == null || !info.activityInfo.exported) continue;
                     String pkg = info.activityInfo.packageName;
-                    if (BuildConfig.BYEDPI_ENABLED && DpiClient.PACKAGE.equals(pkg)) continue;
+
                     if (Intent.CATEGORY_LEANBACK_LAUNCHER.equals(category)) tv.add(pkg);
                     if (!pkg.equals(self) && !unique.containsKey(pkg)) unique.put(pkg, info);
                 }
@@ -235,6 +273,7 @@ final class AppLibraryDialog {
             Map<String, String> names = new HashMap<>();
             Map<String, Long> installed = new HashMap<>();
             for (Map.Entry<String, ResolveInfo> entry : unique.entrySet()) {
+                if(closed || Thread.currentThread().isInterrupted())return;
                 String pkg = entry.getKey();
                 long updated = 0;
                 try {
@@ -263,12 +302,21 @@ final class AppLibraryDialog {
                 fill(new ArrayList<>(unique.values()));
                 if (loads.takeReveal()) reveal();
             });
-        });
+        }));
     }
 
     private void fill(List<ResolveInfo> catalogue) {
         totalApps = catalogue.size();
-        apps = catalogue;
+        unfiltered=new ArrayList<>(catalogue);
+        apps = new ArrayList<>();
+        for(ResolveInfo app:catalogue){
+            String pkg=app.activityInfo.packageName;
+            boolean technical=LibraryFilter.technical((app.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0,tvPackages.contains(pkg),onHome.test(pkg),BuildConfig.BYEDPI_ENABLED && DpiClient.PACKAGE.equals(pkg),pkg);
+            String name=label(app);
+            String letter=LibraryFilter.initial(name);
+            if((showAll || !technical) && (firstLetter.isEmpty() || firstLetter.equals(letter)))apps.add(app);
+        }
+        totalApps=apps.size();
         Map<String, Boolean> home = new HashMap<>();
         for (ResolveInfo app : apps) {
             String pkg = app.activityInfo.packageName;
@@ -292,10 +340,10 @@ final class AppLibraryDialog {
     private String label(ResolveInfo app) {
         String pkg = app.activityInfo.packageName;
         String cached = labels.get(pkg);
-        if (cached != null) return cached;
+        if (cached != null) return AppNames.get(activity,pkg,cached);
         String value = loadLabel(activity.getPackageManager(), app);
         labels.put(pkg, value);
-        return value;
+        return AppNames.get(activity,pkg,value);
     }
 
     private static String loadLabel(PackageManager pm, ResolveInfo app) {
@@ -312,9 +360,10 @@ final class AppLibraryDialog {
         icon.setImageDrawable(cached);
         if (cached != null || !iconsLoading.add(pkg)) return;
         PackageManager pm = activity.getPackageManager();
-        LOADER.execute(() -> {
+        tasks.add(LOADER.submit(() -> {
+            if(closed || Thread.currentThread().isInterrupted())return;
             Drawable loaded;
-            try { loaded = app.loadIcon(pm); }
+            try { loaded = AppArtwork.get(activity,app,"icon",()->app.loadIcon(pm)); }
             catch (RuntimeException unavailable) { loaded = null; }
             Drawable result = loaded;
             main.post(() -> {
@@ -325,7 +374,7 @@ final class AppLibraryDialog {
                 // The view may show another app by now; a view bound to it later takes it from the cache.
                 if (pkg.equals(icon.getTag())) icon.setImageDrawable(shown);
             });
-        });
+        }));
     }
 
     private void heading(String text) {
@@ -345,7 +394,7 @@ final class AppLibraryDialog {
 
     private void showCatalog() {
         stopHighlight();
-        resize(catalogWidth, dp(280));
+        resize(catalogWidth, dp(324));
         panel.removeAllViews();
         LinearLayout header = new LinearLayout(activity);
         header.setGravity(Gravity.CENTER_VERTICAL);
@@ -360,6 +409,21 @@ final class AppLibraryDialog {
         count.setSingleLine(true);
         header.addView(count, new LinearLayout.LayoutParams(-2, -2));
         panel.addView(header, new LinearLayout.LayoutParams(-1, dp(44)));
+        LinearLayout filters=new LinearLayout(activity);
+        TextView letter=text(activity.getString(R.string.opt_letter)+": "+(firstLetter.isEmpty()?activity.getString(R.string.opt_all_letters):firstLetter),13,Color.WHITE);
+        letterControl=letter;letter.setId(View.generateViewId());letter.setGravity(Gravity.CENTER_VERTICAL);letter.setTextColor(activity.getColorStateList(R.color.milo_quick_text));
+        letter.setPadding(dp(12),0,dp(12),0);letter.setBackgroundResource(R.drawable.milo_settings_choice);letter.setFocusable(true);
+        letter.setOnClickListener(v->chooseLetter());filters.addView(letter,new LinearLayout.LayoutParams(0,dp(36),1));
+        TextView all=text(activity.getString(R.string.opt_show_all)+(showAll?" ✓":""),13,Color.WHITE);
+        allControl=all;all.setId(View.generateViewId());all.setGravity(Gravity.CENTER_VERTICAL);all.setTextColor(activity.getColorStateList(R.color.milo_quick_text));
+        all.setPadding(dp(12),0,dp(12),0);all.setBackgroundResource(R.drawable.milo_settings_choice);all.setFocusable(true);
+        all.setOnClickListener(v->{remember();showAll=!showAll;retained.edit().putBoolean("show_all",showAll).apply();fill(unfiltered);});
+        filters.addView(all,new LinearLayout.LayoutParams(0,dp(36),1));panel.addView(filters);
+        if(rtl){letter.setNextFocusLeftId(all.getId());all.setNextFocusRightId(letter.getId());}else{letter.setNextFocusRightId(all.getId());all.setNextFocusLeftId(letter.getId());}
+        for(TextView control:new TextView[]{letter,all}){
+            control.setOnFocusChangeListener((v,focused)->{if(focused && highlight!=null)highlight.setAlpha(0);});
+            control.setOnKeyListener((v,key,event)->{if(RemoteInput.drop(event))return true;if(event.getAction()==KeyEvent.ACTION_DOWN && key==KeyEvent.KEYCODE_DPAD_DOWN){restoreCardFocus();return true;}return false;});
+        }
         instructions = text(hint(false), 13, 0xBBFFFFFF);
         instructions.setSingleLine(true);
         instructions.setEllipsize(TextUtils.TruncateAt.END);
@@ -368,9 +432,9 @@ final class AppLibraryDialog {
         panel.setFocusableInTouchMode(apps.isEmpty());
         if (apps.isEmpty()) {
             instructions.setVisibility(View.GONE);
-            heading(activity.getString(R.string.library_empty));
+            heading(activity.getString(unfiltered.isEmpty()?R.string.library_empty:R.string.opt_no_match));
             panel.setFocusableInTouchMode(true);
-            panel.requestFocus();
+            letterControl.requestFocus();
             return;
         }
         shelf = new FrameLayout(activity);
@@ -502,7 +566,7 @@ final class AppLibraryDialog {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         try { activity.startActivity(intent); }
         catch (ActivityNotFoundException | SecurityException e) {
-            Toast.makeText(activity, activity.getString(R.string.cant_open, label(app)), Toast.LENGTH_SHORT).show();
+            AppLaunchFailure.show(activity,app.activityInfo.packageName,label(app),changed);
         }
     }
 
@@ -527,12 +591,21 @@ final class AppLibraryDialog {
         boolean home = onHome.test(pkg);
         addAction(rows, home ? R.string.library_remove_shortcut : R.string.library_add_home,
                 () -> changeHome(app, !home));
+        addAction(rows,R.string.opt_rename,()->{
+            dismissActions();
+            android.widget.EditText input=new android.widget.EditText(activity);
+            input.setSingleLine(true);input.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(40)});
+            input.setText(label(app));
+            new android.app.AlertDialog.Builder(activity).setTitle(R.string.opt_rename).setView(input)
+                .setNegativeButton(android.R.string.cancel,null).setNeutralButton(R.string.opt_default_name,(d,w)->{AppNames.save(activity,pkg,"");changed.run();refresh();})
+                .setPositiveButton(android.R.string.ok,(d,w)->{AppNames.save(activity,pkg,input.getText().toString());changed.run();refresh();}).show();
+        });
         addAction(rows, R.string.library_app_info, () -> {
             close();
             try {
                 activity.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + pkg)));
             } catch (ActivityNotFoundException | SecurityException e) {
-                Toast.makeText(activity, activity.getString(R.string.cant_open, label(app)), Toast.LENGTH_SHORT).show();
+                AppLaunchFailure.show(activity,app.activityInfo.packageName,label(app),changed);
             }
         });
         int menuWidth = dp(220);
@@ -572,6 +645,7 @@ final class AppLibraryDialog {
         row.setOnClickListener(v -> action.run());
         rows.addView(row);
         row.setOnKeyListener((v, key, event) -> {
+            if(RemoteInput.drop(event))return true;
             int index = rows.indexOfChild(v);
             return event.getAction() == KeyEvent.ACTION_DOWN && (key == KeyEvent.KEYCODE_DPAD_LEFT
                     || key == KeyEvent.KEYCODE_DPAD_RIGHT || key == KeyEvent.KEYCODE_DPAD_UP && index == 0
@@ -663,9 +737,10 @@ final class AppLibraryDialog {
                 }
             });
             holder.itemView.setOnKeyListener((v, key, event) -> {
+                if(RemoteInput.drop(event))return true;
                 int index = holder.getBindingAdapterPosition();
-                return event.getAction() == KeyEvent.ACTION_DOWN && (key == KeyEvent.KEYCODE_DPAD_UP
-                        || key == KeyEvent.KEYCODE_DPAD_DOWN
+                if(event.getAction()==KeyEvent.ACTION_DOWN && key==KeyEvent.KEYCODE_DPAD_UP){letterControl.requestFocus();return true;}
+                return event.getAction() == KeyEvent.ACTION_DOWN && (key == KeyEvent.KEYCODE_DPAD_DOWN
                         || (rtl ? key == KeyEvent.KEYCODE_DPAD_RIGHT : key == KeyEvent.KEYCODE_DPAD_LEFT) && index == 0
                         || (rtl ? key == KeyEvent.KEYCODE_DPAD_LEFT : key == KeyEvent.KEYCODE_DPAD_RIGHT) && index == apps.size() - 1);
             });

@@ -20,3 +20,10 @@ class BundleTest(unittest.TestCase):
         records=[{'body':release.START+json.dumps(m)+release.END}]
         self.assertEqual(104,release.prior_max(records,'production','byedpi'))
         self.assertEqual(104,release.prior_max(records,'production','standard'))
+
+    def test_preview_channel_does_not_masquerade_as_stable(self):
+        records=self.records()
+        for m in records.values():m.update(versionName='0.0.9-rc.1',channel='rc',versionCode=110)
+        result=bundle_release.bundle(records,'0.0.9-rc.1')
+        self.assertEqual('rc',result['channel'])
+        self.assertTrue(all(m['channel']=='rc' for m in result['editions'].values()))

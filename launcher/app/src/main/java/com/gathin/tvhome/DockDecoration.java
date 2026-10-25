@@ -24,7 +24,8 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
     private final float namesRoom;
     /** Light glass like the top bar's pills (config.xml dock_glass): a white tint that fades downwards. */
     private final boolean lightGlass;
-    private final int opacity;
+    private int opacity;
+    private boolean translucent;
     /** Padding all round the tiles equal to the gap between them (config.xml dock_even_padding). */
     private final boolean evenPadding;
     /** The band's top and bottom the glass gradient was made for; it is remade when they move. */
@@ -39,6 +40,7 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
      */
     DockDecoration(int dockSize, float density, boolean translucent, boolean names, int opacity, boolean lightGlass,
                    boolean evenPadding) {
+        this.translucent=translucent;
         this.dockSize = dockSize;
         this.density = density;
         this.namesRoom = names ? 22 * density : 0;
@@ -52,6 +54,11 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
         edge.setColor(lightGlass ? 0x38FFFFFF : translucent ? 0x26FFFFFF : 0x1FFFFFFF);
     }
 
+    void setOpacity(int value){
+        opacity=Math.max(30,Math.min(100,value));
+        band.setColor(translucent?(DockOpacity.alpha(opacity,140)<<24)|0x121014:(DockOpacity.alpha(opacity,255)<<24)|0x141416);
+        shaderTop=Float.NaN;shaderBottom=Float.NaN;
+    }
     /** Concentric corners: the band's radius is the tiles' radius plus the band's padding around them. */
     static float radiusPx(float tileRadiusPx, float paddingPx) {
         return tileRadiusPx + paddingPx;

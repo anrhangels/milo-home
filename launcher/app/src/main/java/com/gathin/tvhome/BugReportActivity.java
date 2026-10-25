@@ -111,4 +111,5 @@ public final class BugReportActivity extends Activity {
     }
     private int dp(int value){return Math.round(value*getResources().getDisplayMetrics().density);}
     @Override protected void onDestroy(){disposed=true;qr.setImageDrawable(null);super.onDestroy();}
+    @Override public boolean dispatchKeyEvent(android.view.KeyEvent event){return RemoteInput.drop(event) || super.dispatchKeyEvent(event);}
 }

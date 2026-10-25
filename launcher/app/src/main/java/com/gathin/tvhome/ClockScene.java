@@ -27,15 +27,18 @@ final class ClockScene {
     private final View content;
     private final GradientDrawable glow;
     private final float brightness;
+    private boolean running;
+    private final ScreenWork screenWork;
     private int colorIndex;
     private int glowColor;
 
     private final Runnable tick = new Runnable() {
         @Override
         public void run() {
+            if(!running || !screenWork.interactive())return;
             moveClock();
             shiftGlow();
-            handler.postDelayed(this, MOVE_MS);
+
         }
     };
 
@@ -44,6 +47,7 @@ final class ClockScene {
         content = root.findViewById(R.id.dreamContent);
         android.content.SharedPreferences prefs = root.getContext().getSharedPreferences(Config.SETTINGS_NAME, 0);
         brightness = Math.max(20, Math.min(100, prefs.getInt("milo_clock_brightness", 80))) / 100f;
+        screenWork=new ScreenWork(root.getContext(),()->{if(running){content.setAlpha(brightness);MinutePulse.add(tick);}},()->{MinutePulse.remove(tick);handler.removeCallbacksAndMessages(null);content.animate().cancel();});
         android.widget.TextClock clock = root.findViewById(R.id.miloDreamClock);
         clock.setTypeface(android.graphics.Typeface.create(prefs.getBoolean("milo_clock_bold", false) ? "sans-serif-medium" : "sans-serif-thin", android.graphics.Typeface.NORMAL));
         View ambient = root.findViewById(R.id.dreamAmbient);
@@ -57,22 +61,27 @@ final class ClockScene {
     }
 
     void start() {
+        running=true;
         content.setAlpha(0f);
         content.post(() -> {
+            if(!running || !screenWork.interactive())return;
             placeClock();
             content.animate().alpha(brightness).setDuration(1200).start();
         });
-        handler.removeCallbacks(tick);
-        handler.postDelayed(tick, MOVE_MS);
+        screenWork.start();
     }
 
     void stop() {
+        screenWork.stop();
+        running=false;
+        MinutePulse.remove(tick);
         handler.removeCallbacksAndMessages(null);   // the tick and any glow steps still queued
         content.animate().cancel();
     }
 
     private void moveClock() {
         content.animate().alpha(0f).setDuration(900).withLayer().withEndAction(() -> {
+            if(!running || !screenWork.interactive())return;
             placeClock();
             content.animate().alpha(brightness).setDuration(1200).withLayer().start();
         }).start();

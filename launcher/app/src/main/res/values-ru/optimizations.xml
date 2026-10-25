@@ -1,0 +1,15 @@
+<resources>
+ <string name="opt_letter">Первая буква</string>
+ <string name="opt_all_letters">Все</string>
+ <string name="opt_show_all">Показать все</string>
+ <string name="opt_rename">Переименовать карточку</string>
+ <string name="opt_default_name">Исходное имя</string>
+ <string name="opt_launch_removed">Приложение удалено. Убрать его карточку с главного экрана?</string>
+ <string name="opt_launch_disabled">Приложение отключено в Android. Убрать его карточку с главного экрана?</string>
+ <string name="opt_launch_blocked">Android не смог открыть приложение: запуск ограничен или экран запуска изменился. Можно убрать карточку и добавить её заново из библиотеки.</string>
+ <string name="opt_remove_shortcut">Убрать карточку</string>
+ <string name="opt_move_position">Место перемещения: %1$d</string>
+ <string name="opt_interrupted">Загрузка прервана. Выберите эту же версию, чтобы продолжить.</string>
+ <string name="opt_storage">Недостаточно места. Нужно: %1$s; доступно: %2$s.</string>
+ <string name="opt_no_match">Нет приложений для выбранного фильтра. Выберите «Все» или «Показать все».</string>
+</resources>

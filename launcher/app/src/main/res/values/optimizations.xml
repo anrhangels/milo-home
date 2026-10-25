@@ -1,0 +1,15 @@
+<resources>
+ <string name="opt_letter">First letter</string>
+ <string name="opt_all_letters">All</string>
+ <string name="opt_show_all">Show all apps</string>
+ <string name="opt_rename">Rename shortcut</string>
+ <string name="opt_default_name">Original name</string>
+ <string name="opt_launch_removed">This app is no longer installed. Remove its Home shortcut?</string>
+ <string name="opt_launch_disabled">This app is disabled in Android. Remove its Home shortcut?</string>
+ <string name="opt_launch_blocked">Android could not open this app. It may be restricted or its start screen may have changed. You can remove the shortcut and add it again from the library.</string>
+ <string name="opt_remove_shortcut">Remove shortcut</string>
+ <string name="opt_move_position">Move destination: %1$d</string>
+ <string name="opt_interrupted">Download interrupted. Select the same version to continue.</string>
+ <string name="opt_storage">Not enough space. Required: %1$s; available: %2$s.</string>
+ <string name="opt_no_match">No apps match this filter. Choose All or Show all apps.</string>
+</resources>

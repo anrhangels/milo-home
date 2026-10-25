@@ -27,7 +27,11 @@ final class UpdateUi implements UpdateManager.Listener {
     void start() { manager.attach(this); }
     void stop() { if(popup!=null) popup.dismiss(); if(confirmation!=null) confirmation.dismiss(); manager.detach(this); }
     void manualCheck() { manual=true; manager.check(true); Toast.makeText(activity,R.string.update_checking,Toast.LENGTH_SHORT).show(); }
+    private String shownError="";
     public void changed() {
+        if(manager.state==UpdateManager.ERROR && !manager.error.isEmpty() && !manager.error.equals(shownError)){
+            shownError=manager.error;Toast.makeText(activity,manager.error,Toast.LENGTH_LONG).show();
+        }else if(manager.state!=UpdateManager.ERROR)shownError="";
         boolean active=manager.state==UpdateManager.DOWNLOADING || manager.state==UpdateManager.VERIFYING;
         button.setVisibility(!manager.releases.isEmpty() || active || manager.state==UpdateManager.READY?View.VISIBLE:View.GONE);
         button.progress(manager.state==UpdateManager.DOWNLOADING?manager.percent:-1);
@@ -41,13 +45,14 @@ final class UpdateUi implements UpdateManager.Listener {
         }
     }
     private void menu() {
+        if(popup!=null && popup.isShowing() || confirmation!=null && confirmation.isShowing())return;
         if(manager.isChecking()) { Toast.makeText(activity,R.string.update_checking,Toast.LENGTH_SHORT).show(); return; }
         if(manager.state==UpdateManager.DOWNLOADING || manager.state==UpdateManager.VERIFYING) {
             Toast.makeText(activity,R.string.update_in_progress,Toast.LENGTH_SHORT).show(); return;
         }
         View panel=activity.getLayoutInflater().inflate(R.layout.popup_inputs,null,false);
         LinearLayout rows=panel.findViewById(R.id.rows);
-        TextView heading=new TextView(activity); heading.setText(R.string.update_available);
+        TextView heading=new TextView(activity); heading.setText(activity.getString(R.string.update_available)+(manager.hasPartial()?"\n"+activity.getString(R.string.opt_interrupted):""));
         heading.setTextColor(Color.WHITE); heading.setPadding(dp(12),dp(10),dp(12),dp(10)); rows.addView(heading);
         popup=new PopupWindow(panel,dp(360),ViewGroup.LayoutParams.WRAP_CONTENT,true);
         popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); popup.setOutsideTouchable(true); popup.setAnimationStyle(0);

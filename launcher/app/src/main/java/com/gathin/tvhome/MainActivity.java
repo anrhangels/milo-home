@@ -279,41 +279,47 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean libraryFocusPending;
     private RecyclerView.OnScrollListener pendingFocusScroll;
 
+    private boolean resumed;
+    private ScreenWork screenWork;
+    private java.util.Map<String,?> settingsBefore;
+    private DockDecoration dockDecoration;
+    private View returnMenuFocus;
+    void refreshHomeApps(){reloadApps(false);}
     private final Handler handler = new Handler(Looper.getMainLooper());
     /** Refreshes the network pill when the connection changes: at boot Wi-Fi often connects after Home is shown. */
     private final ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
         @Override
         public void onAvailable(@NonNull Network network) {
-            handler.post(MainActivity.this::updateWifiLabel);
+            handler.post(()->{if(resumed && screenWork.interactive())updateWifiLabel();});
         }
 
         @Override
         public void onLost(@NonNull Network network) {
-            handler.post(MainActivity.this::updateWifiLabel);
+            handler.post(()->{if(resumed && screenWork.interactive())updateWifiLabel();});
         }
     };
     /** Shows the Inputs pill once the TV registers an input: at boot HDMI inputs can appear after Home is shown. */
     private final TvInputManager.TvInputCallback inputCallback = new TvInputManager.TvInputCallback() {
         @Override
         public void onInputAdded(String inputId) {
-            updateInputsButton();
+            if(resumed && screenWork.interactive())updateInputsButton();
         }
 
         @Override
         public void onInputRemoved(String inputId) {
-            updateInputsButton();
+            if(resumed && screenWork.interactive())updateInputsButton();
         }
     };
     /** Listens for any VPN coming up or going down, even one this app's traffic is excluded from. */
     private final ConnectivityManager.NetworkCallback vpnCallback = new ConnectivityManager.NetworkCallback() {
         @Override
         public void onAvailable(@NonNull Network network) {
-            handler.post(MainActivity.this::updateWifiLabel);
+            handler.post(()->{if(resumed && screenWork.interactive())updateWifiLabel();});
         }
 
         @Override
         public void onLost(@NonNull Network network) {
-            handler.post(MainActivity.this::updateWifiLabel);
+            handler.post(()->{if(resumed && screenWork.interactive())updateWifiLabel();});
         }
     };
     private final IntentFilter packageFilter = new IntentFilter();
@@ -323,7 +329,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // Updates send REMOVED followed by ADDED; keep the tile until the new APK is ready.
             if (Intent.ACTION_PACKAGE_REMOVED.equals(intent.getAction())
                     && intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) return;
+            String pkg=intent.getData()==null?null:intent.getData().getSchemeSpecificPart();
+            AppArtwork.invalidate(pkg);
+            AppCatalog.changed(getPackageManager(),pkg);
             // In the background this only marks the tiles stale; onResume rebuilds them once.
+            if (!resumed || !screenWork.interactive()){tileRefresh.invalidate();return;}
             if (!tileRefresh.onPackagesChanged()) return;
             reloadApps(false);
             if (appLibrary != null) appLibrary.refresh();
@@ -334,12 +344,13 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private final BroadcastReceiver timeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateClockVisibility();
+            if(resumed && screenWork.interactive())updateClockVisibility();
         }
     };
     private final Runnable minuteTick = new Runnable() {
         @Override
         public void run() {
+            if(!resumed || !screenWork.interactive())return;
             updateGreeting();
             updateRace();
             // The pill follows the network callbacks and each return to Home; only the diya's flame follows the
@@ -347,7 +358,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (festive) updateWifiLabel();
             sky.update();
             wallpaperPlayer.update();
-            handler.postDelayed(this, MINUTE_MS);
+
         }
     };
 
@@ -355,14 +366,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        screenWork=new ScreenWork(this,()->{if(resumed)resumeVisuals();},this::suspendVisuals);
         density = getResources().getDisplayMetrics().density;
         // config.xml, overlaid by config.json from a pushed theme (see Config and tools/theme.sh).
         Config cfg = Config.load(this);
+        AppArtwork.theme(getSharedPreferences(Config.SETTINGS_NAME,0).getString("theme_signature","")+getResources().getConfiguration().hashCode());
         appLibrarySelection = cfg.appLibrarySelection;
         // restore_key_services: after a force stop, put back the remote's accessibility helpers that Android took
         // off the list (needs WRITE_SECURE_SETTINGS, granted by build-and-install with RESTORE_KEY_SERVICES=1).
         if (cfg.restoreKeyServices) ServiceRepair.restore(this);
         settingsRevision = settingsRevision();
+        settingsBefore=new java.util.HashMap<>(getSharedPreferences(Config.SETTINGS_NAME,0).getAll());
         applyViewInputsHandler(cfg.handleViewInputs);
         settingsKeycodes = cfg.settingsKeycodes;
         settingsKeyPanel = cfg.settingsKeyPanel;
@@ -517,7 +531,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             public void onChildViewDetachedFromWindow(@NonNull View v) {
             }
         });
-        if (dockRow) grid.addItemDecoration(new DockDecoration(COLUMNS, density, cinematic, cfg.alwaysShowNames, cfg.dockOpacity, cfg.dockGlass, cfg.dockEvenPadding));
+        if (dockRow) {dockDecoration=new DockDecoration(COLUMNS, density, cinematic, cfg.alwaysShowNames, cfg.dockOpacity, cfg.dockGlass, cfg.dockEvenPadding);grid.addItemDecoration(dockDecoration);}
         if (cfg.fadeRows) TopFade.attach(grid, 48 * density);
         // Reduced motion: the tiles are simply there, with no entrance (reloadApps skips it there too).
         if (animations && !reducedMotion) {
@@ -609,7 +623,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             ((TextView) btnSettings).setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_home_settings_pill, 0, 0, 0);
         }
         btnSettings.setOnClickListener(v -> {
-            startActivity(new Intent(this, QuickSettingsActivity.class));
+            open(new Intent(this, QuickSettingsActivity.class));
         });
         btnReorder = findViewById(R.id.btnReorder);
         btnReorder.setOnClickListener(v -> toggleReorder());
@@ -639,7 +653,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             ((TextView) btnSettings).setText(R.string.settings);
             ((TextView) btnSettings).setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_settings, 0, 0, 0);
             if (!iconOnlyButtons) makeIconOnly((TextView) btnSettings);
-            btnSettings.setOnClickListener(v -> startActivity(new Intent(this, QuickSettingsActivity.class)));
+            btnSettings.setOnClickListener(v -> open(new Intent(this, QuickSettingsActivity.class)));
             // The lone gear sits at the header's middle, not on its bottom line like the row of pills.
             LinearLayout topButtons = findViewById(R.id.topButtons);
             RelativeLayout.LayoutParams tlp = (RelativeLayout.LayoutParams) topButtons.getLayoutParams();
@@ -808,6 +822,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         updateUi.start();
         stopped = false;
         started = true;
+        screenWork.start();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(timeReceiver, timeFilter, Context.RECEIVER_NOT_EXPORTED);
         } else {
@@ -820,6 +835,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onResume() {
         super.onResume();
+        resumed=true;
         // A festival that started or ended while Home was in the background: rebuild with or without it.
         if (festive != festival.active(LocalDate.now())) {
             recreate();
@@ -829,13 +845,24 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // delivered their RESULT_OK; Home (the remote's button) clears them off this task and the result comes
         // back cancelled, so a new wallpaper or layout waited for the next process start.
         if (Config.settingsChanged(settingsRevision, settingsRevision())) {
-            recreate();
-            return;
+            java.util.Map<String,Object> before=new java.util.HashMap<>(settingsBefore);
+            java.util.Map<String,Object> after=new java.util.HashMap<>(getSharedPreferences(Config.SETTINGS_NAME,0).getAll());
+            before.remove(Config.SETTINGS_REVISION_KEY);after.remove(Config.SETTINGS_REVISION_KEY);
+            before.remove(Config.DOCK_OPACITY_KEY);after.remove(Config.DOCK_OPACITY_KEY);
+            for(String key:new String[]{"milo_clock_bold","milo_clock_brightness","milo_idle_minutes"}){before.remove(key);after.remove(key);}
+            if(dockDecoration!=null && before.equals(after)){
+                Config updated=Config.load(this);
+                dockDecoration.setOpacity(updated.dockOpacity);grid.invalidateItemDecorations();
+                idleClockMs=updated.homeIdleClockMinutes*60000L;
+                settingsRevision=settingsRevision();settingsBefore=new java.util.HashMap<>(getSharedPreferences(Config.SETTINGS_NAME,0).getAll());
+            }else{recreate();return;}
         }
         restartIdleClock();
         promptsPaused = false;
         if (grid.getAdapter() == null) grid.setAdapter(adapter);   // dropped by onTrimMemory
-        switch (tileRefresh.onResume(packagesChangedSinceRebuild())) {
+        boolean missedPackages=packagesChangedSinceRebuild();
+
+        switch (tileRefresh.onResume(missedPackages)) {
             case REBUILD:
                 tilesReady = false;
                 reloadApps(true);
@@ -862,16 +889,21 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             updateInputsButton();
             pillsShown = true;
         }
+        resumeVisuals();
+        if(returnMenuFocus!=null){View target=returnMenuFocus;returnMenuFocus=null;target.post(()->{if(!resumed || !target.isShown())return;target.requestFocus();int position=focusedTilePosition();if(position>=0 && target.getId()==R.id.card)onTileFocused(position,target);});}
+    }
+    private void resumeVisuals(){
+        if(!resumed || !screenWork.interactive())return;
         if (showStats) startStats();
         sky.update();
         wallpaperPlayer.start();
-        handler.postDelayed(minuteTick, MINUTE_MS);
+        MinutePulse.add(minuteTick);
         if (festive && diya != null) {
             diya.start();
             LocalDate today = LocalDate.now();
             if (!reducedMotion && !today.equals(lastPetalShower)) {
                 lastPetalShower = today;
-                handler.postDelayed(this::playPetalShower, 450);
+                handler.postDelayed(()->{if(resumed && screenWork.interactive())playPetalShower();},450);
             }
         }
     }
@@ -913,6 +945,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // The old activity must not consume the pending action, or rebuild a second time in onResume.
             settingsRecreationPending = true;
             settingsRevision = settingsRevision();
+        settingsBefore=new java.util.HashMap<>(getSharedPreferences(Config.SETTINGS_NAME,0).getAll());
             recreate();
         }
     }
@@ -988,7 +1021,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     /** True when PackageManager reports apps changed since the last rebuild (one binder call). */
     private boolean packagesChangedSinceRebuild() {
         ChangedPackages changed = getPackageManager().getChangedPackages(packageSequence);
-        return changed != null && !changed.getPackageNames().isEmpty();
+        if(changed==null || changed.getPackageNames().isEmpty())return false;
+        for(String pkg:changed.getPackageNames()){AppCatalog.changed(getPackageManager(),pkg);AppArtwork.invalidate(pkg);}
+        return true;
     }
 
     private int currentPackageSequence(int since) {
@@ -1007,12 +1042,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         final String returnKey = lastFocusedKey;
         final int returnSlot = lastFocused;
         final List<Cards.Card> none = Collections.emptyList();
-        // An updated app may bring new artwork; the backdrop is cheap to make again.
+        // Package invalidation already removed only the updated artwork.
         heroArtCache.clear();
         heroArtKey = null;
         // One LEANBACK query for both the tiles and the card checks.
-        final List<ResolveInfo> leanback = getPackageManager().queryIntentActivities(
-                new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LEANBACK_LAUNCHER), 0);
+        final List<ResolveInfo> leanback = AppCatalog.query(getPackageManager(),Intent.CATEGORY_LEANBACK_LAUNCHER);
         cards = moduleCards ? CardFeature.run(() -> Cards.discover(this, hiddenApps,
                 () -> Cards.load(Cards.storeFile(this)), leanback), none) : none;
         adapter.reload(cards.isEmpty() ? none : CardFeature.run(() -> Cards.shown(cards), none), leanback);
@@ -1046,14 +1080,28 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         restartIdleClock();
     }
 
+    private static void cancelVisualTree(View view){
+        view.animate().cancel();
+        if(view instanceof PetalShowerView && view.getParent() instanceof android.view.ViewGroup){((android.view.ViewGroup)view.getParent()).removeView(view);return;}
+        if(view instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int i=group.getChildCount()-1;i>=0;i--)cancelVisualTree(group.getChildAt(i));}
+    }
+    private void suspendVisuals(){
+        if(root==null)return;
+        MinutePulse.remove(minuteTick);handler.removeCallbacks(clockCheck);root.removeCallbacks(showIdleClock);
+        if(wallpaperPlayer!=null)wallpaperPlayer.stop();stopAmbientAnimation();stopStats();
+        if(diya!=null)diya.stop();if(springX!=null)springX.cancel();if(springY!=null)springY.cancel();
+        cancelVisualTree(root);
+    }
     private void restartIdleClock() {
         root.removeCallbacks(showIdleClock);
-        if (idleClockMs > 0) root.postDelayed(showIdleClock, idleClockMs);
+        if (resumed && screenWork.interactive() && idleClockMs > 0) root.postDelayed(showIdleClock, idleClockMs);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        resumed=false;
+        suspendVisuals();
         root.removeCallbacks(showIdleClock);
         endReorder();   // Home or another app while reordering keeps the order so far
         wallpaperPlayer.stop();
@@ -1061,7 +1109,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         hero.animate().cancel();
         ambient.animate().cancel();
         heroArt.animate().cancel();
-        handler.removeCallbacks(minuteTick);
+        MinutePulse.remove(minuteTick);
         stopStats();
         if (diya != null) diya.stop();
         cancelPendingFocusScroll();
@@ -1069,6 +1117,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (cardPrompt != null) cardPrompt.dismiss();
         if (appLibrary != null) appLibrary.close();
         if (openPopup != null) openPopup.dismiss();
+        suspendVisuals();
     }
 
     @Override
@@ -1076,6 +1125,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         updateUi.stop();
         super.onStop();
         started = false;
+        screenWork.stop();
         unregisterReceiver(timeReceiver);
         handler.removeCallbacks(clockCheck);
         stopped = true;
@@ -1100,6 +1150,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // they hold) would stay attached until Home comes back. setAdapter(null) recycles them now.
         grid.setAdapter(null);
         grid.getRecycledViewPool().clear();
+        AppArtwork.trim();
         heroArtCache.clear();
         heroArtKey = null;
         tileRefresh.invalidate();
@@ -1161,6 +1212,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if(RemoteInput.drop(event))return true;
         if (handleSettingsKey(event)) return true;
         if (tileMenuEnabled && !reordering && openPopup == null && cardPrompt == null
                 && event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
@@ -1437,6 +1489,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (to < 0 || to >= n || to == from) return;
         keepScroll(() -> adapter.move(from, to));
         // The owner carries this tile: where it lands decides whether it is in the dock, not dock_apps (#499).
+        grid.announceForAccessibility(getString(R.string.opt_move_position,to+1));
+        if(heroName!=null)heroName.setText(adapter.labelAt(to)+" \u00b7 "+getString(R.string.opt_move_position,to+1));
         if (to < COLUMNS) dockInSession.add(movingKey);
         else dockInSession.remove(movingKey);
         refocusAfterLayout(to);
@@ -1488,7 +1542,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     @Override
     public void onLibraryRequested() {
-        if (appLibrary != null) appLibrary.close();
+        if (appLibrary != null) return;
         if (openPopup != null) openPopup.dismiss();
         libraryFocusPending = false;
         libraryFromTopBar = false;
@@ -1511,6 +1565,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     @Override
     public void onTileFocused(int position, View card) {
+        if(!resumed || !screenWork.interactive())return;
         lastFocused = position;
         lastFocusedKey = adapter.keyAt(position);
         // Focus restored before the first layout (cold start): the tile has no size yet, and the glass
@@ -1610,7 +1665,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     // ---- top shelf -------------------------------------------------------------------------------
 
     private void showHero(int position, float dockTopInRoot) {
-        String label = adapter.labelAt(position);
+        String label = adapter.labelAt(position)+(movingKey!=null?" \u00b7 "+getString(R.string.opt_move_position,position+1):"");
         int color = adapter.ambientColorAt(position);
         float y = dockTopInRoot - 14 * density - 26 * density - hero.getHeight();
         boolean changed = !label.contentEquals(heroName.getText());
@@ -2571,7 +2626,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             open(systemIntent(Settings.ACTION_WIFI_SETTINGS));
             return;
         }
-        if (openPopup != null) openPopup.dismiss();
+        if (openPopup != null && openPopup.isShowing()) return;
         View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
         LinearLayout rows = panel.findViewById(R.id.rows);
         PopupWindow popup = glassPopup(panel, (int)(300*density));
@@ -2704,7 +2759,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
     }
 
+    private long lastMenuOpen;
     private void open(Intent i) {
+        long now=android.os.SystemClock.uptimeMillis();
+        if(now-lastMenuOpen<450)return;
+        returnMenuFocus=getCurrentFocus();
+        lastMenuOpen=now;
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
             startActivity(i);
@@ -2956,7 +3016,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         popup.setOutsideTouchable(true);
         popup.setAnimationStyle(0);
         popup.setElevation(0f);
+        final View returnFocus=getCurrentFocus();
         popup.setOnDismissListener(() -> {
+            if(returnFocus!=null && returnFocus.isShown())returnFocus.requestFocus();
             if (openPopup == popup) openPopup = null;
         });
         openPopup = popup;
