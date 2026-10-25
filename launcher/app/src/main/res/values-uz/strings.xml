@@ -58,7 +58,6 @@
     <string name="card_prompt_names">Karta nomi: ‘%1$s’. Ilova: ‘%2$s’.</string>
     <string name="card_prompt_resigned">%1$s boshqa imzo kaliti bilan yangilandi, shuning uchun oldingi javobingiz endi amal qilmaydi. Uning kartasi uchun qaytadan tanlang.</string>
     <string name="card_prompt_relabelled">%1$s siz tanlaganingizdan keyin kartasi nomini oʻzgartirdi. Qaytadan tanlang.</string>
-    <string name="card_prompt_hint">Buni keyin oʻzgartirishingiz mumkin: Sozlamalar ustida OK ni bosib turing va Modul kartalarini tanlang.</string>
     <string name="card_prompt_identity">%1$s, kalit %2$s</string>
     <string name="card_keep_hidden">Yashirin qoldirish</string>
     <string name="card_show">Kartani koʻrsatish</string>

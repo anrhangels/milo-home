@@ -45,7 +45,6 @@
     <string name="card_prompt_names">Karta se jmenuje „%1$s“. Aplikace se jmenuje „%2$s“.</string>
     <string name="card_prompt_resigned">Aplikace %1$s byla aktualizována s jiným podpisovým klíčem, takže vaše dřívější volba už neplatí. Rozhodněte o její kartě znovu.</string>
     <string name="card_prompt_relabelled">Aplikace %1$s od vašeho rozhodnutí změnila název své karty. Rozhodněte o ní znovu.</string>
-    <string name="card_prompt_hint">Později to můžete změnit: podržte OK na tlačítku Nastavení a vyberte Karty modulů.</string>
     <string name="card_prompt_identity">%1$s, klíč %2$s</string>
     <string name="card_keep_hidden">Nechat skrytou</string>
     <string name="card_show">Zobrazit kartu</string>

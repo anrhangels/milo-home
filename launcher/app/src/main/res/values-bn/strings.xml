@@ -53,7 +53,6 @@
     <string name="card_prompt_names">কার্ডটির নাম \'%1$s\'। অ্যাপটির নাম \'%2$s\'।</string>
     <string name="card_prompt_resigned">%1$s অন্য একটি সাইনিং কি দিয়ে আপডেট হয়েছে, তাই আপনার আগের উত্তর আর প্রযোজ্য নয়। এর কার্ডের জন্য আবার বেছে নিন।</string>
     <string name="card_prompt_relabelled">আপনি বেছে নেওয়ার পর %1$s তার কার্ডের নাম বদলেছে। এর জন্য আবার বেছে নিন।</string>
-    <string name="card_prompt_hint">পরে বদলাতে পারবেন: সেটিংসে OK চেপে ধরে রাখুন, তারপর মডিউল কার্ড বেছে নিন।</string>
     <string name="card_prompt_identity">%1$s, কি %2$s</string>
     <string name="card_keep_hidden">লুকিয়ে রাখুন</string>
     <string name="card_show">কার্ড দেখান</string>

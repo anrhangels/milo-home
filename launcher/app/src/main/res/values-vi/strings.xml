@@ -51,7 +51,6 @@
     <string name="card_prompt_names">Thẻ tên là \'%1$s\'. Ứng dụng là \'%2$s\'.</string>
     <string name="card_prompt_resigned">%1$s đã được cập nhật bằng một khóa ký khác, nên lựa chọn trước của bạn không còn áp dụng. Hãy chọn lại cho thẻ của nó.</string>
     <string name="card_prompt_relabelled">%1$s đã đổi tên thẻ từ lúc bạn chọn. Hãy chọn lại.</string>
-    <string name="card_prompt_hint">Bạn có thể đổi sau: giữ OK trên Cài đặt, rồi chọn Thẻ mô-đun.</string>
     <string name="card_prompt_identity">%1$s, khóa %2$s</string>
     <string name="card_keep_hidden">Vẫn ẩn</string>
     <string name="card_show">Hiện thẻ</string>

@@ -58,7 +58,6 @@
     <string name="card_prompt_names">De kaart heet \'%1$s\'. De app heet \'%2$s\'.</string>
     <string name="card_prompt_resigned">%1$s is bijgewerkt met een andere ondertekeningssleutel, dus je eerdere antwoord geldt niet meer. Kies opnieuw voor de kaart.</string>
     <string name="card_prompt_relabelled">%1$s heeft de naam van zijn kaart veranderd sinds je koos. Kies opnieuw.</string>
-    <string name="card_prompt_hint">Je kunt dit later wijzigen: houd OK ingedrukt op Instellingen en kies Modulekaarten.</string>
     <string name="card_prompt_identity">%1$s, sleutel %2$s</string>
     <string name="card_keep_hidden">Verborgen houden</string>
     <string name="card_show">Kaart tonen</string>

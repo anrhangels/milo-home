@@ -1,0 +1,21 @@
+<resources>
+<item type="id" name="columns4"/>
+<item type="id" name="columns5"/>
+<item type="id" name="columns6"/>
+<item type="id" name="columns7"/>
+<item type="id" name="rows0"/>
+<item type="id" name="rows1"/>
+<item type="id" name="rows2"/>
+<item type="id" name="rows3"/>
+<item type="id" name="dock100"/>
+<item type="id" name="dock70"/>
+<item type="id" name="dock50"/>
+<item type="id" name="dock30"/>
+<item type="id" name="reorderChoice"/>
+<item type="id" name="wallpaperChoice"/>
+<item type="id" name="animationsChoice"/>
+<item type="id" name="advancedChoice"/>
+<item type="id" name="followThemeChoice"/>
+<item type="id" name="defaultHomeChoice"/>
+<item type="id" name="tvSettingsChoice"/>
+</resources>

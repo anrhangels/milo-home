@@ -85,7 +85,6 @@
     <string name="card_prompt_names">La tarjeta se llama «%1$s». La aplicación es «%2$s».</string>
     <string name="card_prompt_resigned">%1$s se actualizó con otra clave de firma, así que tu respuesta anterior ya no vale. Vuelve a decidir sobre su tarjeta.</string>
     <string name="card_prompt_relabelled">%1$s cambió el nombre de su tarjeta desde que decidiste. Vuelve a decidir.</string>
-    <string name="card_prompt_hint">Puedes cambiarlo luego: mantén OK sobre Ajustes y elige Tarjetas de módulos.</string>
     <string name="card_prompt_identity">%1$s, clave %2$s</string>
     <string name="card_keep_hidden">Mantener oculta</string>
     <string name="card_show">Mostrar tarjeta</string>

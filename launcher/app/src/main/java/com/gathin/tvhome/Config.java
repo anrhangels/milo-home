@@ -478,6 +478,11 @@ final class Config {
         if (chosenColumns >= 4 && chosenColumns <= 7) columns = chosenColumns;
         int chosenRows = choices.getInt(ROWS_BELOW_DOCK_KEY, rowsBelow);
         if (chosenRows >= 0 && chosenRows <= 3) rowsBelow = chosenRows;
+        alwaysShowNames = choices.getBoolean("milo_names", alwaysShowNames);
+        dockTitle = choices.getBoolean("milo_dock_title", dockTitle);
+        showNetworkPill = choices.getBoolean("milo_wifi_button", showNetworkPill);
+        showInputsPill = choices.getBoolean("milo_inputs_button", showInputsPill);
+        libraryButton = choices.getBoolean("milo_library_button", libraryButton);
         animations = choices.getBoolean("animations", animations);
         advancedEffects = choices.getBoolean("advanced_effects", advancedEffects);
         File wallpaper = dir != null ? new File(dir, WALLPAPER_NAME) : null;
@@ -565,11 +570,13 @@ final class Config {
             SharedPreferences.Editor editor = choices.edit();
             if (!"absent".equals(token)) editor.remove("columns").remove("animations")
                     .remove("advanced_effects").remove(ROWS_BELOW_DOCK_KEY).remove(WALLPAPER_CHOICE_KEY)
-                    .remove(DOCK_OPACITY_KEY);
+                    .remove(DOCK_OPACITY_KEY).remove("milo_names").remove("milo_dock_title")
+                    .remove("milo_wifi_button").remove("milo_inputs_button").remove("milo_library_button");
             editor.putString(THEME_SIGNATURE_KEY, signature).commit();
         } else if (!seen.equals(signature)) {
             choices.edit().remove("columns").remove("animations").remove("advanced_effects")
-                    .remove(ROWS_BELOW_DOCK_KEY).remove(WALLPAPER_CHOICE_KEY).remove(DOCK_OPACITY_KEY)
+                    .remove(ROWS_BELOW_DOCK_KEY).remove(WALLPAPER_CHOICE_KEY).remove(DOCK_OPACITY_KEY).remove("milo_names").remove("milo_dock_title")
+                    .remove("milo_wifi_button").remove("milo_inputs_button").remove("milo_library_button")
                     .putString(THEME_SIGNATURE_KEY, signature).commit();
         }
     }

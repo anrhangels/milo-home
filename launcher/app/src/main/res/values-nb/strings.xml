@@ -58,7 +58,6 @@
     <string name="card_prompt_names">Kortet heter «%1$s». Appen heter «%2$s».</string>
     <string name="card_prompt_resigned">%1$s ble oppdatert med en annen signeringsnøkkel. Det tidligere svaret ditt gjelder derfor ikke lenger. Velg på nytt om kortet skal vises.</string>
     <string name="card_prompt_relabelled">%1$s har endret navnet på kortet siden du valgte sist. Velg på nytt om kortet skal vises.</string>
-    <string name="card_prompt_hint">Du kan endre dette senere: Hold inne OK på Innstillinger, og velg Modulkort.</string>
     <string name="card_prompt_identity">%1$s, nøkkel %2$s</string>
     <string name="card_keep_hidden">Hold skjult</string>
     <string name="card_show">Vis kort</string>

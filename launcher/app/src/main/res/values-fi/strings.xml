@@ -50,7 +50,6 @@
     <string name="card_prompt_names">Kortin nimi on ”%1$s”. Sovellus on ”%2$s”.</string>
     <string name="card_prompt_resigned">%1$s on päivitetty eri allekirjoitusavaimella, joten aiempi vastauksesi ei ole enää voimassa. Päätä sen kortista uudelleen.</string>
     <string name="card_prompt_relabelled">%1$s on vaihtanut korttinsa nimen päätöksesi jälkeen. Päätä siitä uudelleen.</string>
-    <string name="card_prompt_hint">Voit muuttaa tätä myöhemmin: pidä OK-painiketta pohjassa Asetukset-kohdassa ja valitse Moduulikortit.</string>
     <string name="card_prompt_identity">%1$s, avain %2$s</string>
     <string name="card_keep_hidden">Pidä piilossa</string>
     <string name="card_show">Näytä kortti</string>

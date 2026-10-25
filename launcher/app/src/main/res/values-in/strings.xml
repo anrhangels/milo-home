@@ -57,7 +57,6 @@
     <string name="card_prompt_names">Kartu bernama \'%1$s\'. Aplikasinya \'%2$s\'.</string>
     <string name="card_prompt_resigned">%1$s diperbarui dengan kunci penandatangan berbeda, jadi jawaban Anda sebelumnya tidak berlaku lagi. Tentukan lagi untuk kartunya.</string>
     <string name="card_prompt_relabelled">%1$s mengubah nama kartunya sejak Anda menentukan pilihan. Tentukan lagi.</string>
-    <string name="card_prompt_hint">Anda dapat mengubahnya nanti: tahan OK pada Setelan, lalu pilih Kartu Modul.</string>
     <string name="card_prompt_identity">%1$s, kunci %2$s</string>
     <string name="card_keep_hidden">Tetap sembunyikan</string>
     <string name="card_show">Tampilkan kartu</string>

@@ -82,7 +82,6 @@
     <string name="card_prompt_names">La targeta es diu «%1$s». L\'aplicació és «%2$s».</string>
     <string name="card_prompt_resigned">%1$s s\'ha actualitzat amb una clau de signatura diferent, així que la teva resposta anterior ja no val. Torna a decidir per a la seva targeta.</string>
     <string name="card_prompt_relabelled">%1$s ha canviat el nom de la seva targeta des que vas decidir. Torna a decidir.</string>
-    <string name="card_prompt_hint">Ho pots canviar més endavant: mantén premut OK a Configuració i tria Targetes de mòduls.</string>
     <string name="card_prompt_identity">%1$s, clau %2$s</string>
     <string name="card_keep_hidden">Mantén-la amagada</string>
     <string name="card_show">Mostra la targeta</string>

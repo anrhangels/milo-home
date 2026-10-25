@@ -654,10 +654,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             makeIconOnly((TextView) btnSettings);
         }
         if (cfg.iconOnlyInputs) makeIconOnly((TextView) btnInputs);
-        btnSettings.setOnLongClickListener(v -> {
-            showSettingsMenu();
-            return true;
-        });
+        btnSettings.setOnLongClickListener(null);
+        btnSettings.setLongClickable(false);
 
         // Keep focus on the top bar at its ends and at the top: Android's focus finder would otherwise
         // jump to a tile far below when there is nothing in that direction.
@@ -910,6 +908,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (requestCode == LAUNCHER_SETTINGS_REQUEST && resultCode == RESULT_OK
                 && data != null && data.getBooleanExtra(LauncherSettingsActivity.EXTRA_REORDER, false)) {
             getIntent().putExtra(LauncherSettingsActivity.EXTRA_REORDER, true);
+            getIntent().putExtra(LauncherSettingsActivity.EXTRA_HOME_ACTION,
+                    data.getStringExtra(LauncherSettingsActivity.EXTRA_HOME_ACTION));
             // The old activity must not consume the pending action, or rebuild a second time in onResume.
             settingsRecreationPending = true;
             settingsRevision = settingsRevision();
@@ -921,7 +921,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (settingsRecreationPending || !tilesReady || !hasWindowFocus() || isFinishing()
                 || !getIntent().getBooleanExtra(LauncherSettingsActivity.EXTRA_REORDER, false)) return;
         getIntent().removeExtra(LauncherSettingsActivity.EXTRA_REORDER);
-        toggleReorder();
+        String action = getIntent().getStringExtra(LauncherSettingsActivity.EXTRA_HOME_ACTION);
+        getIntent().removeExtra(LauncherSettingsActivity.EXTRA_HOME_ACTION);
+        if ("dock".equals(action)) startDockEdit();
+        else if ("cards".equals(action)) showModuleCards();
+        else toggleReorder();
     }
 
     /** Rebuilds the tiles (and the module cards), then puts focus back where it was. */
@@ -2620,8 +2624,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             return key==KeyEvent.KEYCODE_DPAD_LEFT || key==KeyEvent.KEYCODE_DPAD_RIGHT;
         };
         dpiRow.setOnKeyListener(keys); wifiRow.setOnKeyListener(keys);
-        popup.setOnDismissListener(() -> { client.close(); if(openPopup==popup) openPopup=null; btnWifi.requestFocus(); });
-        dropIn(popup,panel,btnWifi,Gravity.END); dpiRow.requestFocus(); client.connect();
+        View networkAnchor = btnWifi.getVisibility()==View.VISIBLE ? btnWifi : findViewById(R.id.btnSettings);
+        popup.setOnDismissListener(() -> { client.close(); if(openPopup==popup) openPopup=null; networkAnchor.requestFocus(); });
+        dropIn(popup,panel,networkAnchor,Gravity.END); dpiRow.requestFocus(); client.connect();
     }
 
 
@@ -3031,25 +3036,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         panel.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         popup.setWidth(Math.max((int) (220 * density), Math.min(panel.getMeasuredWidth(), (int) (360 * density))));
         dropIn(popup, panel, anchor, getResources().getBoolean(R.bool.rtl_menu_bar) ? Gravity.START : Gravity.END);
-        rows.getChildAt(0).requestFocus();
-    }
-
-    /** The header opens launcher settings directly; hold OK keeps the extra home actions available. */
-    private void showSettingsMenu() {
-        View anchor = findViewById(R.id.btnSettings);
-        View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
-        LinearLayout rows = panel.findViewById(R.id.rows);
-        PopupWindow popup = glassPopup(panel, (int) (200 * density));
-        if (!launcherSettingsButton) addSettingsMenuRow(rows, popup, R.string.launcher_settings, () -> startActivityForResult(
-                new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST));
-        if (moduleCards) addSettingsMenuRow(rows, popup, R.string.module_cards, this::showModuleCards);
-        if (dockRow) addSettingsMenuRow(rows, popup, R.string.dock_edit, this::startDockEdit);
-        addSettingsMenuRow(rows, popup, R.string.reorder, this::toggleReorder);
-        panel.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        popup.setWidth(Math.max((int) (200 * density), panel.getMeasuredWidth()));
-        // Hebrew puts Settings at the left of the header: grow the menu inward from it.
-        dropIn(popup, panel, anchor, getResources().getBoolean(R.bool.rtl_menu_bar)
-                ? Gravity.START : Gravity.END);
         rows.getChildAt(0).requestFocus();
     }
 

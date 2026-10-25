@@ -74,7 +74,6 @@
     <string name="card_prompt_names">Картка має назву «%1$s». Застосунок — «%2$s».</string>
     <string name="card_prompt_resigned">%1$s оновлено з іншим ключем підпису, тому ваш попередній вибір більше не діє. Виберіть ще раз, показувати чи приховувати картку.</string>
     <string name="card_prompt_relabelled">Назву картки для %1$s змінено після вашого вибору. Виберіть ще раз.</string>
-    <string name="card_prompt_hint">Це можна змінити пізніше: утримуйте OK на плитці «Налаштування», потім виберіть «Картки застосунків».</string>
     <string name="card_prompt_identity">%1$s, ключ %2$s</string>
     <string name="card_keep_hidden">Не показувати</string>
     <string name="card_show">Показати картку</string>

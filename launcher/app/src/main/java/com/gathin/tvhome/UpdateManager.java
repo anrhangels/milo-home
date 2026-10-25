@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import org.json.JSONArray;
 
-/** Application-scoped bounded worker. No service, alarms, boot receiver or background polling. */
+/** Application-scoped bounded worker. Optional system-scheduled checks; no permanent service, boot receiver or tight polling. */
 final class UpdateManager {
     static final int IDLE=0,CHECKING=1,DOWNLOADING=2,VERIFYING=3,READY=4,ERROR=5;
     interface Listener { void changed(); void ready(File file); }
@@ -33,12 +33,16 @@ final class UpdateManager {
     private Listener listener;
     private UpdateManager(Context context) { this.context=context; prefs=context.getSharedPreferences("milo_updates",Context.MODE_PRIVATE); worker.allowCoreThreadTimeOut(true); }
     boolean isChecking() { return checking; }
-    void attach(Listener value) { listener=value; check(false); notifyChanged(); }
+    void attach(Listener value) { listener=value; UpdateSchedule.sync(context); check(false); notifyChanged(); }
     void detach(Listener value) { if(listener==value) listener=null; cancelDownload(); }
     private void notifyChanged() { main.post(() -> { if(listener!=null) listener.changed(); }); }
     void cancelDownload() { if(state==DOWNLOADING || state==VERIFYING) cancelled=true; }
-    void check(boolean force) {
-        if(checking || state==DOWNLOADING || state==VERIFYING) return;
+    void check(boolean force) { check(force,null); }
+    synchronized void check(boolean force,Runnable completion) {
+        if(checking || state==DOWNLOADING || state==VERIFYING) {
+            if(completion!=null) main.post(completion);
+            return;
+        }
         checking=true;
         worker.execute(() -> {
             try {
@@ -51,11 +55,8 @@ final class UpdateManager {
                 });
                 String cache=prefs.getString("feed","");
                 if(!cache.isEmpty()) releases=UpdateFeed.parse(cache,BuildConfig.UPDATE_REPO,context.getPackageName(),code,Build.VERSION.SDK_INT,certificate,BuildConfig.UPDATE_TRACK,BuildConfig.UPDATE_VARIANT);
-                if(now<prefs.getLong("blocked_until",0)) return;
-                if(!force && now>=prefs.getLong("success",0) && now-prefs.getLong("success",0)<86400000L) return;
-                // Failed automatic checks back off for one hour. Manual checks cannot be spammed within a minute.
-                long interval=force?60000L:3600000L;
-                if(now>=prefs.getLong("attempt",0) && now-prefs.getLong("attempt",0)<interval) return;
+                if(!UpdatePolicy.due(UpdateSchedule.mode(context),force,now,prefs.getLong("success",0),
+                        prefs.getLong("attempt",0),prefs.getLong("blocked_until",0))) return;
                 prefs.edit().putLong("attempt",now).apply(); state=CHECKING; notifyChanged();
                 JSONArray combined=new JSONArray();
                 for(int page=1;page<=3;page++) {
@@ -72,7 +73,7 @@ final class UpdateManager {
             } catch(Exception failure) {
                 if(failure instanceof UpdateHttp.RateLimit) prefs.edit().putLong("blocked_until",((UpdateHttp.RateLimit)failure).retryAt).apply();
                 error=failure.getMessage()==null?"Update check failed":failure.getMessage(); state=ERROR;
-            } finally { checking=false; notifyChanged(); }
+            } finally { checking=false; notifyChanged(); if(completion!=null) main.post(completion); }
         });
     }
     /** Called only after explicit download confirmation. Popup dismissal alone does not cancel it. */

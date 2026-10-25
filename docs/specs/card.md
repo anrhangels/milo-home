@@ -145,7 +145,7 @@ any violation drops that one card, with a log line and no other effect.
    as far as they fit on one line. A card uses the app's own banner (or icon) for its artwork.
 7. Hide. A hidden card leaves the app's ordinary tile exactly as before: hiding a card never
    removes an app, and showing one never installs anything. A card is hidden or shown again from
-   the Module cards list: hold OK on the Settings pill. The list shows every discovered card with
+   the Module cards list: Settings → Launcher settings → More → Module cards. The list shows every discovered card with
    its app label, package, full signer digest and state; OK toggles Shown and Hidden.
 8. Uninstall. Removing the module removes the card. Its record stays, so a reinstall with the same
    signing key needs no new prompt.
