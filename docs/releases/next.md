@@ -4,6 +4,7 @@
 
 - Заставка: мягкое свечение или чёрный фон, три размера часов, предпросмотр перед выходом.
 - «Уменьшить эффекты»: одна команда отключает анимации, дополнительные эффекты и свечение часов. Все опции можно настроить отдельно.
+- Исправлен найденный на ТВ сбой: ползунок громкости обновляется и когда кнопки обрабатывает сама прошивка. Без постоянного опроса.
 - Панель быстрых настроек и часы теперь соблюдают выбор отключённых анимаций.
 - Обработчики кнопок пульта не перехватывают команды при выключенном экране.
 - Меню библиотеки скрывает сведения о приложении, если прошивка не предоставляет этот экран.
@@ -22,6 +23,7 @@ The familiar Home screen and app order are preserved.
 
 - Clock screensaver: ambient glow or black background, three clock sizes and an appearance preview.
 - Reduce effects applies animation, extra-effect and black-clock preferences in one confirmation. Each option remains independently adjustable.
+- Fixed a physical-TV finding: the volume slider follows system-handled volume keys through visible-only audio events, without polling.
 - Quick settings and clock transitions respect disabled animations.
 - Remote helpers pass keys through while the display is off.
 - App info is offered only when the firmware provides it; vendor settings resolution is retained.

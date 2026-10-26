@@ -12,6 +12,26 @@ import android.widget.*;
 public final class QuickSettingsActivity extends Activity {
     private AudioManager audio;
     private SeekBar volume;
+    private boolean volumeEventsRegistered;
+    // Some TV firmware consumes volume keys before Activity.dispatchKeyEvent. Treat broadcasts only
+    // as refresh signals; always read the actual AudioManager value, never trust supplied extras.
+    private final android.content.BroadcastReceiver volumeEvents=new android.content.BroadcastReceiver() {
+        @Override public void onReceive(android.content.Context context,Intent intent) { refreshVolume(); }
+    };
+    @Override protected void onStart() {
+        super.onStart();
+        android.content.IntentFilter filter=new android.content.IntentFilter("android.media.VOLUME_CHANGED_ACTION");
+        filter.addAction("android.media.STREAM_MUTE_CHANGED_ACTION");
+        filter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        if(android.os.Build.VERSION.SDK_INT>=33) registerReceiver(volumeEvents,filter,android.content.Context.RECEIVER_EXPORTED);
+        else registerReceiver(volumeEvents,filter);
+        volumeEventsRegistered=true;
+        refreshVolume();
+    }
+    @Override protected void onStop() {
+        if(volumeEventsRegistered) { unregisterReceiver(volumeEvents); volumeEventsRegistered=false; }
+        super.onStop();
+    }
     
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
