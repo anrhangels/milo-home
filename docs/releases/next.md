@@ -1,32 +1,31 @@
-# Milo Home 0.0.9
+# Milo Home 0.1.0 Preview
 
-Легче в фоне, удобнее каждый день. Привычный главный экран сохранён.
+Первый тестовый выпуск 0.1.0. Привычный главный экран и порядок приложений сохранены.
 
-- Графика и цвета приложений кэшируются совместно; каталог обновляется по изменившимся пакетам.
-- Скрытый лаунчер и погашенный экран больше не держат активными визуальные задачи. Минутные задачи видимых сцен объединены.
-- Прозрачность дока, часы и время заставки применяются без пересоздания главного экрана.
-- Библиотека запоминает позицию. Добавлены фильтр по первой букве, «Показать все» и собственные названия карточек через удержание OK.
-- Новые приложения не переставляют прежние автоматически заполненные места дока. При перемещении показывается номер места.
-- Ошибка запуска объясняет причину и предлагает убрать карточку, не удаляя приложение.
-- Обновления показывают нехватку места, продолжают прерванную загрузку при поддержке сервера и восстанавливают готовый проверенный APK без повторного скачивания.
+- Заставка: мягкое свечение или чёрный фон, три размера часов, предпросмотр перед выходом.
+- «Уменьшить эффекты»: одна команда отключает анимации, дополнительные эффекты и свечение часов. Все опции можно настроить отдельно.
+- Панель быстрых настроек и часы теперь соблюдают выбор отключённых анимаций.
+- Обработчики кнопок пульта не перехватывают команды при выключенном экране.
+- Меню библиотеки скрывает сведения о приложении, если прошивка не предоставляет этот экран.
+- Обновлена совместимость системных настроек. Добавлены переводы основной части исходного интерфейса на датский, корейский и европейский португальский; новые пункты Milo используют английский при отсутствии перевода.
+- Оптимизации 0.0.9 и проверка подписи обновлений сохранены.
 
-Preview и стабильная 0.0.9 установлены на Android TV 11 через настоящий GitHub Release; установленные APK совпали с опубликованными по SHA-256. HOME и состояние системных пакетов сохранились; владелец проверил пульт и меню. Автоматически прошли 261 JVM-тест, 17 проверок инструментов и семь Android-тестов. Процент снижения CPU/RAM не заявляется: для такого сравнения нужны одинаковые условия измерения.
+Это Preview для испытаний. Подробный результат проверки на настоящем телевизоре будет добавлен после установки. Снижение общей нагрузки Android в процентах не обещается.
 
-**Milo-Home.apk** — обычная версия. **Milo-Home-ByeByeDPI.apk** — со встроенным установщиком ByeByeDPI. Обновляйте свой вариант поверх установленного приложения, без удаления данных.
-
-[Установка](https://github.com/anrhangels/milo-home/blob/milo-main/docs/START.ru.md) · [Проверки и ограничения](https://github.com/anrhangels/milo-home/blob/milo-main/docs/releases/0.0.9-preview.md) · [Будущие стили Milo](https://github.com/anrhangels/milo-home/blob/milo-main/docs/ADDONS-CONCEPT.md)
+**Milo-Home.apk** — обычная версия. **Milo-Home-ByeByeDPI.apk** — со встроенным установщиком ByeByeDPI. Устанавливайте свой вариант поверх прежнего, без удаления данных.
 
 ---
 
-Lighter in the background, easier to use. The familiar Home layout is preserved.
+# Milo Home 0.1.0 Preview
 
-- Shared artwork/colour caches and package-scoped catalogue refreshes.
-- Hidden/screen-off visual work suspension and shared minute scheduling.
-- Dock opacity, clock options and idle delay without recreating Home.
-- Library position retention, first-letter filtering, Show all and custom shortcut names.
-- Stable automatically filled dock positions, a move destination and actionable launch errors.
-- Storage feedback, validated Range resume and recovery of a fully verified cached APK.
+The familiar Home screen and app order are preserved.
 
-Both Preview and Stable 0.0.9 were installed from genuine GitHub Releases on Android TV 11 and matched their published APK hashes, preserving HOME and system-package state; the owner checked remote controls and menus. Validation includes 261 JVM tests, 17 tooling tests and seven Android tests. No device-specific CPU/RAM percentage improvement is claimed.
+- Clock screensaver: ambient glow or black background, three clock sizes and an appearance preview.
+- Reduce effects applies animation, extra-effect and black-clock preferences in one confirmation. Each option remains independently adjustable.
+- Quick settings and clock transitions respect disabled animations.
+- Remote helpers pass keys through while the display is off.
+- App info is offered only when the firmware provides it; vendor settings resolution is retained.
+- Danish, Korean and European Portuguese upstream interface translations added. Untranslated Milo-specific options fall back to English.
+- All 0.0.9 optimizations and APK update verification retained.
 
-Choose Milo-Home.apk or Milo-Home-ByeByeDPI.apk to match your existing edition. Update in place without uninstalling.
+Preview for testing; physical-TV acceptance results will follow installation. No percentage reduction in overall Android load is claimed.

@@ -61,8 +61,11 @@ public final class QuickSettingsActivity extends Activity {
         link(launcher,launcher,launcher,volume.isEnabled()?volume:inputs,all);
         link(all,all,all,launcher,all);
         wifi.requestFocus();
-        View panel=findViewById(R.id.panel); panel.setTranslationX(dp(32)); panel.setAlpha(0);
-        panel.animate().translationX(0).alpha(1).setDuration(180).start();
+        View panel=findViewById(R.id.panel);
+        if(Config.load(this).animations) {
+            panel.setTranslationX(dp(32)); panel.setAlpha(0);
+            panel.animate().translationX(0).alpha(1).setDuration(180).start();
+        }
     }
     private LinearLayout grid(LinearLayout parent) {
         LinearLayout line=new LinearLayout(this);

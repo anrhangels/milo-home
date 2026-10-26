@@ -29,7 +29,7 @@ public final class LauncherSettingsActivity extends Activity implements UpdateMa
     private UpdateManager updates;
     private static final String[] APPEARANCE_KEYS={"columns",Config.ROWS_BELOW_DOCK_KEY,Config.DOCK_OPACITY_KEY,
         Config.WALLPAPER_CHOICE_KEY,"animations","advanced_effects","milo_names","milo_dock_title",
-        "milo_wifi_button","milo_inputs_button","milo_library_button","milo_clock_bold","milo_clock_brightness","milo_idle_minutes"};
+        "milo_wifi_button","milo_inputs_button","milo_library_button","milo_clock_bold","milo_clock_brightness","milo_idle_minutes",ClockBackdrop.KEY,"milo_clock_size"};
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
@@ -101,9 +101,15 @@ public final class LauncherSettingsActivity extends Activity implements UpdateMa
         if(config.dockRow) action(0,R.string.dock_edit,R.string.ms_home_action_hint,()->homeAction("dock"));
     }
     private void screensaver() {
+        chips(R.string.milo_clock_background,R.string.milo_clock_background_hint,
+            new String[]{getString(R.string.milo_clock_ambient),getString(R.string.milo_clock_black)},null,
+            ()->ClockBackdrop.normalize(choices.getInt(ClockBackdrop.KEY,0)),i->save(ClockBackdrop.KEY,i));
         chips(R.string.milo_clock_style,R.string.ms_clock_hint,
             new String[]{getString(R.string.milo_clock_light),getString(R.string.milo_clock_bold)},null,
             ()->choices.getBoolean("milo_clock_bold",false)?1:0,i->save("milo_clock_bold",i==1));
+        int[] sizes={90,120,150};
+        chips(R.string.milo_clock_size,R.string.ms_clock_hint,new String[]{"90","120","150"},null,
+            ()->Arrays.asList(90,120,150).indexOf(choices.getInt("milo_clock_size",120)),i->save("milo_clock_size",sizes[i]));
         int[] levels={30,50,80,100};
         chips(R.string.milo_brightness,R.string.ms_brightness_hint,new String[]{"30%","50%","80%","100%"},null,
             ()->Arrays.asList(30,50,80,100).indexOf(choices.getInt("milo_clock_brightness",80)),
@@ -125,6 +131,14 @@ public final class LauncherSettingsActivity extends Activity implements UpdateMa
         action(0,R.string.milo_preview,R.string.ms_clock_hint,()->startActivity(new Intent(this,ClockActivity.class)));
     }
     private void motion() {
+        action(0,R.string.milo_light_mode,R.string.milo_light_mode_hint,()->
+            new AlertDialog.Builder(this).setTitle(R.string.milo_light_mode)
+                .setMessage(R.string.milo_light_mode_confirm)
+                .setPositiveButton(android.R.string.ok,(d,w)->{
+                    choices.edit().putBoolean("animations",false).putBoolean("advanced_effects",false)
+                        .putInt(ClockBackdrop.KEY,ClockBackdrop.BLACK).apply();
+                    markChanged(); refresh();
+                }).setNegativeButton(android.R.string.cancel,null).show());
         toggle("animations",R.string.ms_animations,R.string.ms_motion_hint,()->config.animations);
         LinearLayout row=action(R.id.advancedChoice,R.string.advanced_effects,R.string.ms_advanced_hint,()->{
             if(config.advancedEffects) save("advanced_effects",false);

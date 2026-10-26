@@ -470,11 +470,12 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 if (pos != RecyclerView.NO_POSITION) listener.onTileLongPress(pos, v);
                 return true;
             }
-            Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + e.pkg));
+            Intent i = SystemSettings.appInfo(ctx,e.pkg);
+            if (i == null) return true;
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             try {
                 ctx.startActivity(i);
-            } catch (ActivityNotFoundException ignored) {
+            } catch (ActivityNotFoundException | SecurityException ignored) {
             }
             return true;
         });

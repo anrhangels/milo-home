@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="milo_clock_background">Фон часов</string>
+    <string name="milo_clock_background_hint">Мягкое свечение или простой чёрный фон.</string>
+    <string name="milo_clock_ambient">Свечение</string>
+    <string name="milo_clock_black">Чёрный</string>
+    <string name="milo_light_mode">Уменьшить эффекты</string>
+    <string name="milo_light_mode_hint">Отключить анимации и выбрать чёрный фон часов.</string>
+    <string name="milo_light_mode_confirm">Отключить анимации и дополнительные эффекты, выбрать чёрную заставку? Порядок приложений и остальные настройки сохранятся. Каждую опцию можно изменить позже.</string>
+    <string name="milo_clock_size">Размер часов</string>
+</resources>

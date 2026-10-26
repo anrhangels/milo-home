@@ -600,10 +600,11 @@ final class AppLibraryDialog {
                 .setNegativeButton(android.R.string.cancel,null).setNeutralButton(R.string.opt_default_name,(d,w)->{AppNames.save(activity,pkg,"");changed.run();refresh();})
                 .setPositiveButton(android.R.string.ok,(d,w)->{AppNames.save(activity,pkg,input.getText().toString());changed.run();refresh();}).show();
         });
-        addAction(rows, R.string.library_app_info, () -> {
+        android.content.Intent appInfo = SystemSettings.appInfo(activity,pkg);
+        if (appInfo != null) addAction(rows, R.string.library_app_info, () -> {
             close();
             try {
-                activity.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + pkg)));
+                activity.startActivity(appInfo);
             } catch (ActivityNotFoundException | SecurityException e) {
                 AppLaunchFailure.show(activity,app.activityInfo.packageName,label(app),changed);
             }

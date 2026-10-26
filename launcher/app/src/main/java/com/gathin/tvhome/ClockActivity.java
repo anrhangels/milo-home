@@ -56,6 +56,7 @@ public class ClockActivity extends Activity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        if (Config.load(this).animations) overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        else overridePendingTransition(0,0);
     }
 }

@@ -22,3 +22,7 @@ Milo Home is not an official product of Gathin23, OpenAI, GitHub, Haier or Googl
 ## QR code generation
 
 Report QR codes use [ZXing Core 3.5.3](https://github.com/zxing/zxing), Apache License 2.0. Only offline QR encoding is included in the app; no scanner or camera integration. [License](docs/licenses/zxing-LICENSE.txt).
+
+## 0.1.0 upstream selections
+
+Screen-off remote safety, app-info availability, vendor settings extraction, MemoryTrimPolicy and Danish/Korean/European Portuguese base translations were adapted from CleanYourTV v3.0.0 (`67dc5bee`), under the original MIT licence. Milo-specific settings, update delivery and optimizations remain independent.

@@ -13,7 +13,9 @@ public final class SettingsPreview extends View {
     private Config config;
     private boolean clock,updateExample;
     private boolean bold;
+    private boolean blackClock;
     private int brightness=80;
+    private int clockSize=120;
     private Bitmap wallpaper;
     private String wallpaperPath="";
     private final Typeface font;
@@ -23,7 +25,9 @@ public final class SettingsPreview extends View {
     void update(Config value,int page) {
         config=value; clock=page==2; updateExample=page==4;
         android.content.SharedPreferences p=getContext().getSharedPreferences(Config.SETTINGS_NAME,0);
+        blackClock=ClockBackdrop.normalize(p.getInt(ClockBackdrop.KEY,0))==ClockBackdrop.BLACK;
         bold=p.getBoolean("milo_clock_bold",false);
+        clockSize=Math.max(90,Math.min(150,p.getInt("milo_clock_size",120)));
         brightness=p.getInt("milo_clock_brightness",80);
         File file=value.wallpaper;
         String path=file==null?"":file.getAbsolutePath();
@@ -104,11 +108,12 @@ public final class SettingsPreview extends View {
                 }
             }
         } else {
-            paint.setShader(new RadialGradient(120,90,120,0xff182142,0xff050609,Shader.TileMode.CLAMP));
+            if (blackClock) paint.setColor(android.graphics.Color.BLACK);
+            else paint.setShader(new RadialGradient(120,90,120,0xff182142,0xff050609,Shader.TileMode.CLAMP));
             canvas.drawRect(0,12,240,170,paint); paint.setShader(null);
             paint.setTypeface(Typeface.create(bold?"sans-serif-medium":"sans-serif-thin",Typeface.NORMAL));
-            paint.setTextSize(47); paint.setColor((Math.round(brightness*2.55f)<<24)|0xffffff);
-            canvas.drawText("20:43",51,105,paint);
+            paint.setTextSize(47f*clockSize/120f); paint.setColor((Math.round(brightness*2.55f)<<24)|0xffffff);
+            canvas.drawText("20:43",(240-paint.measureText("20:43"))/2,105,paint);
             text(canvas,"Milo",102,127,10,0xff8891a6);
         }
         canvas.restore();

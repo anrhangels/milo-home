@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="milo_clock_background">Clock background</string>
+    <string name="milo_clock_background_hint">Choose a soft glow or a plain black background.</string>
+    <string name="milo_clock_ambient">Soft glow</string>
+    <string name="milo_clock_black">Black</string>
+    <string name="milo_light_mode">Reduce effects</string>
+    <string name="milo_light_mode_hint">Turn off animations and use a black clock background.</string>
+    <string name="milo_light_mode_confirm">Disable animations and extra effects, and use a black screensaver? App order and other settings stay the same. You can change each option later.</string>
+    <string name="milo_clock_size">Clock size</string>
+</resources>

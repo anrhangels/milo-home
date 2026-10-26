@@ -28,6 +28,8 @@ final class ClockScene {
     private final GradientDrawable glow;
     private final float brightness;
     private boolean running;
+    private final boolean ambientEnabled;
+    private final boolean animations;
     private final ScreenWork screenWork;
     private int colorIndex;
     private int glowColor;
@@ -46,14 +48,18 @@ final class ClockScene {
     ClockScene(View root) {
         content = root.findViewById(R.id.dreamContent);
         android.content.SharedPreferences prefs = root.getContext().getSharedPreferences(Config.SETTINGS_NAME, 0);
+        animations = Config.load(root.getContext()).animations;
+        ambientEnabled = ClockBackdrop.normalize(prefs.getInt(ClockBackdrop.KEY,0)) == ClockBackdrop.AMBIENT;
         brightness = Math.max(20, Math.min(100, prefs.getInt("milo_clock_brightness", 80))) / 100f;
         screenWork=new ScreenWork(root.getContext(),()->{if(running){content.setAlpha(brightness);MinutePulse.add(tick);}},()->{MinutePulse.remove(tick);handler.removeCallbacksAndMessages(null);content.animate().cancel();});
         android.widget.TextClock clock = root.findViewById(R.id.miloDreamClock);
+        clock.setTextSize(Math.max(90,Math.min(150,prefs.getInt("milo_clock_size",120))));
         clock.setTypeface(android.graphics.Typeface.create(prefs.getBoolean("milo_clock_bold", false) ? "sans-serif-medium" : "sans-serif-thin", android.graphics.Typeface.NORMAL));
         View ambient = root.findViewById(R.id.dreamAmbient);
         glow = new GradientDrawable();
         glow.setGradientType(GradientDrawable.RADIAL_GRADIENT);
         ambient.setBackground(glow);
+        ambient.setVisibility(ambientEnabled ? View.VISIBLE : View.GONE);
         ambient.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) ->
                 glow.setGradientRadius((r - l) * 0.55f));
         colorIndex = random.nextInt(PALETTE.length);
@@ -66,7 +72,8 @@ final class ClockScene {
         content.post(() -> {
             if(!running || !screenWork.interactive())return;
             placeClock();
-            content.animate().alpha(brightness).setDuration(1200).start();
+            if (animations) content.animate().alpha(brightness).setDuration(1200).start();
+            else content.setAlpha(brightness);
         });
         screenWork.start();
     }
@@ -80,6 +87,7 @@ final class ClockScene {
     }
 
     private void moveClock() {
+        if (!animations) { placeClock(); content.setAlpha(brightness); return; }
         content.animate().alpha(0f).setDuration(900).withLayer().withEndAction(() -> {
             if(!running || !screenWork.interactive())return;
             placeClock();
@@ -103,6 +111,7 @@ final class ClockScene {
     }
 
     private void shiftGlow() {
+        if (!ambientEnabled) return;
         int from = glowColor;
         colorIndex = (colorIndex + 1) % PALETTE.length;
         int to = PALETTE[colorIndex];
