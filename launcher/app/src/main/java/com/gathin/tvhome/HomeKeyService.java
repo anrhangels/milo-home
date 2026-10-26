@@ -154,7 +154,7 @@ public class HomeKeyService extends AccessibilityService {
                 Intent open = settingsPanel ? new Intent(this, QuickSettingsActivity.class)
                         : SystemSettings.intent(this, Settings.ACTION_SETTINGS);
                 try {
-                    startActivity(open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    startActivity(open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | (settingsPanel ? Intent.FLAG_ACTIVITY_MULTIPLE_TASK : 0)));
                 } catch (ActivityNotFoundException | SecurityException unavailable) {
                     Toast.makeText(this, R.string.not_available, Toast.LENGTH_SHORT).show();
                 }

@@ -151,7 +151,7 @@ public final class QuickSettingsActivity extends Activity {
     }
     private int dp(int n) { return Math.round(n*getResources().getDisplayMetrics().density); }
     private void launch(Intent intent) {
-        try { startActivity(intent); }
+        try { startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)); }
         catch(android.content.ActivityNotFoundException|SecurityException e) {
             Toast.makeText(this,R.string.not_available,Toast.LENGTH_SHORT).show();
         }

@@ -277,6 +277,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private AppLibraryDialog appLibrary;
     private boolean appLibrarySelection;
     private boolean libraryFocusPending;
+    private View pendingMenuAnchor;
     private RecyclerView.OnScrollListener pendingFocusScroll;
 
     private boolean resumed;
@@ -1159,7 +1160,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
             startPendingSettingsReorder();
-            if (libraryFocusPending && appLibrary == null) focusLibrary();
+            if (pendingMenuAnchor != null) restoreMenuAnchor();
+            else if (libraryFocusPending && appLibrary == null) focusLibrary();
             showCardPrompt();
         }
     }
@@ -2678,10 +2680,22 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         };
         dpiRow.setOnKeyListener(keys); wifiRow.setOnKeyListener(keys);
         View networkAnchor = btnWifi.getVisibility()==View.VISIBLE ? btnWifi : findViewById(R.id.btnSettings);
-        popup.setOnDismissListener(() -> { client.close(); if(openPopup==popup) openPopup=null; networkAnchor.requestFocus(); });
+        popup.setOnDismissListener(() -> {
+            client.close(); if(openPopup==popup) openPopup=null;
+            libraryFocusPending=false;
+            pendingMenuAnchor=networkAnchor;
+            root.post(this::restoreMenuAnchor);
+        });
         dropIn(popup,panel,networkAnchor,Gravity.END); dpiRow.requestFocus(); client.connect();
     }
 
+
+    /** Popup dismissal can precede the host window regaining focus on TV firmware. */
+    private void restoreMenuAnchor() {
+        if(!resumed || !hasWindowFocus() || openPopup!=null || pendingMenuAnchor==null) return;
+        View anchor=pendingMenuAnchor; pendingMenuAnchor=null;
+        if(anchor.isAttachedToWindow() && anchor.isShown()) anchor.requestFocus();
+    }
 
     /** Every settings entry shares the standard intent and the vendor fallback (SystemSettings). */
     private Intent systemIntent(String standardAction) {
@@ -2764,6 +2778,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         returnMenuFocus=getCurrentFocus();
         lastMenuOpen=now;
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(i.getComponent()!=null && QuickSettingsActivity.class.getName().equals(i.getComponent().getClassName()))
+            i.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         try {
             startActivity(i);
         } catch (ActivityNotFoundException | SecurityException e) {

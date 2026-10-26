@@ -23,9 +23,12 @@ public class OptimizationLifecycleTest {
   Context c=instrumentation.getTargetContext();c.getSharedPreferences(Config.SETTINGS_NAME,0).edit().putInt(UpdatePolicy.KEY,0).commit();
   rule.launchActivity(new Intent(Intent.ACTION_MAIN));Field f=MinutePulse.class.getDeclaredField("listeners");f.setAccessible(true);
   try{
-   instrumentation.getUiAutomation().executeShellCommand("input keyevent 223").close();Thread.sleep(800);instrumentation.waitForIdleSync();
+   try(java.io.InputStream input=new android.os.ParcelFileDescriptor.AutoCloseInputStream(instrumentation.getUiAutomation().executeShellCommand("input keyevent 223"))) { while(input.read()!=-1) {} }
+   android.os.PowerManager power=c.getSystemService(android.os.PowerManager.class);
+   long deadline=System.currentTimeMillis()+4000;while(power.isInteractive() && System.currentTimeMillis()<deadline)Thread.sleep(50);
+   assertFalse("Sleep command must really turn off the display",power.isInteractive());Thread.sleep(200);instrumentation.waitForIdleSync();
    main(()->{try{assertEquals(0,((Set<?>)f.get(null)).size());}catch(Exception e){throw new RuntimeException(e);}});
-  }finally{instrumentation.getUiAutomation().executeShellCommand("input keyevent 224").close();}
+  }finally{try(java.io.InputStream input=new android.os.ParcelFileDescriptor.AutoCloseInputStream(instrumentation.getUiAutomation().executeShellCommand("input keyevent 224"))) { while(input.read()!=-1) {} }}
   Thread.sleep(800);instrumentation.waitForIdleSync();main(()->{try{assertTrue(((Set<?>)f.get(null)).size()>0);}catch(Exception e){throw new RuntimeException(e);}});
  }
 
