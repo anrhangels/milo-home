@@ -415,6 +415,15 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             v.setPadding(v.getPaddingLeft(), pad, v.getPaddingRight(), pad);
         }
         name.setLayoutParams(nameLp);
+        if(h < Math.round(DESIGN_H_DP*density)) {
+            View icon=v.findViewById(R.id.icon);
+            android.widget.FrameLayout.LayoutParams lp=(android.widget.FrameLayout.LayoutParams)icon.getLayoutParams();
+            float scale=h/(DESIGN_H_DP*density);
+            lp.width=lp.height=Math.round(48f*density*scale);
+            lp.bottomMargin=Math.round(14f*density*scale);icon.setLayoutParams(lp);
+            View label=v.findViewById(R.id.label);
+            label.setPadding(label.getPaddingLeft(),label.getPaddingTop(),label.getPaddingRight(),Math.round(4f*density));
+        }
         return new Holder(v, listener, animations, advancedEffects, reducedMotion, restNameAlpha, focusOvershoot);
     }
 

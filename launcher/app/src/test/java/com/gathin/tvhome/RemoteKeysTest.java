@@ -3,6 +3,7 @@ package com.gathin.tvhome;
 import java.util.Arrays;
 import java.util.Map;
 import org.junit.Test;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -92,5 +93,95 @@ public class RemoteKeysTest {
         assertEquals("app", RemoteKeys.target("app", "hold.app", RemoteKeys.HOLD_MS - 1));
         assertEquals("app", RemoteKeys.target("app", null, 5000));
         assertNull(RemoteKeys.target(null, "hold.app", 0));
+    }
+    /** Presses with a timer the test runs by hand, and the targets they open. */
+    private static final class Remote {
+        final java.util.List<Runnable> holds = new java.util.ArrayList<>();
+        final java.util.List<String> opened = new java.util.ArrayList<>();
+        final RemoteKeys.Presses presses = new RemoteKeys.Presses(new RemoteKeys.Presses.Timer() {
+            @Override public void post(Runnable hold, long delayMs) { holds.add(hold); }
+            @Override public void cancel(Runnable hold) { holds.remove(hold); }
+        });
+
+        void down(String button, long at, String holdApp) {
+            presses.down(button, at, 0, holdApp, opened::add);
+        }
+
+        void up(String button, long at, long downTime, String app, String holdApp) {
+            presses.up(button, at, downTime, false, app, holdApp, opened::add);
+        }
+
+        /** HOLD_MS has passed: every hold still pending fires. */
+        void holdTimeout() {
+            for (Runnable hold : new java.util.ArrayList<>(holds)) hold.run();
+            holds.clear();
+        }
+    }
+
+    @Test public void chordedKeysKeepTheirOwnHold() {
+        Remote remote = new Remote();
+        remote.down("1:190:0", 1000, "a.hold");
+        remote.down("1:191:0", 1100, "b.hold");
+        // A is released reporting B's down time; it is still A's tap, and only A's hold is cancelled.
+        remote.up("1:190:0", 1200, 1100, "a.tap", "a.hold");
+        remote.holdTimeout();
+        remote.up("1:191:0", 1700, 1100, "b.tap", "b.hold");
+        assertEquals(Arrays.asList("a.tap", "b.hold"), remote.opened);
+    }
+
+    @Test public void holdsOnTwoDevicesStayApart() {
+        Remote remote = new Remote();
+        remote.down("1:190:0", 1000, "hold");
+        remote.holdTimeout();
+        remote.down("2:190:0", 1000, "hold");
+        remote.holdTimeout();
+        remote.up("1:190:0", 1800, 1000, "tap", "hold");
+        remote.up("2:190:0", 1900, 1000, "tap", "hold");
+        assertEquals(Arrays.asList("hold", "hold"), remote.opened);
+    }
+
+    @Test public void bothServicesAnswerEachPressOnce() {
+        Remote remote = new Remote();
+        // A tap, each event delivered to both services, in either order.
+        remote.down("1:190:0", 1000, "hold");
+        remote.down("1:190:0", 1000, "hold");
+        remote.up("1:190:0", 1100, 1000, "tap", "hold");
+        remote.up("1:190:0", 1100, 1000, "tap", "hold");
+        // A hold, with the second service's DOWN arriving after the hold fired.
+        remote.down("1:190:0", 2000, "hold");
+        remote.holdTimeout();
+        remote.down("1:190:0", 2000, "hold");
+        remote.up("1:190:0", 2800, 2000, "tap", "hold");
+        remote.up("1:190:0", 2800, 2000, "tap", "hold");
+        assertEquals(Arrays.asList("tap", "hold"), remote.opened);
+        assertTrue(remote.holds.isEmpty());
+    }
+
+    @Test public void aCanceledUpOpensNothingAndDropsTheHold() {
+        Remote remote = new Remote();
+        remote.down("1:190:0", 1000, "hold");
+        remote.presses.up("1:190:0", 1200, 1000, true, "tap", "hold", remote.opened::add);
+        remote.holdTimeout();
+        assertTrue(remote.opened.isEmpty());
+    }
+
+    @Test public void anUpWithoutItsDownUsesTheEventsDownTime() {
+        Remote remote = new Remote();
+        remote.up("1:190:0", 1100, 1000, "tap", "hold");
+        remote.up("1:191:0", 1700, 1000, "tap", "hold");
+        assertEquals(Arrays.asList("tap", "hold"), remote.opened);
+    }
+    @Test public void passthroughInputIsNeverTreatedAsAnActivity() {
+        assertFalse(RemoteKeys.isActivity("input:com.vendor.tv/.InputService/HW1"));
+        assertTrue(RemoteKeys.isActivity("com.example.addon/.QuickActivity"));
+        assertFalse(RemoteKeys.isActivity("com.example.app"));
+        assertFalse(RemoteKeys.isActivity(null));
+    }
+    @Test public void autoRepeatDoesNotRestartTheHoldTimer() {
+        Remote remote=new Remote();remote.down("1:195:0",1000,"hold");
+        remote.presses.down("1:195:0",1250,1,"hold",remote.opened::add);
+        assertEquals(1,remote.holds.size());remote.holdTimeout();
+        remote.up("1:195:0",1800,1000,"tap","hold");
+        assertEquals(Arrays.asList("hold"),remote.opened);
     }
 }

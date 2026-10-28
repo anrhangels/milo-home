@@ -1,37 +1,33 @@
-# Milo Home 0.1.0
+# Milo Home 0.1.1
 
-Проверенное обновление 0.1.0. Привычный главный экран и порядок приложений сохранены.
+Обновление с выбранными исправлениями CleanYourTV 3.1. Привычный интерфейс Milo сохранён.
 
-- Заставка: мягкое свечение или чёрный фон, три размера часов, предпросмотр перед выходом.
-- «Уменьшить эффекты»: одна команда отключает анимации, дополнительные эффекты и свечение часов. Все опции можно настроить отдельно.
-- Исправлено повторное открытие панели после перехода в системные настройки; улучшен возврат выделения после меню сети.
-- Исправлен найденный на ТВ сбой: ползунок громкости обновляется и когда кнопки обрабатывает сама прошивка. Без постоянного опроса.
-- Панель быстрых настроек и часы теперь соблюдают выбор отключённых анимаций.
-- Обработчики кнопок пульта не перехватывают команды при выключенном экране.
-- Меню библиотеки скрывает сведения о приложении, если прошивка не предоставляет этот экран.
-- Обновлена совместимость системных настроек. Добавлены переводы основной части исходного интерфейса на датский, корейский и европейский португальский; новые пункты Milo используют английский при отсутствии перевода.
-- Оптимизации 0.0.9 и проверка подписи обновлений сохранены.
+- Исправлено удержание назначенных кнопок пульта: действие запускается после удержания, а два обработчика не запускают его повторно.
+- Поддержаны отдельные экраны приложений в назначениях кнопок и нестандартные коды кнопок на главном экране.
+- Подсветка и название карточки восстанавливаются после прерванного появления и повторного Home.
+- Иконки лучше помещаются в компактных карточках; смена обоев не пропускает минутный интервал из-за небольшого смещения таймера.
+- Улучшено открытие входов на Android 9 и настроек на прошивках без стандартного обработчика.
+- Добавлен основной шведский перевод, обновлены испанский, итальянский и французский. Список языков Android 13+ дополнен переводами, добавленными ранее; новые пункты Milo без перевода используют английский.
 
-Preview прошла испытания на Android TV 11; стабильная 0.1.0 установлена и проверена после повторного включения ТВ. Проверены заставка и сохранение настроек, панель и переход к настройкам Android, громкость, библиотека, сеть, сон/пробуждение и физический пульт. Сохранены HOME и состояние системных пакетов. Прошли 264 JVM-теста для каждого варианта, 17 проверок выпуска и девять Android-тестов. Снижение общей нагрузки Android в процентах не заявляется.
+Проверки: 272 JVM-теста для каждого варианта, Android Lint, 17 тестов выпуска и 11 Android-сценариев на отдельном эмуляторе. Исправления для конкретных прошивок не означают испытания на всех моделях. На физическом телевизоре эта версия в данном прогоне не устанавливалась.
 
-**Milo-Home.apk** — обычная версия. **Milo-Home-ByeByeDPI.apk** — со встроенным установщиком ByeByeDPI. Устанавливайте свой вариант поверх прежнего, без удаления данных.
+**Milo-Home.apk** — обычная версия. **Milo-Home-ByeByeDPI.apk** — вариант со встроенным установщиком ByeByeDPI. Выбирайте свой вариант и устанавливайте поверх прежней версии.
+
+[Проверки и происхождение изменений](https://github.com/anrhangels/milo-home/blob/milo-main/docs/releases/0.1.1-testing.md)
 
 ---
 
-# Milo Home 0.1.0
+# Milo Home 0.1.1
 
-The familiar Home screen and app order are preserved.
+Selected CleanYourTV 3.1 fixes, adapted to preserve Milo's interface and independent update system.
 
-- Clock screensaver: ambient glow or black background, three clock sizes and an appearance preview.
-- Reduce effects applies animation, extra-effect and black-clock preferences in one confirmation. Each option remains independently adjustable.
-- Fixed panel reopening after visiting Android settings and improved network-menu focus restoration.
-- Fixed a physical-TV finding: the volume slider follows system-handled volume keys through visible-only audio events, without polling.
-- Quick settings and clock transitions respect disabled animations.
-- Remote helpers pass keys through while the display is off.
-- App info is offered only when the firmware provides it; vendor settings resolution is retained.
-- Danish, Korean and European Portuguese upstream interface translations added. Untranslated Milo-specific options fall back to English.
-- All 0.0.9 optimizations and APK update verification retained.
+- Mapped long presses fire on time; duplicate delivery through key helpers launches once.
+- Explicit activity targets and vendor keycodes on Home are supported.
+- Interrupted same-card shelf/glow fades recover after returning Home.
+- Compact-card icons scale to fit; wallpaper rotation tolerates small minute-timer drift.
+- Deferred input opening for Android 9 and an AOSP TV settings fallback for firmware missing standard handlers.
+- Swedish base-interface translation, refreshed Spanish/Italian/French, and registration of all available base languages for Android 13+. Untranslated Milo options fall back to English.
 
-The Preview passed real Android TV11 tests and owner remote-control acceptance. Stable0.1.0 was installed and confirmed after the owner turned the TV off and back on. Clock preferences, panel reopening, system-handled volume, library, network and sleep/wake were checked; HOME and system-package state were preserved. Both editions passed 264 JVM tests and Android Lint, plus17 tooling tests and nine emulator instrumentation tests. No percentage reduction in overall Android load is claimed.
+Validation: 272 JVM tests per edition, Android Lint, 17 tooling tests and 11 Android emulator scenarios. Firmware-specific fixes are not a claim of physical validation on every model. This version was not installed on the physical TV in this run.
 
-[Test results and limits](https://github.com/anrhangels/milo-home/blob/milo-main/docs/releases/0.1.0-testing.md)
+Choose Milo-Home.apk or Milo-Home-ByeByeDPI.apk to match the installed edition and update in place.

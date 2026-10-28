@@ -26,3 +26,7 @@ Report QR codes use [ZXing Core 3.5.3](https://github.com/zxing/zxing), Apache L
 ## 0.1.0 upstream selections
 
 Screen-off remote safety, app-info availability, vendor settings extraction, MemoryTrimPolicy and Danish/Korean/European Portuguese base translations were adapted from CleanYourTV v3.0.0 (`67dc5bee`), under the original MIT licence. Milo-specific settings, update delivery and optimizations remain independent.
+
+## 0.1.1 upstream selections
+
+Selected remote press tracking,explicit activity targets,vendor-key handling,wallpaper jitter,compact-icon layout,shelf fade,input lifecycle,settings fallback and base translations were adapted from CleanYourTV v3.1.0 (`874ffd7b`), including corresponding press regression tests,under the original MIT licence. Milo adds an interactive-display check and application-context timer callback. The upstream project remains separately maintained.

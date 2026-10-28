@@ -276,6 +276,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private String dockEditAppKey;
     private AppLibraryDialog appLibrary;
     private boolean appLibrarySelection;
+    private java.util.Map<Integer,String> homeAppKeys=java.util.Collections.emptyMap();
     private boolean libraryFocusPending;
     private View pendingMenuAnchor;
     private RecyclerView.OnScrollListener pendingFocusScroll;
@@ -612,6 +613,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
         btnInputs = findViewById(R.id.btnInputs);
         View btnSettings = findViewById(R.id.btnSettings);
+        homeAppKeys=RemoteKeys.parseAppKeys(cfg.appKeys);
         btnInputs.setOnClickListener(v -> showInputs());
         btnWifi.setOnClickListener(v -> openNetworkPill());
         btnWifi.setOnLongClickListener(v -> {
@@ -763,8 +765,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         View anchor = topMenu || btnInputs.getVisibility() != View.VISIBLE
                 ? findViewById(R.id.btnSettings) : btnInputs;
         if (anchor.isLaidOut()) {
-            anchor.requestFocus();
-            showInputs();
+            // Android9 briefly pauses again after delivering a new intent; defer the popup past it.
+            anchor.post(()->{
+                if(isFinishing() || isDestroyed() || anchor.getVisibility()!=View.VISIBLE) return;
+                anchor.requestFocus();showInputs();
+            });
             return true;
         }
         // Cold start: the popup anchors to the pill (or the gear), so wait for the first layout.
@@ -1213,6 +1218,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if(RemoteInput.drop(event))return true;
+        if(event.getKeyCode()>=1000 && RemoteKeys.handle(this,event,homeAppKeys.get(event.getKeyCode()),null))return true;
         if (handleSettingsKey(event)) return true;
         if (tileMenuEnabled && !reordering && openPopup == null && cardPrompt == null
                 && event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
@@ -1719,6 +1725,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             }
         } else {
             hero.setY(y);
+            // A second Home can interrupt the fade without changing the selected card.
+            if(hero.getAlpha()<1f) hero.animate().alpha(1f).setDuration(260).start();
+            if(ambientGlow && color==ambientColor && ambient.getAlpha()<1f)
+                ambient.animate().alpha(1f).setDuration(600).start();
         }
     }
 

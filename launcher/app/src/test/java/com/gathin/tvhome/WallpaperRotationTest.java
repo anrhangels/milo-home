@@ -135,4 +135,9 @@ public class WallpaperRotationTest {
         for (int i = 0; i < out.length; i++) out[i] = files.get(i).getName();
         return Arrays.asList(out);
     }
+    @org.junit.Test public void minuteJitterDoesNotSkipAnEntireRotation() {
+        org.junit.Assert.assertTrue(WallpaperRotation.due(60000,119500,60000));
+        org.junit.Assert.assertFalse(WallpaperRotation.due(60000,117000,60000));
+        org.junit.Assert.assertFalse(WallpaperRotation.due(60000,60000,0));
+    }
 }
