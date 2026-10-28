@@ -102,3 +102,8 @@ To reproduce: install a test build on a disposable emulator, disconnect its netw
 ## 0.0.9 Preview
 
 [Coverage, limits and reproduction](releases/0.0.9-preview.md) include actual APK-upgrade checks and lifecycle, shared-artwork, library and resumable-download instrumentation. Preview and Stable delivery from genuine GitHub Releases and acceptance on Android TV 11 are complete; both installed APKs matched their published hashes.
+
+
+## Milo Home 0.1.1 — upstream 3.1 fixes
+
+Both editions passed272 JVM tests and Android Lint;17 release-tool tests and11 isolated Android11 instrumentation scenarios passed. Optimized APK menus/library were checked. Both published assets passed real APK/signature/hash/edition and HTTP Range verification. The physical TV was unchanged in this run; the emulator was stopped. [Integration matrix,results and hardware limits](releases/0.1.1-testing.md).
