@@ -30,3 +30,7 @@ Screen-off remote safety, app-info availability, vendor settings extraction, Mem
 ## 0.1.1 upstream selections
 
 Selected remote press tracking,explicit activity targets,vendor-key handling,wallpaper jitter,compact-icon layout,shelf fade,input lifecycle,settings fallback and base translations were adapted from CleanYourTV v3.1.0 (`874ffd7b`), including corresponding press regression tests,under the original MIT licence. Milo adds an interactive-display check and application-context timer callback. The upstream project remains separately maintained.
+
+## 0.1.2 upstream selections
+
+Helper-owned remote holds and regression tests, gamepad handover cancellation, RTL library alignment and Latin American Spanish resources are adapted from CleanYourTV v3.2.0 under its MIT licence.

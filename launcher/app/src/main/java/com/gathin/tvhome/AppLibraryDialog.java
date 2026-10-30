@@ -397,17 +397,19 @@ final class AppLibraryDialog {
         resize(catalogWidth, dp(324));
         panel.removeAllViews();
         LinearLayout header = new LinearLayout(activity);
+        header.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
         header.setGravity(Gravity.CENTER_VERTICAL);
         header.setPadding(dp(12), dp(4), dp(8), dp(4));
         TextView title = text(activity.getString(R.string.app_library), 22, Color.WHITE);
         header.addView(title, new LinearLayout.LayoutParams(0, dp(36), 1));
-        title.setGravity(Gravity.CENTER_VERTICAL);
+        title.setGravity(Gravity.CENTER_VERTICAL | (rtl ? Gravity.RIGHT : Gravity.LEFT));
         title.setSingleLine(true);
         title.setEllipsize(TextUtils.TruncateAt.END);
         TextView count = text(activity.getResources().getQuantityString(
                 R.plurals.library_app_count, totalApps, totalApps), 13, 0xA6FFFFFF);
         count.setSingleLine(true);
         header.addView(count, new LinearLayout.LayoutParams(-2, -2));
+        if (rtl) { header.removeView(count); header.addView(count,0); count.setPadding(0,0,dp(12),0); }
         panel.addView(header, new LinearLayout.LayoutParams(-1, dp(44)));
         LinearLayout filters=new LinearLayout(activity);
         TextView letter=text(activity.getString(R.string.opt_letter)+": "+(firstLetter.isEmpty()?activity.getString(R.string.opt_all_letters):firstLetter),13,Color.WHITE);
@@ -657,6 +659,8 @@ final class AppLibraryDialog {
     private TextView text(String value, int size, int color) {
         TextView view = new TextView(activity);
         view.setText(value);
+        view.setTextDirection(rtl ? View.TEXT_DIRECTION_RTL : View.TEXT_DIRECTION_FIRST_STRONG);
+        view.setGravity(rtl ? Gravity.RIGHT : Gravity.LEFT);
         view.setTextSize(size);
         view.setTextColor(color);
         view.setTypeface(UiFont.get(activity, R.string.font_medium));

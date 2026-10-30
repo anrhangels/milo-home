@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.ToIntFunction;
@@ -156,7 +157,7 @@ final class RemoteKeys {
         };
         String button = event.getDeviceId() + ":" + event.getKeyCode() + ":" + event.getScanCode();
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            presses.down(button, event.getEventTime(), event.getRepeatCount(), holdApp, open);
+            presses.down(button, event.getEventTime(), event.getRepeatCount(), holdApp, ctx, open);
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
             presses.up(button, event.getEventTime(), event.getDownTime(), event.isCanceled(), app, holdApp,
                     open);
@@ -170,6 +171,8 @@ final class RemoteKeys {
      * or UP whose event time was already seen for that button is the other service's copy and is skipped. One small
      * record per mapped button that has been pressed, not a history.
      */
+    static void release(Context helper) { if (presses != null) presses.release(helper); }
+
     static final class Presses {
         interface Timer {
             void post(Runnable hold, long delayMs);
@@ -180,6 +183,8 @@ final class RemoteKeys {
             long downAt = -1, upAt = -1;
             boolean fired;
             Runnable hold;
+            /** The helpers that saw this DOWN while its hold is pending, each with the way it opens a target. */
+            final Map<Object, Consumer<String>> owners = new LinkedHashMap<>();
         }
 
         private final Map<String, Press> buttons = new HashMap<>();
@@ -190,20 +195,43 @@ final class RemoteKeys {
         }
 
         void down(String button, long eventTime, int repeatCount, String holdApp, Consumer<String> open) {
+            down(button,eventTime,repeatCount,holdApp,this,open);
+        }
+
+        void down(String button, long eventTime, int repeatCount, String holdApp, Object owner,
+                Consumer<String> open) {
             if (repeatCount != 0) return;
             Press press = buttons.computeIfAbsent(button, b -> new Press());
-            if (press.downAt == eventTime) return;
+            if (press.downAt == eventTime) {
+                // The other helper's copy: it can answer the hold too, should the first one leave.
+                if (press.hold != null) press.owners.putIfAbsent(owner, open);
+                return;
+            }
             if (press.hold != null) timer.cancel(press.hold);   // its UP never came
             press.downAt = eventTime;
             press.fired = false;
             press.hold = null;
+            press.owners.clear();
             if (holdApp == null) return;
+            press.owners.put(owner, open);
             press.hold = () -> {
+                Consumer<String> first = press.owners.values().iterator().next();
                 press.hold = null;
+                press.owners.clear();
                 press.fired = true;
-                open.accept(holdApp);
+                first.accept(holdApp);
             };
             timer.post(press.hold, HOLD_MS);
+        }
+
+        /** Drops this helper from every pending hold, cancelling a hold it was the last to own. */
+        void release(Object owner) {
+            for (Press press : buttons.values()) {
+                if (press.hold == null || press.owners.remove(owner) == null || !press.owners.isEmpty()) continue;
+                timer.cancel(press.hold);
+                press.hold = null;
+                press.fired = true;   // the press is over: an UP that still comes later opens nothing
+            }
         }
 
         void up(String button, long eventTime, long downTime, boolean canceled, String app, String holdApp,
@@ -215,6 +243,7 @@ final class RemoteKeys {
             if (press.hold != null) {
                 timer.cancel(press.hold);
                 press.hold = null;
+                press.owners.clear();
             }
             if (canceled || (sawDown && press.fired)) return;
             // Without its DOWN (the service started while the button was held), the event's own down time will do.

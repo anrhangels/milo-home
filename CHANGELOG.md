@@ -1,5 +1,9 @@
 # История Milo Home
 
+## 0.1.2
+
+Selective CleanYourTV 3.2 integration: helper-owned pending holds, gamepad handover cancellation, RTL library alignment and Latin American Spanish. Existing layout, updater and edition boundaries preserved.
+
 ## 0.1.1
 
 - Выбраны исправления CleanYourTV 3.1: кнопки пульта, восстановление подсветки, компактные иконки, таймер обоев и открытие системных экранов.
